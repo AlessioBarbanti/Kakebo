@@ -1,0 +1,8 @@
+# Translations: one ARB (JSON) file per language in lib/l10n, Italian is the reference.
+# Add a language by copying app_it.arb to app_xx.arb and translating the values.
+arb-dir: lib/l10n
+template-arb-file: app_it.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false
+untranslated-messages-file: build/untranslated-messages.json

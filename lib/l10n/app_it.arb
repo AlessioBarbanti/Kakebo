@@ -1,0 +1,520 @@
+{
+  "@@locale": "it",
+  "newItem": "Nuova voce",
+  "morning": "Buongiorno",
+  "afternoon": "Buon pomeriggio",
+  "evening": "Buonasera",
+  "skip": "Salta",
+  "back": "Indietro",
+  "backToLedger": "← Torna al registro",
+  "setupTitle": "Prima di iniziare, scrivi cosa entra e cosa deve uscire.",
+  "income": "Entrate del mese",
+  "incomeHint": "Stipendio e altre entrate",
+  "savingGoal": "Obiettivo di risparmio",
+  "savingHint": "Da mettere da parte subito, prima di spendere",
+  "ruleTitle": "Punto di partenza: 50 / 30 / 20",
+  "ruleBody": "Metà ai bisogni, un terzo al resto, un quinto al risparmio. Poi il kakebo ti chiede di guardare ogni voce.",
+  "apply": "Applica",
+  "applied": "Applicato",
+  "fixedOverHalf": "Le spese fisse superano già la metà",
+  "fixedPart": "Di cui {amount} già in spese fisse",
+  "@fixedPart": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "otherPillars": "Desideri, cultura, imprevisti",
+  "shareAmongThree": "Da dividere tra i tre pilastri",
+  "savings": "Risparmio",
+  "becomesGoal": "Diventa il tuo obiettivo del mese",
+  "fixedTitle": "Spese fisse ricorrenti",
+  "fixedHint": "Si ripetono ogni mese, modificabili quando vuoi",
+  "addFixed": "+ Aggiungi spesa fissa",
+  "remove": "Rimuovi {name}",
+  "@remove": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetsTitle": "Budget dei pilastri",
+  "budgetsAuto": "Divisi in automatico da ciò che resta da spendere",
+  "budgetsMine": "Scelti da te",
+  "allAssigned": "Tutto il disponibile è assegnato.",
+  "toAssign": "Da assegnare: {amount}",
+  "@toAssign": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "overBy": "Oltre il disponibile di {amount}",
+  "@overBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "splitAgain": "Dividi di nuovo in automatico",
+  "mindful": "Da spendere con consapevolezza",
+  "perWeek": "circa {amount} a settimana",
+  "@perWeek": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "startMonth": "Inizia {month}",
+  "@startMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "eveningThought": "Il pensiero della sera",
+  "happyQuestion": "Cosa ti ha reso felice oggi?",
+  "write": "Scrivi",
+  "leftFor": "Ti restano per {month}",
+  "@leftFor": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "spendToday": "da spendere entro oggi",
+  "spentShare": "{pct}% del disponibile già speso",
+  "@spentShare": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "branchTitle": "Il ramo del risparmio",
+  "branchRule": "Ogni fiore vale {flower} del tuo obiettivo. Sboccia quando la spesa resta nel ritmo del mese: finora {soFar} su {goal}.",
+  "@branchRule": {
+    "placeholders": {
+      "flower": {
+        "type": "String"
+      },
+      "soFar": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "today": "Oggi",
+  "addShort": "+ Annota",
+  "emptyLedger": "Il registro è ancora vuoto. Annota la prima spesa del mese: basta un importo e un pilastro.",
+  "quietToday": "Nessuna spesa oggi. Una giornata leggera.",
+  "newExpense": "Nuova spesa",
+  "editExpense": "Modifica spesa",
+  "cancel": "Annulla",
+  "notePlaceholder": "Per cosa? es. spesa, cinema, farmacia",
+  "suggested": "Pilastro suggerito dalla nota: {pillar}",
+  "@suggested": {
+    "placeholders": {
+      "pillar": {
+        "type": "String"
+      }
+    }
+  },
+  "save": "Salva",
+  "deleteExpense": "Elimina spesa",
+  "expenseDeleted": "Spesa eliminata",
+  "undo": "Annulla",
+  "erase": "Cancella",
+  "settings": "Impostazioni",
+  "ledgerKicker": "REGISTRO",
+  "ledgerTitle": "Dove sono andati",
+  "thisWeek": "Questa settimana",
+  "thisMonth": "Questo mese",
+  "ofAvailable": "su {amount} disponibili",
+  "@ofAvailable": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "leftOf": "{left} rimasti su {budget}",
+  "@leftOf": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      },
+      "budget": {
+        "type": "String"
+      }
+    }
+  },
+  "noneInPillar": "Nessuna spesa in questo pilastro.",
+  "journalKicker": "DIARIO",
+  "journalTitle": "Due momenti",
+  "journalIntro": "Uno per la sera, uno per il mese. Ogni domenica il diario raccoglie da solo la settimana.",
+  "everyDayAt": "Ogni giorno alle {time}",
+  "@everyDayAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "written": "Scritto",
+  "toWrite": "Da scrivere",
+  "eveningNow": "È sera: puoi scriverlo ora.",
+  "opensAt": "Si apre stasera alle {time}.",
+  "@opensAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "theMonth": "Il mese",
+  "questionsFrom": "Le quattro domande · dal {date}",
+  "@questionsFrom": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "sealed": "Sigillato",
+  "open": "Aperto",
+  "monthSealed": "{month} è chiuso con il sigillo.",
+  "@monthSealed": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "questionsHint": "Quanto hai, quanto vuoi risparmiare, quanto spendi, come migliorare.",
+  "timeline": "Cronologia",
+  "week": "La settimana · {span}",
+  "@week": {
+    "placeholders": {
+      "span": {
+        "type": "String"
+      }
+    }
+  },
+  "weekNoSpending": "Una settimana senza spese.",
+  "questionsOf": "Le quattro domande · {month}",
+  "@questionsOf": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "sealedSaved": "Sigillato · {amount} risparmiati",
+  "@sealedSaved": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "monthClosed": "Mese chiuso con il sigillo.",
+  "resolutionFor": "Proposito per {month}: {goal}",
+  "@resolutionFor": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "backToJournal": "← Diario",
+  "reviewKicker": "FINE MESE",
+  "reviewTitle": "Le quattro domande",
+  "soFar": "{month}, FINORA",
+  "@soFar": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "towardSaving": "verso il risparmio · obiettivo {goal}",
+  "@towardSaving": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "flowerWorth": "Ogni fiore vale {flower}. Finora {soFar} su {goal} messi da parte.",
+  "@flowerWorth": {
+    "placeholders": {
+      "flower": {
+        "type": "String"
+      },
+      "soFar": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "question": "Domanda {n}",
+  "@question": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "incomeMinusFixed": "Entrate meno spese fisse",
+  "goalFor": "Il tuo obiettivo per {month}",
+  "@goalFor": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "acrossPillars": "Nei quattro pilastri",
+  "smallResolution": "Un piccolo proposito per {month}",
+  "@smallResolution": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "plan": "Pianifica {month} →",
+  "@plan": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "sealMonth": "Chiudi {month} con il sigillo",
+  "@sealMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "calendarKicker": "CALENDARIO",
+  "month": "Mese",
+  "year": "Anno",
+  "quietDay": "Una giornata tranquilla. Nessuna spesa annotata.",
+  "goalReached": "Obiettivo di risparmio raggiunto",
+  "spentInPillars": "Speso nei pilastri",
+  "onTrack": "Sulla strada per risparmiare",
+  "savedLabel": "Risparmiato",
+  "goal": "Obiettivo",
+  "monthAhead": "Mese ancora da vivere.",
+  "monthEmpty": "Nessuna spesa annotata in questo mese.",
+  "monthNow": "Mese in corso: il sigillo arriva con la revisione di fine mese.",
+  "monthReached": "Obiettivo raggiunto: il ramo è fiorito e il mese porta il sigillo.",
+  "missedBy": "Obiettivo mancato di {amount}.",
+  "@missedBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savedGoodnight": "Salvato nel diario. Buonanotte.",
+  "edit": "Modifica",
+  "backToLedgerShort": "Torna al registro",
+  "breathFirst": "Prima, un respiro",
+  "followCircle": "Segui il cerchio per tre respiri, poi scrivi.",
+  "ready": "Sono pronto",
+  "smallThing": "Anche una cosa piccola. Fai un respiro, poi scrivi.",
+  "todayHint": "Oggi…",
+  "later": "Più tardi",
+  "keepThought": "Custodisci il pensiero",
+  "close": "Chiudi",
+  "breatheIn": "Inspira",
+  "breatheOut": "Espira",
+  "channel": "La sera",
+  "channelInfo": "Il pensiero della sera e la nota delle spese",
+  "noteTitle": "La nota della sera",
+  "noteBody": "Annota le spese di oggi: basta un importo e un pilastro.",
+  "settingsKicker": "IMPOSTAZIONI",
+  "ledgerGroup": "REGISTRO",
+  "monthStartLabel": "Inizio del mese",
+  "monthStartHint": "Per esempio il giorno dello stipendio",
+  "startDay": "Il {day}°",
+  "@startDay": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "monthStartDialog": "Il mese inizia il giorno",
+  "incomeFixed": "Entrate e spese fisse",
+  "incomeFixedHint": "Entrate, spese ricorrenti, risparmio e budget",
+  "fixedValue": "{amount} fisse ›",
+  "@fixedValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "rhythm": "RITMO",
+  "weekly": "Riepilogo della domenica",
+  "weeklyHint": "La settimana raccolta nel diario, niente da scrivere",
+  "proverb": "Frase del giorno",
+  "proverbHint": "Un proverbio giapponese in fondo a Oggi",
+  "eveningNote": "Nota serale",
+  "eveningNoteHint": "Un invito a scrivere le spese del giorno",
+  "noteTime": "Orario della nota",
+  "tapToChange": "Tocca per cambiare",
+  "noteTimeDialog": "Orario della nota serale",
+  "evenings": "LA SERA",
+  "thoughtNotice": "Notifica del pensiero",
+  "time": "Orario",
+  "thoughtTimeDialog": "Orario del pensiero della sera",
+  "precise": "Orario preciso",
+  "preciseOn": "Le notifiche arrivano al minuto",
+  "preciseOff": "Senza, Android può ritardarle fino a un'ora",
+  "active": "Attivo",
+  "activate": "Attiva ›",
+  "writeToday": "Scrivi il pensiero di oggi",
+  "writeTodayHint": "Una schermata senza distrazioni",
+  "data": "DATI",
+  "exportLedger": "Esporta registro",
+  "exportHint": "Un file CSV da aprire con un foglio di calcolo",
+  "ledgerSaved": "Registro salvato",
+  "backupSave": "Salva un backup",
+  "backupHint": "Tutti i dati in un file, anche per un nuovo telefono",
+  "backupSaved": "Backup salvato",
+  "restore": "Ripristina un backup",
+  "restoreHint": "Sostituisce i dati attuali con quelli del file",
+  "restoreAsk": "Ripristinare il backup?",
+  "restoreWarn": "I dati attuali verranno sostituiti da quelli del file.",
+  "restoreYes": "Ripristina",
+  "restored": "Backup ripristinato",
+  "notABackup": "Questo file non è un backup di Kakebo",
+  "wipe": "Cancella tutti i dati",
+  "wipeHint": "Spese, pensieri e impostazioni. Non si può annullare",
+  "wipeAsk": "Cancellare tutto?",
+  "wipeWarn": "Spese, spese fisse, pensieri, sigilli e impostazioni verranno eliminati da questo telefono. Se vuoi tenerli, salva prima un backup.",
+  "other": "ALTRO",
+  "replayIntro": "Rivedi l'introduzione",
+  "replayIntroHint": "I pilastri e le domande",
+  "licenses": "Licenze",
+  "licensesHint": "Font, stampe e librerie usate",
+  "prints": "Stampe (pubblico dominio, Wikimedia Commons)",
+  "printsList": "Utagawa Hiroshige, Giardino di susini a Kameido (Cento vedute famose di Edo), 1857.\nZheng Xie, Bambù e rocce. Google Art Project.\nZheng Xie, Orchidee. Princeton University Art Museum, 2014-128.\nKatsushika Hokusai, Crisantemi e ape, c. 1832.\nWang Mian, Pruno in inchiostro (lo sfondo di ogni schermata).\n\nOpere in pubblico dominio, riprodotte da Wikimedia Commons.",
+  "pillarNeeds": "Necessità",
+  "pillarNeedsJp": "必要 hitsuyō · bambù",
+  "pillarNeedsVirtue": "Il bambù: si piega ma non si spezza",
+  "pillarWants": "Desideri",
+  "pillarWantsJp": "欲しい hoshii · susino",
+  "pillarWantsVirtue": "Il susino: fiorisce quando serve gioia",
+  "pillarCulture": "Cultura",
+  "pillarCultureJp": "文化 bunka · orchidea",
+  "pillarCultureVirtue": "L'orchidea: nutre la mente in silenzio",
+  "pillarUnexpected": "Imprevisti",
+  "pillarUnexpectedJp": "予想外 yosōgai · crisantemo",
+  "pillarUnexpectedVirtue": "Il crisantemo: resiste al freddo inatteso",
+  "seasonWinter": "Inverno",
+  "seasonWinterPlant": "Nandina",
+  "seasonSpring": "Primavera",
+  "seasonSpringPlant": "Ciliegio",
+  "seasonSummer": "Estate",
+  "seasonSummerPlant": "Pesce rosso",
+  "seasonAutumn": "Autunno",
+  "seasonAutumnPlant": "Luna piena",
+  "proverb1Meaning": "Anche la polvere, accumulandosi, diventa una montagna.",
+  "proverb2Meaning": "Sapere quando si ha abbastanza.",
+  "proverb3Meaning": "Se hai fretta, prendi la strada lunga.",
+  "proverb4Meaning": "Chi compra ciò che costa poco, perde denaro.",
+  "proverb5Meaning": "Anche una pietra si scalda, se ci siedi sopra tre anni.",
+  "proverb6Meaning": "Cadi sette volte, rialzati otto.",
+  "proverb7Meaning": "Ogni incontro accade una volta sola.",
+  "defaultFixed1": "Affitto",
+  "defaultFixed2": "Bollette luce e gas",
+  "defaultFixed3": "Internet e telefono",
+  "defaultFixed4": "Abbonamenti",
+  "defaultFixed5": "Assicurazione",
+  "csvDate": "data",
+  "csvNote": "nota",
+  "csvAmount": "importo",
+  "csvPillar": "pilastro",
+  "step1Title": "Un registro per la casa",
+  "step1Body": "Nato in Giappone nel 1904: annoti ogni spesa, ti fermi un momento, osservi dove vanno i soldi.",
+  "step1Cta": "Avanti",
+  "step2Title": "Quattro pilastri, quattro gentiluomini",
+  "step2Body": "Ogni spesa va in uno di quattro pilastri, ognuno con la sua pianta.",
+  "step2Cta": "Avanti",
+  "step3Title": "Quattro domande",
+  "step3Body": "A inizio e fine mese rispondi sempre alle stesse quattro. Scorri per iniziare.",
+  "step3Cta": "Inizia il mio mese",
+  "fourQuestion1": "Quanto denaro hai?",
+  "fourQuestion2": "Quanto vorresti risparmiare?",
+  "fourQuestion3": "Quanto stai spendendo?",
+  "fourQuestion4": "Come puoi migliorare?",
+  "tabToday": "Oggi",
+  "tabLedger": "Registro",
+  "tabJournal": "Diario",
+  "tabCalendar": "Calendario",
+  "perDay": "{days, plural, =1{circa {amount} al giorno per domani} other{circa {amount} al giorno per i prossimi {days} giorni}}",
+  "@perDay": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "flowers": "{n, plural, =1{1 fiore su 10} other{{n} fiori su 10}}",
+  "@flowers": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "weekPace": "{onPace, select, true{Nel ritmo del mese} other{Sopra il ritmo del mese}}",
+  "@weekPace": {
+    "placeholders": {
+      "onPace": {
+        "type": "String"
+      }
+    }
+  },
+  "weekFullest": "Il pilastro più pieno: {pillar}.",
+  "@weekFullest": {
+    "placeholders": {
+      "pillar": {
+        "type": "String"
+      }
+    }
+  },
+  "weekQuiet": "{days} giorni senza spese.",
+  "@weekQuiet": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
+}

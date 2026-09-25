@@ -28,12 +28,16 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  audioplayers: ^6.8.1
+  file_picker: ^13.1.0
   flutter:
     sdk: flutter
+  flutter_local_notifications: ^22.3.1
   flutter_localizations:
     sdk: flutter
-  google_fonts: ^8.2.1
+  intl: ^0.20.3
   shared_preferences: ^2.5.5
+  timezone: ^0.11.1
 
 dev_dependencies:
   flutter_test:
@@ -45,12 +49,15 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  image: ^4.10.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true # lib/l10n/app_localizations.dart from the ARB files
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -58,6 +65,27 @@ flutter:
   uses-material-design: true
   assets:
     - assets/art/
+    - assets/sounds/
+    - assets/fonts/OFL-ShipporiMincho.txt
+    - assets/fonts/OFL-ZenKakuGothicNew.txt
+
+  # Subsets with only the characters the app uses (python tool/fonts.py), so they load instantly and offline.
+  fonts:
+    - family: Shippori Mincho
+      fonts:
+        - asset: assets/fonts/ShipporiMincho-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/ShipporiMincho-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/ShipporiMincho-Bold.ttf
+          weight: 700
+    - family: Zen Kaku Gothic New
+      fonts:
+        - asset: assets/fonts/ZenKakuGothicNew-Regular.ttf
+        - asset: assets/fonts/ZenKakuGothicNew-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/ZenKakuGothicNew-Bold.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -89,3 +117,13 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# dart run tool/icon.dart && dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: assets/icon/icon.png
+  adaptive_icon_background: "#f2f6ed"
+  adaptive_icon_foreground: assets/icon/foreground.png
+  adaptive_icon_monochrome: assets/icon/monochrome.png
+  min_sdk_android: 21

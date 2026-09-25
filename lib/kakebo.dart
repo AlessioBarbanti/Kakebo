@@ -5,6 +5,10 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'l10n.dart';
+
+export 'l10n.dart';
+
 double _gamma(double x) => x <= 0.0031308 ? 12.92 * x : 1.055 * math.pow(x, 1 / 2.4) - 0.055;
 
 /// CSS `oklch(l c h / a)` → sRGB, so the design tokens carry over unchanged.
@@ -23,104 +27,74 @@ Color ok(double l, double c, double h, [double alpha = 1]) {
   );
 }
 
-/// it-IT currency like the design: "1.234 €", "12,80 €".
-String fmt(num n) {
-  final r = (n * 100).round() / 100;
-  final s = r.abs().toStringAsFixed(n % 1 != 0 ? 2 : 0).split('.');
-  final whole = s[0].replaceAllMapped(RegExp(r'\B(?=(\d{3})+$)'), (_) => '.');
-  return '${r < 0 ? '-' : ''}$whole${s.length > 1 ? ',${s[1]}' : ''} €';
-}
-
-const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
-const giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
 const kanjiMesi = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
-String mese(DateTime d) => mesi[d.month - 1].toLowerCase();
-String abbr(DateTime d) => mese(d).substring(0, 3);
-String dayLabel(DateTime d) => '${giorni[d.weekday - 1]} ${d.day} ${mese(d)}';
 String dateKey(DateTime d) => d.toIso8601String().substring(0, 10);
 String monthKey(DateTime d) => d.toIso8601String().substring(0, 7);
 
+/// One of the four pillars; its words come in the app's language.
 class Pillar {
-  Pillar({
-    required this.name,
-    required this.flower,
-    required this.jp,
-    required this.virtue,
-    required this.kanji,
-    required this.ink,
-    required this.soft,
-    required this.budget,
-    required this.img,
-    required this.pos,
-  });
-  final String name, flower, jp, virtue, kanji, img;
+  Pillar({required this.key, required this.kanji, required this.ink, required this.soft, required this.share, required this.img, required this.pos});
+  final String key, kanji, img;
   final Color ink, soft;
-  final double budget;
+  final double share;
   final Alignment pos;
+  String get name => tr.pillars[key]!.name;
+  String get jp => tr.pillars[key]!.jp;
+  String get virtue => tr.pillars[key]!.virtue;
 }
 
 final pillars = {
   'needs': Pillar(
-    name: 'Necessità',
-    flower: 'Bambù',
-    jp: '必要 hitsuyō · bambù',
-    virtue: 'Il bambù: si piega ma non si spezza',
+    key: 'needs',
     kanji: '竹',
     ink: ok(.56, .08, 155),
     soft: ok(.93, .04, 155),
-    budget: 600,
+    share: 600 / 1350, // the design's split of what is available
     img: 'assets/art/bamboo.jpg',
     pos: const Alignment(0, -.3),
   ),
   'wants': Pillar(
-    name: 'Desideri',
-    flower: 'Susino in fiore',
-    jp: '欲しい hoshii · susino',
-    virtue: 'Il susino: fiorisce quando serve gioia',
+    key: 'wants',
     kanji: '梅',
     ink: ok(.6, .1, 10),
     soft: ok(.94, .035, 10),
-    budget: 300,
+    share: 300 / 1350, // the design's split of what is available
     img: 'assets/art/plum.jpg',
     pos: const Alignment(0, -.76),
   ),
   'culture': Pillar(
-    name: 'Cultura',
-    flower: 'Orchidea',
-    jp: '文化 bunka · orchidea',
-    virtue: "L'orchidea: nutre la mente in silenzio",
+    key: 'culture',
     kanji: '蘭',
     ink: ok(.58, .08, 295),
     soft: ok(.94, .03, 295),
-    budget: 200,
+    share: 200 / 1350, // the design's split of what is available
     img: 'assets/art/orchid.jpg',
     pos: Alignment.center,
   ),
   'unexpected': Pillar(
-    name: 'Imprevisti',
-    flower: 'Crisantemo',
-    jp: '予想外 yosōgai · crisantemo',
-    virtue: 'Il crisantemo: resiste al freddo inatteso',
+    key: 'unexpected',
     kanji: '菊',
     ink: ok(.62, .1, 80),
     soft: ok(.95, .045, 90),
-    budget: 250,
+    share: 250 / 1350, // the design's split of what is available
     img: 'assets/art/chrys.jpg',
     pos: Alignment.center,
   ),
 };
 
 class Season {
-  Season(this.name, this.plantName, this.plant, this.deep, this.ink, this.soft, this.bloom);
-  final String name, plantName, plant;
+  Season(this.key, this.plant, this.deep, this.ink, this.soft, this.bloom);
+  final String key, plant;
   final Color deep, ink, soft, bloom;
+  String get name => tr.seasons[key]!.$1;
+  String get plantName => tr.seasons[key]!.$2;
 }
 
 final seasons = {
-  'winter': Season('Inverno', 'Nandina', '南天', ok(.44, .13, 25), ok(.56, .16, 25), ok(.95, .025, 25), ok(.72, .14, 25)),
-  'spring': Season('Primavera', 'Ciliegio', '桜', ok(.47, .08, 15), ok(.68, .09, 15), ok(.955, .025, 15), ok(.89, .05, 15)),
-  'summer': Season('Estate', 'Pesce rosso', '金魚', ok(.47, .12, 35), ok(.66, .14, 38), ok(.955, .03, 45), ok(.82, .1, 42)),
-  'autumn': Season('Autunno', 'Luna piena', '月', ok(.46, .08, 80), ok(.7, .1, 85), ok(.96, .035, 90), ok(.88, .08, 90)),
+  'winter': Season('winter', '南天', ok(.44, .13, 25), ok(.56, .16, 25), ok(.95, .025, 25), ok(.72, .14, 25)),
+  'spring': Season('spring', '桜', ok(.47, .08, 15), ok(.68, .09, 15), ok(.955, .025, 15), ok(.89, .05, 15)),
+  'summer': Season('summer', '金魚', ok(.47, .12, 35), ok(.66, .14, 38), ok(.955, .03, 45), ok(.82, .1, 42)),
+  'autumn': Season('autumn', '月', ok(.46, .08, 80), ok(.7, .1, 85), ok(.96, .035, 90), ok(.88, .08, 90)),
 };
 Season seasonOf(int month0) =>
     seasons[[11, 0, 1].contains(month0)
@@ -131,33 +105,76 @@ Season seasonOf(int month0) =>
         ? 'summer'
         : 'autumn']!;
 
+/// Japanese proverbs (text, romaji); their meaning is tr.proverbs[i].
 const phrases = [
-  ('塵も積もれば山となる', 'Chiri mo tsumoreba yama to naru', 'Anche la polvere, accumulandosi, diventa una montagna.'),
-  ('足るを知る', 'Taru o shiru', 'Sapere quando si ha abbastanza.'),
-  ('急がば回れ', 'Isogaba maware', 'Se hai fretta, prendi la strada lunga.'),
-  ('安物買いの銭失い', 'Yasumono-gai no zeni-ushinai', 'Chi compra ciò che costa poco, perde denaro.'),
-  ('石の上にも三年', 'Ishi no ue ni mo san-nen', 'Anche una pietra si scalda, se ci siedi sopra tre anni.'),
-  ('七転び八起き', 'Nana korobi ya oki', 'Cadi sette volte, rialzati otto.'),
-  ('一期一会', 'Ichigo ichie', 'Ogni incontro accade una volta sola.'),
+  ('塵も積もれば山となる', 'Chiri mo tsumoreba yama to naru'),
+  ('足るを知る', 'Taru o shiru'),
+  ('急がば回れ', 'Isogaba maware'),
+  ('安物買いの銭失い', 'Yasumono-gai no zeni-ushinai'),
+  ('石の上にも三年', 'Ishi no ue ni mo san-nen'),
+  ('七転び八起き', 'Nana korobi ya oki'),
+  ('一期一会', 'Ichigo ichie'),
 ];
 
 const _kw = {
-  'needs': ['spes', 'supermerc', 'affitt', 'bollett', 'farmac', 'treno', 'benzin', 'medic', 'bus', 'riso', 'verdur'],
-  'wants': ['cena', 'ristor', 'bar', 'caff', 'vestit', 'regal', 'fiori', 'aperitiv', 'pizza'],
-  'culture': ['libr', 'cinema', 'muse', 'concert', 'teatr', 'corso', 'mostra', 'quadern'],
-  'unexpected': ['ripara', 'multa', 'dentist', 'guast', 'veterin', 'rott'],
+  // Italian and English stems, so a note in either language works on any phone.
+  'needs': [
+    'spes',
+    'supermerc',
+    'affitt',
+    'bollett',
+    'farmac',
+    'treno',
+    'benzin',
+    'medic',
+    'bus',
+    'riso',
+    'verdur',
+    'grocer',
+    'rent',
+    'bill',
+    'pharma',
+    'train',
+    'fuel',
+    'doctor',
+    'vegetab',
+  ],
+  'wants': [
+    'cena',
+    'ristor',
+    'bar',
+    'caff',
+    'vestit',
+    'regal',
+    'fiori',
+    'aperitiv',
+    'pizza',
+    'dinner',
+    'restaurant',
+    'coffee',
+    'cloth',
+    'gift',
+    'flower',
+    'drink',
+  ],
+  'culture': ['libr', 'cinema', 'muse', 'concert', 'teatr', 'corso', 'mostra', 'quadern', 'book', 'movie', 'theat', 'course', 'exhibit', 'notebook'],
+  'unexpected': ['ripara', 'multa', 'dentist', 'guast', 'veterin', 'rott', 'repair', 'broke', 'fix'],
 };
 
-/// Pillar guessed from the note's words, or null.
+/// Pillar guessed from the note: a word that starts like one of the pillar's stems ("spesa" → spes), or null.
 String? suggest(String t) {
-  t = t.toLowerCase();
+  final words = t.toLowerCase().split(RegExp(r'[^\p{L}]+', unicode: true));
   for (final e in _kw.entries) {
-    if (e.value.any(t.contains)) return e.key;
+    if (words.any((w) => e.value.any(w.startsWith))) return e.key;
   }
   return null;
 }
 
-const thoughtTimes = ['20:00', '20:30', '21:00', '21:30', '22:00'];
+/// "21:30" → (21, 30)
+(int, int) hm(String t) {
+  final [h, m] = t.split(':').map(int.parse).toList();
+  return (h, m);
+}
 
 class Entry {
   Entry(this.date, this.note, this.amt, this.p);
@@ -178,6 +195,16 @@ class Fixed {
 
 double _nz(double v) => v == 0 ? 1 : v;
 double sum(Iterable<Entry> l) => l.fold(0.0, (a, e) => a + e.amt);
+int daysBetween(DateTime a, DateTime b) => DateTime.utc(b.year, b.month, b.day).difference(DateTime.utc(a.year, a.month, a.day)).inDays;
+
+/// A budgeting month: from the chosen start day up to the day before it, a month later.
+class Period {
+  const Period(this.start, this.end);
+  final DateTime start, end; // end is excluded
+  bool has(DateTime d) => !d.isBefore(start) && d.isBefore(end);
+  int get days => daysBetween(start, end);
+  DateTime get last => DateTime(end.year, end.month, end.day - 1);
+}
 
 class Kakebo extends ChangeNotifier {
   static DateTime Function() clock = DateTime.now;
@@ -187,18 +214,16 @@ class Kakebo extends ChangeNotifier {
   bool onboarded = false, rule = false;
   double income = 2800, save = 300;
   List<Fixed> fixed = [
-    Fixed(1, 'Affitto', 850),
-    Fixed(2, 'Bollette luce e gas', 120),
-    Fixed(3, 'Internet e telefono', 30),
-    Fixed(4, 'Abbonamenti', 25),
-    Fixed(5, 'Assicurazione', 125),
+    for (final (i, amt) in const [850.0, 120.0, 30.0, 25.0, 125.0].indexed) Fixed(i + 1, tr.defaultFixed[i], amt),
   ];
   List<Entry> entries = [];
   Map<String, String> thoughts = {}; // yyyy-mm-dd → text
   Map<String, String> improve = {}; // yyyy-mm → answer to question 4
   Map<String, double> sealed = {}; // yyyy-mm → saved when sealed
   Map<String, bool> flags = {'weekly': true, 'phraseOn': true, 'reminders': true, 'thoughtOn': true};
-  String thoughtTime = '21:00';
+  String thoughtTime = '21:00', noteTime = '20:00';
+  int monthStart = 1; // day the budgeting month begins (1–28), e.g. payday
+  Map<String, double>? budgets; // null → split what is available like the design
 
   // Transient.
   String screen = 'onboarding';
@@ -227,6 +252,9 @@ class Kakebo extends ChangeNotifier {
     sealed = {for (final e in (j['sealed'] as Map).entries) e.key: (e.value as num).toDouble()};
     flags = {...flags, ...Map<String, bool>.from(j['flags'])};
     thoughtTime = j['thoughtTime'];
+    noteTime = j['noteTime'] ?? noteTime;
+    monthStart = j['monthStart'] ?? 1;
+    budgets = j['budgets'] == null ? null : {for (final e in (j['budgets'] as Map).entries) e.key as String: (e.value as num).toDouble()};
   }
 
   Map<String, Object> toJson() => {
@@ -243,6 +271,9 @@ class Kakebo extends ChangeNotifier {
     'sealed': sealed,
     'flags': flags,
     'thoughtTime': thoughtTime,
+    'noteTime': noteTime,
+    'monthStart': monthStart,
+    'budgets': ?budgets,
   };
 
   // ponytail: whole state rewritten as one JSON blob per change; move to drift/SQLite when history spans years.
@@ -259,13 +290,27 @@ class Kakebo extends ChangeNotifier {
 
   void go(String s) => update(() => screen = s);
 
-  // Current month.
-  int get day => now.day;
-  int get dim => DateTime(now.year, now.month + 1, 0).day;
+  /// Redraw for a new hour/day (greeting, evening notice, "today") without saving.
+  void refresh() => super.notifyListeners();
+
+  // The current budgeting month ("period"): the calendar month unless it starts on another day.
+  Period periodAt(DateTime d) {
+    final s = DateTime(d.year, d.month - (d.day < monthStart ? 1 : 0), monthStart);
+    return Period(s, DateTime(s.year, s.month + 1, monthStart));
+  }
+
+  Period get period => periodAt(now);
+
+  /// A period is named after the month holding most of its days: 27 Aug – 26 Sep is September.
+  DateTime labelOf(Period p) => DateTime(p.start.year, p.start.month + (monthStart > 16 ? 1 : 0));
+  Period periodFor(DateTime month) => periodAt(DateTime(month.year, month.month - (monthStart > 16 ? 1 : 0), monthStart));
+  DateTime get label => labelOf(period);
+  List<Entry> inPeriod(Period p) => entries.where((e) => p.has(e.date)).toList();
+  List<Entry> get month => inPeriod(period);
+  int get day => daysBetween(period.start, now) + 1; // 1 on the period's first day
+  int get dim => period.days;
   Season get season => seasonOf(now.month - 1);
-  List<Entry> inMonth(DateTime m) => entries.where((e) => e.date.year == m.year && e.date.month == m.month).toList();
-  List<Entry> get month => inMonth(now);
-  List<Entry> get today => month.where((e) => e.date.day == day).toList();
+  List<Entry> get today => entries.where((e) => dateKey(e.date) == dateKey(now)).toList();
   DateTime get weekStart => DateTime(now.year, now.month, now.day - now.weekday + 1);
   List<Entry> get week => entries.where((e) => !e.date.isBefore(weekStart)).toList();
   static Map<String, double> spentBy(Iterable<Entry> l) => {for (final k in pillars.keys) k: sum(l.where((e) => e.p == k))};
@@ -283,22 +328,31 @@ class Kakebo extends ChangeNotifier {
     return (10 * elapsed * (pace <= 1 ? 1 : math.max(0, 2 - pace))).round();
   }
 
-  int get thoughtHour => int.parse(thoughtTime.split(':')[0]);
-  bool get evening => now.hour >= thoughtHour || now.hour < 5;
+  /// From the evening thought's time until 5 in the morning.
+  bool get evening {
+    final (h, m) = hm(thoughtTime);
+    return now.hour * 60 + now.minute >= h * 60 + m || now.hour < 5;
+  }
+
+  /// Monthly budget of a pillar: yours once set, otherwise the design's split of what is available.
+  double budget(String k) => budgets?[k] ?? (available * pillars[k]!.share).roundToDouble();
+  double get budgeted => pillars.keys.fold(0.0, (a, k) => a + budget(k));
+  void setBudget(String k, double v) => update(() => budgets = {for (final p in pillars.keys) p: p == k ? v : budget(p)});
+  void autoBudgets() => update(() => budgets = null);
   String? get thoughtToday => thoughts[dateKey(now)];
-  bool get isSealed => sealed.containsKey(monthKey(now));
-  DateTime get nextMonth => DateTime(now.year, now.month + 1);
+  bool get isSealed => sealed.containsKey(monthKey(label));
+  DateTime get nextMonth => DateTime(label.year, label.month + 1);
 
   /// The month the setup screen plans: next one once this one is sealed.
-  DateTime get planMonth => isSealed ? nextMonth : DateTime(now.year, now.month);
+  DateTime get planMonth => isSealed ? nextMonth : label;
 
   String get greeting {
     final h = now.hour;
     return h >= 5 && h < 12
-        ? 'Buongiorno'
+        ? tr.morning
         : h >= 12 && h < 18
-        ? 'Buon pomeriggio'
-        : 'Buonasera';
+        ? tr.afternoon
+        : tr.evening;
   }
 
   void toggleRule() => update(() {
@@ -309,10 +363,56 @@ class Kakebo extends ChangeNotifier {
   void addEntry(double amt, String note, String p) =>
       update(() => entries.insert(0, Entry(DateTime(now.year, now.month, now.day), note.isEmpty ? pillars[p]!.name : note, amt, p)));
 
-  void seal() => update(() => sealed[monthKey(now)] = onTrack);
+  void editEntry(Entry old, double amt, String note, String p) =>
+      update(() => entries[entries.indexOf(old)] = Entry(old.date, note.isEmpty ? pillars[p]!.name : note, amt, p));
 
-  String csv() =>
-      ['data,nota,importo,pilastro', for (final e in entries) '${dateKey(e.date)},"${e.note.replaceAll('"', '""')}",${e.amt},${e.pillar.name}'].join('\n');
+  /// Removes an expense and returns where it was, for undo.
+  int removeEntry(Entry e) {
+    final i = entries.indexOf(e);
+    update(() => entries.removeAt(i));
+    return i;
+  }
+
+  void restoreEntry(int i, Entry e) => update(() => entries.insert(i, e));
+
+  /// Full backup (everything the app stores), as a file the user keeps.
+  String backup() => const JsonEncoder.withIndent(' ').convert({'app': 'kakebo', 'v': 1, ...toJson()});
+
+  /// Replaces all data with a backup; false (and nothing changed) if the file is not a Kakebo backup.
+  bool restore(String text) {
+    try {
+      final j = jsonDecode(text);
+      if (j is! Map || j['app'] != 'kakebo') return false;
+      Kakebo().read(j); // validate on a scratch copy first
+      update(() {
+        read(j);
+        screen = onboarded ? 'home' : 'onboarding';
+      });
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Back to a fresh install: every expense, thought and setting is gone.
+  void reset() => update(() {
+    read(jsonDecode(jsonEncode(Kakebo().toJson())));
+    screen = 'onboarding';
+  });
+
+  void seal() => update(() => sealed[monthKey(label)] = onTrack);
+
+  /// Spreadsheet-ready for the phone's region: "1,5" with ";" where the comma is decimal, else "1.5" with ",".
+  /// Starts with a BOM so Excel reads the accents.
+  String csv() {
+    final sep = decimalSep == ',' ? ';' : ',';
+    return String.fromCharCode(0xFEFF) +
+        [
+          tr.csvHeader.join(sep),
+          for (final e in entries)
+            [dateKey(e.date), '"${e.note.replaceAll('"', '""')}"', e.amt.toString().replaceAll('.', decimalSep), e.pillar.name].join(sep),
+        ].join(String.fromCharCodes(const [13, 10]));
+  }
 
   /// Demo data from the design, placed in the current month (`--dart-define=DEMO=true`).
   void seedDemo() {

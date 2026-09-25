@@ -8,9 +8,10 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    watch(context);
     final s = app.season, by = Kakebo.spentBy(app.month), avail = app.available, today = app.today;
     final rest = app.dim - app.day, perDay = (app.left / (rest < 1 ? 1 : rest)).floor();
-    final phrase = phrases[app.day % phrases.length];
+    final pi = app.now.day % phrases.length, phrase = (phrases[pi].$1, phrases[pi].$2, tr.proverbs[pi]);
     final notice = app.flags['thoughtOn']! && app.thoughtToday == null && app.evening;
 
     return Reveal(
@@ -38,8 +39,8 @@ class Home extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 3,
                       children: [
-                        Text('Il pensiero della sera', style: sans(12, c: ok(.4, .04, 290))),
-                        Text('Cosa ti ha reso felice oggi?', style: serif(19, h: 1.3)),
+                        Text(tr.eveningThought, style: sans(12, c: ok(.4, .04, 290))),
+                        Text(tr.happyQuestion, style: serif(19, h: 1.3)),
                       ],
                     ),
                   ),
@@ -49,7 +50,7 @@ class Home extends StatelessWidget {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(color: green, borderRadius: BorderRadius.circular(12)),
                     child: Text(
-                      'Scrivi',
+                      tr.write,
                       style: sans(14, w: FontWeight.w700, c: onGreen),
                     ),
                   ),
@@ -63,15 +64,12 @@ class Home extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 6,
             children: [
-              Text('Ti restano per ${mese(app.now)}', style: sans(14, c: muted)),
+              Text(tr.leftFor(monthName(app.label)), style: sans(14, c: muted)),
               Text(fmt(app.left), style: serif(56, w: FontWeight.w700, h: 1.05)),
-              Text(
-                rest < 1 ? 'da spendere entro oggi' : 'circa ${fmt(perDay)} al giorno per ${rest == 1 ? 'domani' : 'i prossimi $rest giorni'}',
-                style: sans(14, c: muted),
-              ),
+              Text(rest < 1 ? tr.spendToday : tr.perDay(fmt(perDay), rest), style: sans(14, c: muted)),
               const SizedBox(height: 8),
               Bar([for (final MapEntry(:key, value: p) in pillars.entries) (by[key]! / (avail == 0 ? 1 : avail), p.ink)], height: 6, gap: 2, track: line),
-              Text('${app.spentPct}% del disponibile già speso', style: sans(12, c: ok(.42, .03, 160))),
+              Text(tr.spentShare(app.spentPct), style: sans(12, c: ok(.42, .03, 160))),
             ],
           ),
         ),
@@ -107,10 +105,11 @@ class Home extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
+                spacing: 8,
                 children: [
-                  Text('Il ramo del risparmio', style: serif(18)),
+                  Flexible(child: Text(tr.branchTitle, style: serif(18))),
                   Text(
-                    '${app.bloomed} fiori su 10',
+                    tr.flowers(app.bloomed),
                     style: sans(13, w: FontWeight.w700, c: s.deep),
                   ),
                 ],
@@ -119,10 +118,7 @@ class Home extends StatelessWidget {
             const Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Branch()),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Text(
-                'Ogni fiore vale ${fmt(app.save / 10)} del tuo obiettivo. Sboccia quando la spesa resta nel ritmo del mese: finora ${fmt(app.bloomed * app.save / 10)} su ${fmt(app.save)}.',
-                style: sans(13, h: 1.5, c: muted),
-              ),
+              child: Text(tr.branchRule(fmt(app.save / 10), fmt(app.bloomed * app.save / 10), fmt(app.save)), style: sans(13, h: 1.5, c: muted)),
             ),
           ],
         ),
@@ -134,9 +130,9 @@ class Home extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Oggi', style: serif(18)),
+                  Text(tr.today, style: serif(18)),
                   TapText(
-                    '+ Annota',
+                    tr.addShort,
                     () => openAdd(context),
                     style: sans(14, w: FontWeight.w700, c: ok(.38, .06, 160)),
                   ),
@@ -144,25 +140,29 @@ class Home extends StatelessWidget {
               ),
             ),
             for (final e in today)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
-                decoration: BoxDecoration(
-                  border: Border(top: BorderSide(color: line)),
-                ),
-                child: Row(
-                  spacing: 12,
-                  children: [
-                    SizedBox(
-                      width: 22,
-                      child: Text(
-                        e.pillar.kanji,
-                        textAlign: TextAlign.center,
-                        style: serif(17, c: e.pillar.ink),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => openAdd(context, edit: e),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+                  decoration: BoxDecoration(
+                    border: Border(top: BorderSide(color: line)),
+                  ),
+                  child: Row(
+                    spacing: 12,
+                    children: [
+                      SizedBox(
+                        width: 22,
+                        child: Text(
+                          e.pillar.kanji,
+                          textAlign: TextAlign.center,
+                          style: serif(17, c: e.pillar.ink),
+                        ),
                       ),
-                    ),
-                    Expanded(child: Text(e.note, style: sans(15))),
-                    Text(fmt(e.amt), style: serif(16)),
-                  ],
+                      Expanded(child: Text(e.note, style: sans(15))),
+                      Text(fmt(e.amt), style: serif(16)),
+                    ],
+                  ),
                 ),
               ),
             if (today.isEmpty)
@@ -171,12 +171,7 @@ class Home extends StatelessWidget {
                 decoration: BoxDecoration(
                   border: Border(top: BorderSide(color: line)),
                 ),
-                child: Text(
-                  app.entries.isEmpty
-                      ? 'Il registro è ancora vuoto. Annota la prima spesa del mese: basta un importo e un pilastro.'
-                      : 'Nessuna spesa oggi. Una giornata leggera.',
-                  style: sans(14, h: 1.55, c: muted),
-                ),
+                child: Text(app.entries.isEmpty ? tr.emptyLedger : tr.quietToday, style: sans(14, h: 1.55, c: muted)),
               ),
           ],
         ),
@@ -213,25 +208,30 @@ class Home extends StatelessWidget {
   }
 }
 
-void openAdd(BuildContext context) => showModalBottomSheet(
+/// New expense, or [edit] an existing one (tap on any expense row).
+void openAdd(BuildContext context, {Entry? edit}) => showModalBottomSheet(
   context: context,
   isScrollControlled: true,
   backgroundColor: card,
   barrierColor: ok(.3, .03, 160, .28),
   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
-  builder: (_) => const AddSheet(),
+  builder: (_) => AddSheet(edit: edit),
 );
 
 class AddSheet extends StatefulWidget {
-  const AddSheet({super.key});
+  const AddSheet({super.key, this.edit});
+  final Entry? edit;
 
   @override
   State<AddSheet> createState() => _AddSheetState();
 }
 
 class _AddSheetState extends State<AddSheet> {
-  String amt = '', note = '', pillar = 'culture';
-  bool touched = false;
+  late final Entry? e = widget.edit;
+  late String amt = e == null ? '' : (e!.amt % 1 == 0 ? e!.amt.toInt().toString() : e!.amt.toStringAsFixed(2)),
+      note = e?.note ?? '',
+      pillar = e?.p ?? 'culture';
+  late bool touched = e != null; // an edited expense keeps its pillar
 
   double get value => double.tryParse(amt) ?? 0;
 
@@ -249,12 +249,24 @@ class _AddSheetState extends State<AddSheet> {
 
   void save() {
     if (value == 0) return;
-    app.addEntry(value, note.trim(), pillar);
+    e == null ? app.addEntry(value, note.trim(), pillar) : app.editEntry(e!, value, note.trim(), pillar);
     Navigator.pop(context);
+  }
+
+  void delete() {
+    final messenger = ScaffoldMessenger.of(context), old = e!, at = app.removeEntry(old);
+    Navigator.pop(context);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(tr.expenseDeleted),
+        action: SnackBarAction(label: tr.undo, onPressed: () => app.restoreEntry(at, old)),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    watch(context);
     final guess = touched ? null : suggest(note);
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(18, 10, 18, 30 + MediaQuery.viewInsetsOf(context).bottom + MediaQuery.paddingOf(context).bottom),
@@ -272,28 +284,29 @@ class _AddSheetState extends State<AddSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Nuova spesa', style: serif(20)),
-              TapText('Annulla', () => Navigator.pop(context), style: sans(14, c: muted)),
+              Text(e == null ? tr.newExpense : tr.editExpense, style: serif(20)),
+              TapText(tr.cancel, () => Navigator.pop(context), style: sans(14, c: muted)),
             ],
           ),
           Column(
             spacing: 2,
             children: [
               Text(
-                '${amt.isEmpty ? '0' : amt.replaceAll('.', ',')} €',
+                money(amt.isEmpty ? '0' : amt),
                 style: serif(46, w: FontWeight.w700, h: 1.1, c: value > 0 ? ink : ok(.7, .02, 160)),
               ),
-              Text(dayLabel(app.now), style: sans(12, c: ok(.42, .03, 160))),
+              Text(dayLabel(e?.date ?? app.now), style: sans(12, c: ok(.42, .03, 160))),
             ],
           ),
-          TextField(
+          TextFormField(
+            initialValue: note,
             onChanged: (v) => setState(() {
               note = v;
               final g = suggest(v);
               if (!touched && g != null) pillar = g;
             }),
             style: sans(15),
-            decoration: softInput('Per cosa? es. spesa, cinema, farmacia', ok(.96, .02, 150), 14, const EdgeInsets.symmetric(horizontal: 16, vertical: 13)),
+            decoration: softInput(tr.notePlaceholder, ok(.96, .02, 150), 14, const EdgeInsets.symmetric(horizontal: 16, vertical: 13)),
           ),
           Row(
             spacing: 6,
@@ -327,7 +340,7 @@ class _AddSheetState extends State<AddSheet> {
           SizedBox(
             height: 16,
             child: Text(
-              guess != null ? 'Pilastro suggerito dalla nota: ${pillars[guess]!.name}' : '',
+              guess != null ? tr.suggested(pillars[guess]!.name) : '',
               textAlign: TextAlign.center,
               style: sans(12, c: muted),
             ),
@@ -337,17 +350,17 @@ class _AddSheetState extends State<AddSheet> {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisExtent: 50, mainAxisSpacing: 6, crossAxisSpacing: 6),
             children: [
-              for (final k in ['1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '0', '⌫'])
+              for (final k in ['1', '2', '3', '4', '5', '6', '7', '8', '9', decimalSep, '0', '⌫'])
                 Material(
                   color: ok(.955, .018, 150),
                   borderRadius: BorderRadius.circular(14),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(14),
-                    onTap: () => press(k == ',' ? '.' : k),
+                    onTap: () => press(k == decimalSep ? '.' : k),
                     child: Center(
                       child: Text(
                         k,
-                        semanticsLabel: k == '⌫' ? 'Cancella' : null,
+                        semanticsLabel: k == '⌫' ? tr.erase : null,
                         style: serif(22, w: FontWeight.w500),
                       ),
                     ),
@@ -365,13 +378,21 @@ class _AddSheetState extends State<AddSheet> {
                 height: 52,
                 child: Center(
                   child: Text(
-                    'Salva',
+                    tr.save,
                     style: sans(16, w: FontWeight.w700, c: onGreen),
                   ),
                 ),
               ),
             ),
           ),
+          if (e != null)
+            Center(
+              child: TapText(
+                tr.deleteExpense,
+                delete,
+                style: sans(14, w: FontWeight.w700, c: sealRed),
+              ),
+            ),
         ],
       ),
     );

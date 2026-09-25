@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'home.dart';
 import 'kakebo.dart';
 import 'ui.dart';
 
@@ -18,6 +19,7 @@ class _LedgerState extends State<Ledger> {
 
   @override
   Widget build(BuildContext context) {
+    watch(context);
     final week = range == 'week', list = week ? app.week : app.month;
     final by = Kakebo.spentBy(list), total = sum(list), share = 7 / app.dim;
     final budget = week ? app.available * share : app.available;
@@ -31,8 +33,8 @@ class _LedgerState extends State<Ledger> {
           spacing: 16,
           runSpacing: 16,
           children: [
-            heading('REGISTRO', 'Dove sono andati'),
-            segmented(const [('week', 'Questa settimana'), ('month', 'Questo mese')], range, (k) => setState(() => range = k)),
+            heading(tr.ledgerKicker, tr.ledgerTitle),
+            segmented([('week', tr.thisWeek), ('month', tr.thisMonth)], range, (k) => setState(() => range = k)),
           ],
         ),
         Container(
@@ -50,7 +52,7 @@ class _LedgerState extends State<Ledger> {
                   Text(fmt(total), style: serif(40, w: FontWeight.w700)),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8),
-                    child: Text('su ${fmt(budget.round())} disponibili', style: sans(14, c: ok(.42, .04, 160))),
+                    child: Text(tr.ofAvailable(fmt(budget.round())), style: sans(14, c: ok(.42, .04, 160))),
                   ),
                 ],
               ),
@@ -80,7 +82,7 @@ class _LedgerState extends State<Ledger> {
         ),
         Column(
           spacing: 14,
-          children: [for (final MapEntry(:key, value: p) in pillars.entries) _card(key, p, list, by[key]!, week ? p.budget * share : p.budget)],
+          children: [for (final MapEntry(:key, value: p) in pillars.entries) _card(key, p, list, by[key]!, week ? app.budget(key) * share : app.budget(key))],
         ),
       ],
     );
@@ -140,7 +142,7 @@ class _LedgerState extends State<Ledger> {
                             ),
                             Flexible(
                               child: Text(
-                                '${fmt(math.max(0, (b - spent).round()))} rimasti su ${fmt(b.round())}',
+                                tr.leftOf(fmt(math.max(0, (b - spent).round())), fmt(b.round())),
                                 textAlign: TextAlign.right,
                                 style: sans(12, c: sub),
                               ),
@@ -163,21 +165,25 @@ class _LedgerState extends State<Ledger> {
                   if (items.isEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text('Nessuna spesa in questo pilastro.', style: sans(13, c: muted)),
+                      child: Text(tr.noneInPillar, style: sans(13, c: muted)),
                     ),
                   for (final e in items)
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        border: Border(top: BorderSide(color: Colors.white.withValues(alpha: .85))),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        spacing: 10,
-                        children: [
-                          Flexible(child: Text('${e.date.day} ${abbr(e.date)} · ${e.note}', style: sans(14))),
-                          Text(fmt(e.amt), style: serif(14)),
-                        ],
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => openAdd(context, edit: e),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          border: Border(top: BorderSide(color: Colors.white.withValues(alpha: .85))),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          spacing: 10,
+                          children: [
+                            Flexible(child: Text('${dayMonth(e.date)} · ${e.note}', style: sans(14))),
+                            Text(fmt(e.amt), style: serif(14)),
+                          ],
+                        ),
                       ),
                     ),
                 ],

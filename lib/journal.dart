@@ -3,43 +3,38 @@ import 'package:flutter/material.dart';
 import 'kakebo.dart';
 import 'ui.dart';
 
-String _short(DateTime d) => '${giorni[d.weekday - 1].substring(0, 3)} ${d.day} ${abbr(d)}';
-
-/// Diary history, newest first: evening thoughts, Sunday recaps, sealed months.
+/// Diary history, newest first: evening thoughts, Sunday recaps of this month, sealed months.
 List<(String, String, String, Color)> _timeline() {
   final items = <(DateTime, String, String, String, Color)>[];
-  final today = dateKey(app.now);
+  final now = app.now, today = DateTime(now.year, now.month, now.day);
   app.thoughts.forEach((k, v) {
     final d = DateTime.parse(k);
-    items.add((d, 'Pensiero della sera', k == today ? 'Oggi' : _short(d), v, ok(.72, .06, 295)));
+    items.add((d, tr.eveningThought, k == dateKey(now) ? tr.today : shortDay(d), v, ok(.72, .06, 295)));
   });
   if (app.flags['weekly']!) {
-    final first = DateTime(app.now.year, app.now.month), budget = app.available * 7 / app.dim;
-    for (var mon = DateTime(first.year, first.month, 2 - first.weekday); ; mon = DateTime(mon.year, mon.month, mon.day + 7)) {
+    final first = app.period.start, budget = app.available * 7 / app.dim;
+    for (var mon = DateTime(first.year, first.month, first.day - first.weekday + 1); ; mon = DateTime(mon.year, mon.month, mon.day + 7)) {
       final sun = DateTime(mon.year, mon.month, mon.day + 6);
-      if (!sun.isBefore(DateTime(app.now.year, app.now.month, app.day))) break;
+      if (!sun.isBefore(today)) break;
       final list = app.entries.where((e) => !e.date.isBefore(mon) && !e.date.isAfter(sun)).toList(), total = sum(list);
       final by = Kakebo.spentBy(list).entries.reduce((a, b) => b.value > a.value ? b : a);
       final quiet = List.generate(7, (i) => DateTime(mon.year, mon.month, mon.day + i)).where((d) => !list.any((e) => e.date == d)).length;
-      final span = mon.month == sun.month ? '${mon.day}–${sun.day} ${abbr(sun)}' : '${mon.day} ${abbr(mon)}–${sun.day} ${abbr(sun)}';
       items.add((
         sun,
-        'La settimana · $span',
+        tr.week('${dayMonth(mon)} – ${dayMonth(sun)}'),
         fmt(total),
-        total == 0
-            ? 'Una settimana senza spese.'
-            : '${total <= budget ? 'Nel ritmo del mese' : 'Sopra il ritmo del mese'}. Il pilastro più pieno: ${pillars[by.key]!.name}.${quiet >= 2 ? ' $quiet giorni senza spese.' : ''}',
+        total == 0 ? tr.weekNoSpending : tr.weekText(total <= budget, pillars[by.key]!.name, quiet),
         app.season.ink,
       ));
     }
   }
   app.sealed.forEach((mk, saved) {
-    final m = DateTime.parse('$mk-01'), next = DateTime(m.year, m.month + 1), goal = app.improve[mk] ?? '';
+    final m = DateTime.parse('$mk-01'), next = DateTime(m.year, m.month + 1), goal = (app.improve[mk] ?? '').trim();
     items.add((
-      DateTime(m.year, m.month + 1, 0),
-      'Le quattro domande · ${mese(m)}',
-      'Sigillato · ${fmt(saved)} risparmiati',
-      goal.trim().isEmpty ? 'Mese chiuso con il sigillo.' : 'Proposito per ${mese(next)}: ${goal.trim()}',
+      app.periodFor(m).last,
+      tr.questionsOf(monthName(m)),
+      tr.sealedSaved(fmt(saved)),
+      goal.isEmpty ? tr.monthClosed : tr.resolutionFor(monthName(next), goal),
       sealRed,
     ));
   });
@@ -52,7 +47,8 @@ class Journal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = app.thoughtToday, month = mese(app.now);
+    watch(context);
+    final t = app.thoughtToday, at = clock(context, app.thoughtTime);
     Widget diary(String title, String when, String status, Color statusFg, String preview, Color color, String to) => GestureDetector(
       onTap: () => app.go(to),
       child: Container(
@@ -94,30 +90,30 @@ class Journal extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 6,
             children: [
-              heading('DIARIO', 'Due momenti'),
-              Text('Uno per la sera, uno per il mese. Ogni domenica il diario raccoglie da solo la settimana.', style: sans(14, h: 1.55, c: muted)),
+              heading(tr.journalKicker, tr.journalTitle),
+              Text(tr.journalIntro, style: sans(14, h: 1.55, c: muted)),
             ],
           ),
         ),
         diary(
-          'Pensiero della sera',
-          'Ogni giorno alle ${app.thoughtTime}',
-          t != null ? 'Scritto' : 'Da scrivere',
+          tr.eveningThought,
+          tr.everyDayAt(at),
+          t != null ? tr.written : tr.toWrite,
           t != null ? ok(.4, .08, 155) : ok(.38, .05, 295),
           t != null
               ? '“$t”'
               : app.evening
-              ? 'È sera: puoi scriverlo ora.'
-              : 'Si apre stasera alle ${app.thoughtTime}.',
+              ? tr.eveningNow
+              : tr.opensAt(at),
           ok(.955, .02, 295),
           'thought',
         ),
         diary(
-          'Il mese',
-          'Le quattro domande · dal ${app.dim} $month',
-          app.isSealed ? 'Sigillato' : 'Aperto',
+          tr.theMonth,
+          tr.questionsFrom(dayMonth(app.period.last)),
+          app.isSealed ? tr.sealed : tr.open,
           ok(.48, .15, 28),
-          app.isSealed ? '${mesi[app.now.month - 1]} è chiuso con il sigillo.' : 'Quanto hai, quanto vuoi risparmiare, quanto spendi, come migliorare.',
+          app.isSealed ? tr.monthSealed(monthTitle(app.label)) : tr.questionsHint,
           ok(.95, .025, 28),
           'review',
         ),
@@ -129,7 +125,7 @@ class Journal extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(6, 0, 6, 8),
-                child: Text('Cronologia', style: serif(18)),
+                child: Text(tr.timeline, style: serif(18)),
               ),
               for (final (kind, meta, text, color) in _timeline())
                 Padding(
@@ -190,19 +186,20 @@ class Review extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = app.season, mk = monthKey(app.now), month = mese(app.now), next = mese(app.nextMonth), sealed = app.isSealed;
+    watch(context);
+    final s = app.season, mk = monthKey(app.label), month = monthName(app.label), next = monthName(app.nextMonth), sealed = app.isSealed;
     final questions = [
-      ('Quanto denaro hai?', fmt(app.income - app.fixedTotal), 'Entrate meno spese fisse'),
-      ('Quanto vorresti risparmiare?', fmt(app.save), 'Il tuo obiettivo per $month'),
-      ('Quanto stai spendendo?', fmt(app.spent), 'Nei quattro pilastri'),
+      (tr.fourQuestions[0], fmt(app.income - app.fixedTotal), tr.incomeMinusFixed),
+      (tr.fourQuestions[1], fmt(app.save), tr.goalFor(month)),
+      (tr.fourQuestions[2], fmt(app.spent), tr.acrossPillars),
     ];
     final dim = ok(.34, .04, 160);
 
     return Reveal(
       spacing: 24,
       children: [
-        Align(alignment: Alignment.centerLeft, child: TapText('← Diario', () => app.go('journal'))),
-        heading('FINE MESE', 'Le quattro domande'),
+        Align(alignment: Alignment.centerLeft, child: TapText(tr.backToJournal, () => app.go('journal'))),
+        heading(tr.reviewKicker, tr.reviewTitle),
         Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(color: s.soft, borderRadius: BorderRadius.circular(28)),
@@ -220,19 +217,16 @@ class Review extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 6,
                     children: [
-                      Text('${month.toUpperCase()}, FINORA', style: sans(12, ls: 1.68, c: ok(.38, .04, 160))),
+                      Text(tr.soFar(month.toUpperCase()), style: sans(12, ls: 1.68, c: ok(.38, .04, 160))),
                       Text(fmt(app.onTrack), style: serif(44, w: FontWeight.w700)),
                     ],
                   ),
-                  Text('verso il risparmio · obiettivo ${fmt(app.save)}', style: sans(14, c: dim)),
+                  Text(tr.towardSaving(fmt(app.save)), style: sans(14, c: dim)),
                 ],
               ),
               const Branch(height: 110),
-              Text(
-                'Ogni fiore vale ${fmt(app.save / 10)}. Finora ${fmt(app.bloomed * app.save / 10)} su ${fmt(app.save)} messi da parte.',
-                style: sans(13, c: dim),
-              ),
-              if (sealed) Align(alignment: Alignment.centerRight, child: Hanko(app.now)),
+              Text(tr.flowerWorth(fmt(app.save / 10), fmt(app.bloomed * app.save / 10), fmt(app.save)), style: sans(13, c: dim)),
+              if (sealed) Align(alignment: Alignment.centerRight, child: Hanko(app.label)),
             ],
           ),
         ),
@@ -249,7 +243,7 @@ class Review extends StatelessWidget {
                   spacing: 8,
                   children: [
                     Text(
-                      'Domanda ${i + 1}',
+                      tr.question(i + 1),
                       style: sans(12, w: FontWeight.w700, c: ok(.4, .04, 160)),
                     ),
                     Text(q, style: serif(19, h: 1.35)),
@@ -275,17 +269,17 @@ class Review extends StatelessWidget {
             spacing: 10,
             children: [
               Text(
-                'Domanda 4',
+                tr.question(4),
                 style: sans(12, w: FontWeight.w700, c: ok(.4, .04, 160)),
               ),
-              Text('Come puoi migliorare?', style: serif(19, h: 1.35)),
+              Text(tr.fourQuestions[3], style: serif(19, h: 1.35)),
               TextFormField(
                 initialValue: app.improve[mk] ?? '',
                 onChanged: (v) => app.update(() => app.improve[mk] = v),
                 minLines: 4,
                 maxLines: null,
                 style: sans(15, h: 1.6),
-                decoration: softInput('Un piccolo proposito per $next', ok(.96, .02, 150), 14, const EdgeInsets.symmetric(horizontal: 16, vertical: 14)),
+                decoration: softInput(tr.smallResolution(next), ok(.96, .02, 150), 14, const EdgeInsets.symmetric(horizontal: 16, vertical: 14)),
               ),
             ],
           ),
@@ -293,7 +287,7 @@ class Review extends StatelessWidget {
         Align(
           alignment: Alignment.centerRight,
           child: Btn(
-            sealed ? 'Pianifica $next →' : 'Chiudi $month con il sigillo',
+            sealed ? tr.plan(next) : tr.sealMonth(month),
             sealed ? () => app.go('monthStart') : app.seal,
             color: sealed ? green : sealRed,
             pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 15),

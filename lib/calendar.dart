@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'home.dart';
 import 'kakebo.dart';
 import 'ui.dart';
 
@@ -14,26 +15,38 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   String view = 'month';
-  late int selDay = app.day, selMonth = app.now.month - 1;
+  late DateTime selDay = DateTime(app.now.year, app.now.month, app.now.day);
+  late int selMonth = app.label.month - 1;
 
   @override
-  Widget build(BuildContext context) => Reveal(
-    spacing: 24,
-    children: [
-      heading('CALENDARIO', view == 'year' ? '${app.now.year}' : mesi[app.now.month - 1]),
-      Align(alignment: Alignment.centerLeft, child: segmented(const [('month', 'Mese'), ('year', 'Anno')], view, (k) => setState(() => view = k))),
-      view == 'year' ? _year() : _month(),
-    ],
-  );
+  Widget build(BuildContext context) {
+    watch(context);
+    return Reveal(
+      spacing: 24,
+      children: [
+        heading(
+          tr.calendarKicker,
+          view == 'year'
+              ? '${app.label.year}'
+              : app.monthStart == 1
+              ? monthTitle(app.label)
+              : '${dayMonth(app.period.start)} – ${dayMonth(app.period.last)}',
+        ),
+        Align(alignment: Alignment.centerLeft, child: segmented([('month', tr.month), ('year', tr.year)], view, (k) => setState(() => view = k))),
+        view == 'year' ? _year() : _month(),
+      ],
+    );
+  }
 
   Widget _month() {
-    final now = app.now, first = DateTime(now.year, now.month), offset = first.weekday - 1;
+    // The grid shows the current budgeting month, which may run e.g. from the 27th to the 26th.
+    final now = app.now, today = DateTime(now.year, now.month, now.day), first = app.period.start, offset = first.weekday - 1;
     final cells = ((offset + app.dim) / 7).ceil() * 7;
-    final byDay = <int, List<Entry>>{};
+    final byDay = <String, List<Entry>>{};
     for (final e in app.month) {
-      byDay.putIfAbsent(e.date.day, () => []).add(e);
+      byDay.putIfAbsent(dateKey(e.date), () => []).add(e);
     }
-    final sel = byDay[selDay] ?? [];
+    final sel = byDay[dateKey(selDay)] ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -46,7 +59,7 @@ class _CalendarState extends State<Calendar> {
             children: [
               Row(
                 children: [
-                  for (final w in const ['L', 'M', 'M', 'G', 'V', 'S', 'D'])
+                  for (final w in weekdayLetters)
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 12),
@@ -71,26 +84,26 @@ class _CalendarState extends State<Calendar> {
                       const SizedBox()
                     else
                       () {
-                        final d = i - offset + 1, t = sum(byDay[d] ?? []), isSel = d == selDay;
+                        final d = DateTime(first.year, first.month, first.day + i - offset), t = sum(byDay[dateKey(d)] ?? []), isSel = d == selDay;
                         return GestureDetector(
                           onTap: () => setState(() => selDay = d),
                           child: Container(
                             decoration: BoxDecoration(
                               color: isSel ? green : Colors.transparent,
                               borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: d == app.day && !isSel ? ok(.62, .1, 10) : Colors.transparent, width: 1.5),
+                              border: Border.all(color: d == today && !isSel ? ok(.62, .1, 10) : Colors.transparent, width: 1.5),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               spacing: 5,
                               children: [
                                 Text(
-                                  '$d',
+                                  '${d.day}',
                                   style: serif(
                                     16,
                                     c: isSel
                                         ? onGreen
-                                        : d > app.day
+                                        : d.isAfter(today)
                                         ? ok(.68, .02, 160)
                                         : ink,
                                   ),
@@ -126,36 +139,40 @@ class _CalendarState extends State<Calendar> {
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
                 children: [
-                  Text(dayLabel(DateTime(now.year, now.month, selDay)), style: serif(20)),
+                  Text(dayLabel(selDay), style: serif(20)),
                   Text(fmt(sum(sel)), style: serif(17, c: ok(.42, .04, 160))),
                 ],
               ),
               const SizedBox(height: 8),
               for (final e in sel)
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(color: card)),
-                  ),
-                  child: Row(
-                    spacing: 12,
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(color: e.pillar.soft, shape: BoxShape.circle),
-                        child: Text(e.pillar.kanji, style: serif(14, c: e.pillar.ink)),
-                      ),
-                      Expanded(child: Text(e.note, style: sans(15))),
-                      Text(fmt(e.amt), style: serif(16)),
-                    ],
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => openAdd(context, edit: e),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: card)),
+                    ),
+                    child: Row(
+                      spacing: 12,
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(color: e.pillar.soft, shape: BoxShape.circle),
+                          child: Text(e.pillar.kanji, style: serif(14, c: e.pillar.ink)),
+                        ),
+                        Expanded(child: Text(e.note, style: sans(15))),
+                        Text(fmt(e.amt), style: serif(16)),
+                      ],
+                    ),
                   ),
                 ),
               if (sel.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 18),
-                  child: Text('Una giornata tranquilla. Nessuna spesa annotata.', style: sans(15, c: ok(.45, .03, 160))),
+                  child: Text(tr.quietDay, style: sans(15, c: ok(.45, .03, 160))),
                 ),
             ],
           ),
@@ -165,13 +182,13 @@ class _CalendarState extends State<Calendar> {
   }
 
   Widget _year() {
-    final now = app.now, keys = pillars.keys.toList();
+    final now = app.now, year = app.label.year, keys = pillars.keys.toList();
     // ponytail: past months use today's income and fixed costs unless sealed; store a monthly snapshot if those change often.
     final months = [
       for (var i = 0; i < 12; i++)
         () {
-          final m = DateTime(now.year, i + 1), list = app.inMonth(m), mk = monthKey(m), current = i == now.month - 1;
-          if (i > now.month - 1 || (!current && list.isEmpty && !app.sealed.containsKey(mk))) return null;
+          final m = DateTime(year, i + 1), p = app.periodFor(m), list = app.inPeriod(p), mk = monthKey(m), current = mk == monthKey(app.label);
+          if (p.start.isAfter(now) || (!current && list.isEmpty && !app.sealed.containsKey(mk))) return null;
           final by = Kakebo.spentBy(list), total = sum(list);
           return (
             by: [for (final k in keys) by[k]!],
@@ -240,7 +257,7 @@ class _CalendarState extends State<Calendar> {
                                     ? sealRed
                                     : ok(.85, .01, 160),
                               ),
-                              Text(mesi[i][0], style: sans(12, w: selMonth == i ? FontWeight.w700 : FontWeight.w400)),
+                              Text(monthLetter(i + 1), style: sans(12, w: selMonth == i ? FontWeight.w700 : FontWeight.w400)),
                             ],
                           ),
                         ),
@@ -266,7 +283,7 @@ class _CalendarState extends State<Calendar> {
                     spacing: 6,
                     children: [
                       dot(8, sealRed),
-                      Text('Obiettivo di risparmio raggiunto', style: sans(12, c: muted)),
+                      Text(tr.goalReached, style: sans(12, c: muted)),
                     ],
                   ),
                 ],
@@ -286,16 +303,12 @@ class _CalendarState extends State<Calendar> {
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
                 children: [
-                  Text('${mesi[selMonth]} ${now.year}', style: serif(22)),
+                  Text('${monthTitle(DateTime(year, selMonth + 1))} $year', style: serif(22)),
                   Text(se.plant, style: serif(20, c: se.ink)),
                 ],
               ),
               if (sm != null)
-                for (final (label, value) in [
-                  ('Speso nei pilastri', sm.total),
-                  (sm.current ? 'Sulla strada per risparmiare' : 'Risparmiato', sm.saved),
-                  ('Obiettivo', app.save),
-                ])
+                for (final (label, value) in [(tr.spentInPillars, sm.total), (sm.current ? tr.onTrack : tr.savedLabel, sm.saved), (tr.goal, app.save)])
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
@@ -311,14 +324,14 @@ class _CalendarState extends State<Calendar> {
                   ),
               Text(
                 sm == null
-                    ? selMonth > now.month - 1
-                          ? 'Mese ancora da vivere.'
-                          : 'Nessuna spesa annotata in questo mese.'
+                    ? app.periodFor(DateTime(year, selMonth + 1)).start.isAfter(now)
+                          ? tr.monthAhead
+                          : tr.monthEmpty
                     : sm.current
-                    ? 'Mese in corso: il sigillo arriva con la revisione di fine mese.'
+                    ? tr.monthNow
                     : sm.saved >= app.save
-                    ? 'Obiettivo raggiunto: il ramo è fiorito e il mese porta il sigillo.'
-                    : 'Obiettivo mancato di ${fmt(app.save - sm.saved)}.',
+                    ? tr.monthReached
+                    : tr.missedBy(fmt(app.save - sm.saved)),
                 style: sans(13, h: 1.5, c: ok(.36, .03, 160)),
               ),
             ],

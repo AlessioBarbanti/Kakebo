@@ -7,43 +7,19 @@ import 'ui.dart';
 
 typedef _Item = ({String kanji, String name, String jp, Color ink, Color soft});
 
+/// Kanji, prints and fallback of each intro step; the words are tr.steps[i].
 class _Step {
-  const _Step(this.kanji, this.title, this.body, this.cta, this.credit, this.art, this.fallback);
-  final String kanji, title, body, cta, credit, fallback;
+  const _Step(this.kanji, this.art, this.fallback);
+  final String kanji, fallback;
   final (String, Alignment)? art;
 }
 
-const _q4 = ['Quanto denaro hai?', 'Quanto vorresti risparmiare?', 'Quanto stai spendendo?', 'Come puoi migliorare?'];
 const _q4jp = ['いくらあるか', 'いくら貯めたいか', 'いくら使っているか', 'どう改善できるか'];
 
 const _steps = [
-  _Step(
-    '家計簿',
-    'Un registro per la casa',
-    'Nato in Giappone nel 1904: annoti ogni spesa, ti fermi un momento, osservi dove vanno i soldi.',
-    'Avanti',
-    'Utagawa Hiroshige · Giardino di susini a Kameido, 1857',
-    ('assets/art/plum.jpg', Alignment(0, -.64)),
-    '梅',
-  ),
-  _Step(
-    '四君子',
-    'Quattro pilastri, quattro gentiluomini',
-    'Ogni spesa va in uno di quattro pilastri, ognuno con la sua pianta.',
-    'Avanti',
-    'Zheng Xie, Bambù e rocce · Hiroshige, Susini a Kameido · Zheng Xie, Orchidee · Hokusai, Crisantemi e ape',
-    null,
-    '四',
-  ),
-  _Step(
-    '四問',
-    'Quattro domande',
-    'A inizio e fine mese rispondi sempre alle stesse quattro. Scorri per iniziare.',
-    'Inizia il mio mese',
-    'Katsushika Hokusai · Crisantemi e ape, c. 1832',
-    ('assets/art/chrys.jpg', Alignment.center),
-    '菊',
-  ),
+  _Step('家計簿', ('assets/art/plum.jpg', Alignment(0, -.64)), '梅'),
+  _Step('四君子', null, '四'),
+  _Step('四問', ('assets/art/chrys.jpg', Alignment.center), '菊'),
 ];
 
 class Onboarding extends StatefulWidget {
@@ -54,7 +30,7 @@ class Onboarding extends StatefulWidget {
 }
 
 class _OnboardingState extends State<Onboarding> {
-  int step = 0;
+  int step = 0, art = 0; // art moves to the next step at once, the text after its exit
   double drag = 0;
   double? op;
   bool dragging = false;
@@ -81,8 +57,9 @@ class _OnboardingState extends State<Onboarding> {
     if (n < 0 || n > 2 || n == step) return;
     final dir = n > step ? 1 : -1;
     _t?.cancel();
-    _move(-dir * 220.0, 0, false);
-    _t = Timer(const Duration(milliseconds: 260), () {
+    art = n;
+    _move(drag - dir * 220.0, 0, false); // keep going the way the finger went
+    _t = Timer(const Duration(milliseconds: 200), () {
       if (!mounted) return;
       step = n;
       _move(dir * 90.0, 0, true);
@@ -97,33 +74,28 @@ class _OnboardingState extends State<Onboarding> {
   @override
   Widget build(BuildContext context) {
     final ob = _steps[step], pad = MediaQuery.paddingOf(context);
-    final art = ob.art != null ? [ob.art!] : [for (final p in pillars.values) (p.img, p.pos)];
-    final fallback = [
-      (pillars['wants']!.soft, pillars['wants']!.ink),
-      (ok(.94, .03, 150), pillars['needs']!.ink),
-      (pillars['unexpected']!.soft, pillars['unexpected']!.ink),
-    ][step];
     final items = <_Item>[
       if (step == 1)
         for (final p in pillars.values) (kanji: p.kanji, name: p.name, jp: p.virtue, ink: p.ink, soft: p.soft),
       if (step == 2)
-        for (var i = 0; i < 4; i++) (kanji: '${i + 1}', name: _q4[i], jp: _q4jp[i], ink: ink, soft: ok(.94, .03, 150)),
+        for (var i = 0; i < 4; i++) (kanji: '${i + 1}', name: tr.fourQuestions[i], jp: _q4jp[i], ink: ink, soft: ok(.94, .03, 150)),
     ];
     final out = op == 0;
     final dur = Duration(
       milliseconds: dragging
           ? 0
           : out
-          ? 260
-          : 700,
+          ? 200
+          : 500,
     );
-    final curve = out ? const Cubic(.4, 0, 1, 1) : const Cubic(.16, 1, .3, 1);
+    const curve = Curves.easeOutCubic;
 
     return GestureDetector(
       onHorizontalDragUpdate: (d) => _move(drag + d.delta.dx, null, true),
-      onHorizontalDragEnd: (_) {
-        if (drag < -60) return next();
-        if (drag > 60 && step > 0) return goStep(step - 1);
+      onHorizontalDragEnd: (e) {
+        final dir = fling(e, drag, 60);
+        if (dir < 0) return next();
+        if (dir > 0 && step > 0) return goStep(step - 1);
         _move(0, null, false);
       },
       child: ColoredBox(
@@ -131,28 +103,13 @@ class _OnboardingState extends State<Onboarding> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Container(
-              color: fallback.$1,
-              alignment: Alignment.topCenter,
-              padding: EdgeInsets.only(top: pad.top + 40),
-              child: Opacity(
-                opacity: .35,
-                child: Text(ob.fallback, style: serif(180, h: 1, c: fallback.$2)),
-              ),
-            ),
-            AnimatedContainer(
-              duration: dur,
-              curve: curve,
-              transform: Matrix4.translationValues(drag * .2, 0, 0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  for (final (img, pos) in art)
-                    Expanded(
-                      child: Image.asset(img, fit: BoxFit.cover, alignment: pos, errorBuilder: (_, _, _) => const SizedBox()),
-                    ),
-                ],
-              ),
+            // The prints never slide: the next step's fade in on top at once, then the old ones leave underneath.
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 700),
+              switchInCurve: const Interval(0, .6, curve: Curves.easeInOut),
+              switchOutCurve: const Interval(0, .4),
+              layoutBuilder: (current, previous) => Stack(fit: StackFit.expand, children: [...previous, ?current]),
+              child: RepaintBoundary(key: ValueKey(art), child: _art(art, pad)),
             ),
             DecoratedBox(
               decoration: BoxDecoration(
@@ -161,22 +118,6 @@ class _OnboardingState extends State<Onboarding> {
                   end: Alignment.topCenter,
                   colors: [bg, bg.withValues(alpha: .96), bg.withValues(alpha: .5), bg.withValues(alpha: 0)],
                   stops: const [0, .52, .72, 1],
-                ),
-              ),
-            ),
-            Positioned(
-              right: 14,
-              top: pad.top + 8,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * .7),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(color: ok(.985, .008, 140, .92), borderRadius: BorderRadius.circular(10)),
-                  child: Text(
-                    ob.credit,
-                    textAlign: TextAlign.right,
-                    style: sans(12, h: 1.4, c: ok(.3, .03, 160)),
-                  ),
                 ),
               ),
             ),
@@ -192,11 +133,12 @@ class _OnboardingState extends State<Onboarding> {
                         AnimatedOpacity(
                           opacity: op ?? (1 - drag.abs() / 260).clamp(.1, 1),
                           duration: dur,
+                          curve: Curves.easeOut,
                           child: AnimatedContainer(
                             duration: dur,
                             curve: curve,
                             transform: Matrix4.translationValues(drag * .5, 0, 0),
-                            child: _content(ob, items),
+                            child: RepaintBoundary(child: _content(ob, tr.steps[step], items)),
                           ),
                         ),
                       ],
@@ -211,22 +153,56 @@ class _OnboardingState extends State<Onboarding> {
     );
   }
 
-  Widget _content(_Step ob, List<_Item> items) => Column(
+  Widget _art(int i, EdgeInsets pad) {
+    final s = _steps[i];
+    final prints = s.art != null ? [s.art!] : [for (final p in pillars.values) (p.img, p.pos)];
+    final (tone, kanji) = [
+      (pillars['wants']!.soft, pillars['wants']!.ink),
+      (ok(.94, .03, 150), pillars['needs']!.ink),
+      (pillars['unexpected']!.soft, pillars['unexpected']!.ink),
+    ][i];
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Shown only if a print fails to load.
+        Container(
+          color: tone,
+          alignment: Alignment.topCenter,
+          padding: EdgeInsets.only(top: pad.top + 40),
+          child: Opacity(
+            opacity: .35,
+            child: Text(s.fallback, style: serif(180, h: 1, c: kanji)),
+          ),
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final (img, pos) in prints)
+              Expanded(
+                child: Image.asset(img, fit: BoxFit.cover, alignment: pos, gaplessPlayback: true, errorBuilder: (_, _, _) => const SizedBox()),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _content(_Step ob, StepText text, List<_Item> items) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text('家計簿 · KAKEBO', style: serif(13, ls: 1.82, c: ok(.45, .08, 10))),
-          TapText('Salta', finish, style: sans(14, c: ok(.38, .04, 160))),
+          TapText(tr.skip, finish, style: sans(14, c: ok(.38, .04, 160))),
         ],
       ),
       const SizedBox(height: 20),
       Text(ob.kanji, style: serif(44, h: 1, c: green)),
       const SizedBox(height: 16),
-      Text(ob.title, style: serif(28, h: 1.25)),
+      Text(text.title, style: serif(28, h: 1.25)),
       const SizedBox(height: 10),
-      Text(ob.body, style: sans(15, h: 1.65, c: ok(.36, .03, 160))),
+      Text(text.body, style: sans(15, h: 1.65, c: ok(.36, .03, 160))),
       const SizedBox(height: 24),
       Column(
         spacing: 8,
@@ -292,12 +268,12 @@ class _OnboardingState extends State<Onboarding> {
               children: [
                 if (step > 0)
                   TapText(
-                    'Indietro',
+                    tr.back,
                     () => goStep(step - 1),
                     style: sans(15, c: ok(.38, .04, 160)),
                     pad: const EdgeInsets.symmetric(horizontal: 18),
                   ),
-                Btn(ob.cta, next),
+                Btn(text.cta, next),
               ],
             ),
           ),
@@ -312,6 +288,7 @@ class MonthStart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    watch(context);
     final pm = app.planMonth, fixed = app.fixedTotal, income = app.income, avail = app.available;
     final sub = ok(.42, .03, 160);
     Widget field(String label, String hint, double value, ValueChanged<double> set, Color color) => Container(
@@ -330,7 +307,7 @@ class MonthStart extends StatelessWidget {
               Expanded(
                 child: NumField(value, set, style: serif(28, w: FontWeight.w700)),
               ),
-              Text('€', style: serif(24)),
+              Text(currency, style: serif(24)),
             ],
           ),
           Text(hint, style: sans(12, h: 1.4, c: sub)),
@@ -344,21 +321,21 @@ class MonthStart extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(20, 12, 20, 40 + MediaQuery.paddingOf(context).bottom),
         child: Reveal(
           children: [
-            Align(alignment: Alignment.centerLeft, child: TapText('← Torna al registro', () => app.go('home'))),
-            Padding(padding: const EdgeInsets.only(top: 24), child: kicker('${mesi[pm.month - 1].toUpperCase()} ${pm.year}')),
+            Align(alignment: Alignment.centerLeft, child: TapText(tr.backToLedger, () => app.go('home'))),
+            Padding(padding: const EdgeInsets.only(top: 24), child: kicker(monthYearCaps(pm))),
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Text('Prima di iniziare, scrivi cosa entra e cosa deve uscire.', style: serif(26, h: 1.3)),
+              child: Text(tr.setupTitle, style: serif(26, h: 1.3)),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 28),
               child: Column(
                 spacing: 12,
                 children: [
-                  field('Entrate del mese', 'Stipendio e altre entrate', income, (v) => app.update(() => app.income = v), ok(.93, .04, 155)),
+                  field(tr.income, tr.incomeHint, income, (v) => app.update(() => app.income = v), ok(.93, .04, 155)),
                   field(
-                    'Obiettivo di risparmio',
-                    'Da mettere da parte subito, prima di spendere',
+                    tr.savingGoal,
+                    tr.savingHint,
                     app.save,
                     (v) => app.update(() {
                       app.save = v;
@@ -390,11 +367,8 @@ class MonthStart extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             spacing: 3,
                             children: [
-                              Text('Punto di partenza: 50 / 30 / 20', style: sans(13, w: FontWeight.w700)),
-                              Text(
-                                'Metà ai bisogni, un terzo al resto, un quinto al risparmio. Poi il kakebo ti chiede di guardare ogni voce.',
-                                style: sans(12, h: 1.45, c: sub),
-                              ),
+                              Text(tr.ruleTitle, style: sans(13, w: FontWeight.w700)),
+                              Text(tr.ruleBody, style: sans(12, h: 1.45, c: sub)),
                             ],
                           ),
                         ),
@@ -406,7 +380,7 @@ class MonthStart extends StatelessWidget {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(color: app.rule ? ok(.93, .04, 155) : green, borderRadius: BorderRadius.circular(12)),
                             child: Text(
-                              app.rule ? 'Applicato' : 'Applica',
+                              app.rule ? tr.applied : tr.apply,
                               style: sans(14, w: FontWeight.w700, c: app.rule ? ink : onGreen),
                             ),
                           ),
@@ -417,9 +391,9 @@ class MonthStart extends StatelessWidget {
                       Column(
                         children: [
                           for (final (pct, label, note, v) in [
-                            ('50%', 'Necessità', fixed > income * .5 ? 'Le spese fisse superano già la metà' : 'Di cui ${fmt(fixed)} già in spese fisse', .5),
-                            ('30%', 'Desideri, cultura, imprevisti', 'Da dividere tra i tre pilastri', .3),
-                            ('20%', 'Risparmio', 'Diventa il tuo obiettivo del mese', .2),
+                            ('50%', pillars['needs']!.name, fixed > income * .5 ? tr.fixedOverHalf : tr.fixedPart(fmt(fixed)), .5),
+                            ('30%', tr.otherPillars, tr.shareAmongThree, .3),
+                            ('20%', tr.savings, tr.becomesGoal, .2),
                           ])
                             Container(
                               padding: const EdgeInsets.symmetric(vertical: 9),
@@ -476,8 +450,8 @@ class MonthStart extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             spacing: 2,
                             children: [
-                              Text('Spese fisse ricorrenti', style: sans(13, w: FontWeight.w700)),
-                              Text('Si ripetono ogni mese, modificabili quando vuoi', style: sans(12, c: sub)),
+                              Text(tr.fixedTitle, style: sans(13, w: FontWeight.w700)),
+                              Text(tr.fixedHint, style: sans(12, c: sub)),
                             ],
                           ),
                           Text(fmt(fixed), style: serif(24, w: FontWeight.w700)),
@@ -488,8 +462,8 @@ class MonthStart extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 6),
                       child: TapText(
-                        '+ Aggiungi spesa fissa',
-                        () => app.update(() => app.fixed.add(Fixed(DateTime.now().millisecondsSinceEpoch, 'Nuova voce', 0))),
+                        tr.addFixed,
+                        () => app.update(() => app.fixed.add(Fixed(DateTime.now().millisecondsSinceEpoch, tr.newItem, 0))),
                         style: sans(14, w: FontWeight.w700, c: ok(.4, .06, 160)),
                       ),
                     ),
@@ -497,6 +471,7 @@ class MonthStart extends StatelessWidget {
                 ),
               ),
             ),
+            const Padding(padding: EdgeInsets.only(top: 12), child: _Budgets()),
             Padding(
               padding: const EdgeInsets.only(top: 14),
               child: CustomPaint(
@@ -514,8 +489,8 @@ class MonthStart extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 2,
                         children: [
-                          Text('Da spendere con consapevolezza', style: sans(14, w: FontWeight.w700)),
-                          Text('circa ${fmt((avail * 7 / app.dim).round())} a settimana', style: sans(13, c: ok(.45, .03, 160))),
+                          Text(tr.mindful, style: sans(14, w: FontWeight.w700)),
+                          Text(tr.perWeek(fmt((avail * 7 / app.dim).round())), style: sans(13, c: ok(.45, .03, 160))),
                         ],
                       ),
                       Text(fmt(avail), style: serif(32, w: FontWeight.w700)),
@@ -526,7 +501,7 @@ class MonthStart extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 28),
-              child: Align(alignment: Alignment.centerRight, child: Btn('Inizia ${mese(pm)}', () => app.go('home'))),
+              child: Align(alignment: Alignment.centerRight, child: Btn(tr.startMonth(monthName(pm)), () => app.go('home'))),
             ),
           ],
         ),
@@ -560,10 +535,10 @@ class _FixedRow extends StatelessWidget {
           width: 80,
           child: NumField(r.amt, (v) => app.update(() => r.amt = v), style: serif(16), align: TextAlign.right, fill: card),
         ),
-        Text('€', style: serif(15)),
+        Text(currency, style: serif(15)),
         Semantics(
           button: true,
-          label: 'Rimuovi ${r.name}',
+          label: tr.remove(r.name),
           child: InkResponse(
             onTap: () => app.update(() => app.fixed.remove(r)),
             radius: 22,
@@ -578,4 +553,73 @@ class _FixedRow extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// Monthly budget per pillar: split automatically from what is available until the user types one.
+class _Budgets extends StatelessWidget {
+  const _Budgets();
+
+  @override
+  Widget build(BuildContext context) {
+    watch(context);
+    final auto = app.budgets == null, gap = app.available - app.budgeted, sub = ok(.42, .03, 160);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        color: ok(.99, .006, 140, .8),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: ok(.9, .025, 150)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 4,
+        children: [
+          Text(tr.budgetsTitle, style: sans(13, w: FontWeight.w700)),
+          Text(auto ? tr.budgetsAuto : tr.budgetsMine, style: sans(12, c: sub)),
+          const SizedBox(height: 4),
+          for (final MapEntry(:key, value: p) in pillars.entries)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: ok(.93, .02, 150))),
+              ),
+              child: Row(
+                spacing: 10,
+                children: [
+                  SizedBox(
+                    width: 26,
+                    child: Text(
+                      p.kanji,
+                      textAlign: TextAlign.center,
+                      style: serif(20, c: p.ink),
+                    ),
+                  ),
+                  Expanded(child: Text(p.name, style: sans(15))),
+                  SizedBox(
+                    width: 90,
+                    child: NumField(app.budget(key), (v) => app.setBudget(key, v), style: serif(16), align: TextAlign.right, fill: ok(.95, .025, 150)),
+                  ),
+                  Text(currency, style: serif(15)),
+                ],
+              ),
+            ),
+          const SizedBox(height: 6),
+          Text(
+            auto || gap.abs() < 1
+                ? tr.allAssigned
+                : gap > 0
+                ? tr.toAssign(fmt(gap))
+                : tr.overBy(fmt(-gap)),
+            style: sans(13, w: FontWeight.w700, c: gap < -.5 && !auto ? sealRed : sub),
+          ),
+          if (!auto)
+            TapText(
+              tr.splitAgain,
+              app.autoBudgets,
+              style: sans(14, w: FontWeight.w700, c: ok(.4, .06, 160)),
+            ),
+        ],
+      ),
+    );
+  }
 }

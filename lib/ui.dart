@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'kakebo.dart';
 
@@ -17,10 +17,21 @@ final line = ok(.92, .02, 150);
 final sealRed = ok(.55, .17, 28);
 final shadow = [BoxShadow(color: ok(.4, .04, 150, .1), blurRadius: 4, offset: const Offset(0, 1))];
 
+const mincho = 'Shippori Mincho', gothic = 'Zen Kaku Gothic New';
+
 TextStyle serif(double size, {FontWeight w = FontWeight.w600, Color? c, double? h, double? ls}) =>
-    GoogleFonts.shipporiMincho(fontSize: size, fontWeight: w, color: c ?? ink, height: h, letterSpacing: ls);
+    TextStyle(fontFamily: mincho, fontSize: size, fontWeight: w, color: c ?? ink, height: h, letterSpacing: ls);
 TextStyle sans(double size, {FontWeight w = FontWeight.w400, Color? c, double? h, double? ls}) =>
-    GoogleFonts.zenKakuGothicNew(fontSize: size, fontWeight: w, color: c ?? ink, height: h, letterSpacing: ls);
+    TextStyle(fontFamily: gothic, fontSize: size, fontWeight: w, color: c ?? ink, height: h, letterSpacing: ls);
+
+/// A stored "21:30" shown the phone's way: 21:30, or 9:30 PM where the phone uses a 12-hour clock.
+String clock(BuildContext context, String hhmm) {
+  final (h, m) = hm(hhmm);
+  return MaterialLocalizations.of(context).formatTimeOfDay(
+    TimeOfDay(hour: h, minute: m),
+    alwaysUse24HourFormat: MediaQuery.alwaysUse24HourFormatOf(context),
+  );
+}
 
 /// Small caps-style section label ("REGISTRO", "DIARIO"…).
 Widget kicker(String s) => Text(s, style: sans(13, ls: 1.56, c: ok(.42, .04, 160)));
@@ -196,27 +207,27 @@ class _RevealState extends State<Reveal> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  // Fade and slide happen at compositing: each child is painted once into its own layer, not on every frame.
+  Widget _item(int i, Widget w) {
+    final start = (120 + math.min(i, 7) * 110) / _ms;
+    final t = _c.drive(CurveTween(curve: Interval(start, start + 900 / _ms, curve: const Cubic(.22, .8, .3, 1))));
+    return FadeTransition(
+      opacity: t,
+      child: AnimatedBuilder(
+        animation: t,
+        builder: (context, child) => Transform.translate(offset: Offset(0, 14 * (1 - t.value)), child: child),
+        child: RepaintBoundary(child: w),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (MediaQuery.disableAnimationsOf(context)) _c.value = 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: widget.spacing,
-      children: [
-        for (final (i, w) in widget.children.indexed)
-          AnimatedBuilder(
-            animation: _c,
-            child: w,
-            builder: (context, child) {
-              final start = (120 + math.min(i, 7) * 110) / _ms;
-              final t = Interval(start, start + 900 / _ms, curve: const Cubic(.22, .8, .3, 1)).transform(_c.value);
-              return Opacity(
-                opacity: t,
-                child: Transform.translate(offset: Offset(0, 14 * (1 - t)), child: child),
-              );
-            },
-          ),
-      ],
+      children: [for (final (i, w) in widget.children.indexed) _item(i, w)],
     );
   }
 }
@@ -228,6 +239,7 @@ class Branch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    watch(context);
     final s = app.season, bloomed = app.bloomed, mid = height / 2, brown = ok(.48, .04, 60);
     return SizedBox(
       height: height,
@@ -392,7 +404,21 @@ class Breath extends StatefulWidget {
 }
 
 class _BreathState extends State<Breath> with SingleTickerProviderStateMixin {
-  late final _c = AnimationController(vsync: this, duration: const Duration(seconds: 8))..repeat();
+  // Shared players so a bowl can ring out after the screen moves on; mixes with the user's music instead of pausing it.
+  static final _bowls = [AudioPlayer(), AudioPlayer()];
+  static final _ctx = AudioContextConfig(focus: AudioContextConfigFocus.mixWithOthers).build();
+  int _phase = -1;
+  late final _c = AnimationController(vsync: this, duration: const Duration(seconds: 8))
+    ..addListener(_ring)
+    ..repeat();
+
+  /// A higher bowl as the circle starts to grow (inhale), a lower one as it starts to shrink (exhale).
+  void _ring() {
+    final p = _c.value < .5 ? 0 : 1;
+    if (p == _phase) return;
+    _phase = p;
+    _bowls[p].play(AssetSource(p == 0 ? 'sounds/inspira.wav' : 'sounds/espira.wav'), volume: .6, ctx: _ctx);
+  }
 
   @override
   void dispose() {
@@ -400,46 +426,50 @@ class _BreathState extends State<Breath> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  // Scale and fades run at compositing level: the gradient and the words are painted once.
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: _c,
-    builder: (context, _) {
-      final t = _c.value;
-      final inhale = t < .45
-          ? 1.0
-          : t < .5
-          ? (.5 - t) / .05
-          : t < .95
-          ? 0.0
-          : (t - .95) / .05;
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          Transform.scale(
-            scale: .8 - .2 * math.cos(2 * math.pi * t),
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  radius: .707,
-                  colors: [ok(.9, .05, 295, .9), ok(.93, .035, 150, .6), ok(.93, .035, 150, 0)],
-                  stops: const [0, .6, .72],
-                ),
-              ),
+  Widget build(BuildContext context) => Stack(
+    alignment: Alignment.center,
+    children: [
+      ScaleTransition(
+        scale: _c.drive(const _Fn(_size)),
+        child: RepaintBoundary(
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(radius: .707, colors: [ok(.9, .05, 295, .9), ok(.93, .035, 150, .6), ok(.93, .035, 150, 0)], stops: const [0, .6, .72]),
             ),
           ),
-          Opacity(
-            opacity: inhale,
-            child: Text('Inspira', style: serif(18)),
-          ),
-          Opacity(
-            opacity: 1 - inhale,
-            child: Text('Espira', style: serif(18)),
-          ),
-        ],
-      );
-    },
+        ),
+      ),
+      FadeTransition(
+        opacity: _c.drive(const _Fn(_inhale)),
+        child: Text(tr.breatheIn, style: serif(18)),
+      ),
+      FadeTransition(
+        opacity: _c.drive(const _Fn(_exhale)),
+        child: Text(tr.breatheOut, style: serif(18)),
+      ),
+    ],
   );
+}
+
+double _size(double t) => .8 - .2 * math.cos(2 * math.pi * t); // .6 → 1 → .6
+double _inhale(double t) => t < .45
+    ? 1
+    : t < .5
+    ? (.5 - t) / .05
+    : t < .95
+    ? 0
+    : (t - .95) / .05;
+double _exhale(double t) => 1 - _inhale(t);
+
+class _Fn extends Animatable<double> {
+  const _Fn(this.f);
+  final double Function(double) f;
+
+  @override
+  double transform(double t) => f(t);
 }
 
 /// Dashed rounded outline (the "envelope" around the money left to spend).
@@ -521,3 +551,18 @@ InputDecoration softInput(String hint, Color fill, double radius, EdgeInsets pad
   contentPadding: pad,
   border: OutlineInputBorder(borderRadius: BorderRadius.circular(radius), borderSide: BorderSide.none),
 );
+
+/// Direction a horizontal swipe asks for: -1 left, 1 right, 0 stay. A quick flick counts even when short.
+int fling(DragEndDetails e, double dragged, double minDistance) {
+  final v = e.velocity.pixelsPerSecond.dx;
+  if (v.abs() > 500) return v.sign.toInt();
+  return dragged.abs() > minDistance ? dragged.sign.toInt() : 0;
+}
+
+/// Rebuilds every widget that called [watch] whenever [app] changes, const widgets included.
+class AppScope extends InheritedNotifier<Kakebo> {
+  const AppScope({super.key, required super.notifier, required super.child});
+}
+
+/// Call first in any build that reads [app], or that widget shows stale state.
+void watch(BuildContext context) => context.dependOnInheritedWidgetOfExactType<AppScope>();
