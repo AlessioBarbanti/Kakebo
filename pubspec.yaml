@@ -57,7 +57,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  generate: true # lib/l10n/app_localizations.dart from the ARB files
+  generate: true # lib/l10n/generated/app_localizations.dart from the ARB files
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
