@@ -31,9 +31,10 @@ class _ReviewState extends State<Review> {
     final app = AppScope.watch(context);
     final ml = app.labelOf(p), s = app.season, mk = monthKey(ml), month = monthName(ml), next = monthName(DateTime(ml.year, ml.month + 1));
     final sealed = app.sealed.containsKey(mk), over = p.start != app.period.start, bloomed = app.bloomedIn(p);
+    final plan = app.planOf(p); // the month's own income, fixed costs and goal
     final questions = [
-      (tr.fourQuestions[0], fmt(app.income - app.fixedTotal), tr.incomeMinusFixed),
-      (tr.fourQuestions[1], fmt(app.save), tr.goalFor(month)),
+      (tr.fourQuestions[0], fmt(plan.income - plan.fixed), tr.incomeMinusFixed),
+      (tr.fourQuestions[1], fmt(plan.save), tr.goalFor(month)),
       (tr.fourQuestions[2], fmt(app.spentIn(p)), tr.acrossPillars),
     ];
     final dim = ok(.34, .04, 160);
@@ -57,10 +58,10 @@ class _ReviewState extends State<Review> {
                 children: [
                   Text(tr.residualNow.toUpperCase(), style: sans(12, ls: 1.68, c: ok(.38, .04, 160))), // the calendar's label too
                   Text(fmt(app.onTrackIn(p)), style: serif(36, w: FontWeight.w700)),
-                  Text(tr.residualNote(fmt(app.save), fmt(app.leftIn(p))), style: sans(13, h: 1.5, c: dim)),
+                  Text(tr.residualNote(fmt(plan.save), fmt(app.leftIn(p))), style: sans(13, h: 1.5, c: dim)),
                 ],
               ),
-              for (final (label, value) in [(tr.goal, fmt(app.save)), (tr.branchTitle, tr.flowers(bloomed))])
+              for (final (label, value) in [(tr.goal, fmt(plan.save)), (tr.branchTitle, tr.flowers(bloomed))])
                 Container(
                   padding: const EdgeInsets.only(top: 10),
                   decoration: BoxDecoration(

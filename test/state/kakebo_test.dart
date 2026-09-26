@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/model/entry.dart';
+import 'package:kakebo/model/fixed_expense.dart';
 import 'package:kakebo/model/pillar.dart';
 import 'package:kakebo/model/pillar_suggestion.dart';
 import 'package:kakebo/state/kakebo.dart';
@@ -69,6 +70,27 @@ void main() {
     expect(b.spent, a.spent);
     expect(b.sealed, a.sealed);
     expect(b.thoughts, a.thoughts);
+  });
+
+  test('a month keeps its own income, fixed costs and goal once it is over', () {
+    final k = Kakebo()
+      ..income = 2800
+      ..save = 300
+      ..fixed = [Fixed(1, 'Affitto', 1150)];
+    Kakebo.clock = () => DateTime(2026, 9, 20);
+    k.update(() => k.entries = [Entry(DateTime(2026, 9, 10), 'Spesa', 1000, 'needs')]);
+
+    Kakebo.clock = () => DateTime(2026, 10, 5);
+    k.update(() => k.fixed.single.amt = 1300); // the rent goes up in October
+    final september = k.previous;
+    expect(k.available, 1200); // October plans with the new rent
+    expect(k.availableIn(september), 1350); // September keeps its own
+    expect(k.onTrackIn(september), 650); // 2800 − 1150 − 1000
+    k.seal();
+    expect(k.sealed['2026-09'], 650);
+
+    final b = Kakebo()..read(jsonDecode(jsonEncode(k.toJson()))); // kept through a save and a backup
+    expect(b.planOf(b.previous), (income: 2800.0, fixed: 1150.0, save: 300.0));
   });
 
   test('a month seals from the first day of the next, and by itself when that one ends too, across the new year', () {

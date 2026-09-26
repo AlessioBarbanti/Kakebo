@@ -15,6 +15,9 @@ import 'package:kakebo/services/storage.dart';
 
 double _nz(double v) => v == 0 ? 1 : v;
 
+/// A month's plan: the income, fixed costs and savings goal it had.
+typedef Plan = ({double income, double fixed, double save});
+
 class Kakebo extends ChangeNotifier {
   static DateTime Function() clock = DateTime.now;
   DateTime get now => clock();
@@ -30,6 +33,10 @@ class Kakebo extends ChangeNotifier {
   Map<String, Map<String, String>> reflections = {}; // budgeting month → good/change
   Map<String, String> weeklyReflections = {}; // Sunday yyyy-mm-dd → reflection
   Map<String, double> sealed = {}; // yyyy-mm → saved when sealed
+  // yyyy-mm → that month's plan: it follows every change while the month runs and stays put once it is over, so changing
+  // the rent in October leaves September's figures alone. A month counts only if something was written in it, and each
+  // write takes the plan; months without one (before plans were kept, or dated back into) use today's.
+  Map<String, Plan> plans = {};
   // thoughtOn: the one evening reminder; breathe: guided breaths before writing the thought (off unless chosen).
   Map<String, bool> flags = {'weekly': true, 'phraseOn': true, 'thoughtOn': true, 'breathe': false, 'sound': true};
   String thoughtTime = '21:00';
@@ -63,6 +70,10 @@ class Kakebo extends ChangeNotifier {
     reflections = {for (final e in (j['reflections'] as Map? ?? {}).entries) e.key as String: Map<String, String>.from(e.value as Map)};
     weeklyReflections = Map<String, String>.from(j['weeklyReflections'] as Map? ?? {});
     sealed = {for (final e in (j['sealed'] as Map).entries) e.key: (e.value as num).toDouble()};
+    plans = {
+      for (final MapEntry(:key, :value) in (j['plans'] as Map? ?? {}).entries)
+        key as String: (income: (value['income'] as num).toDouble(), fixed: (value['fixed'] as num).toDouble(), save: (value['save'] as num).toDouble()),
+    };
     flags = {...flags, ...Map<String, bool>.from(j['flags'])};
     thoughtTime = j['thoughtTime'];
     monthStart = j['monthStart'] ?? 1;
@@ -83,6 +94,9 @@ class Kakebo extends ChangeNotifier {
     'reflections': reflections,
     'weeklyReflections': weeklyReflections,
     'sealed': sealed,
+    'plans': {
+      for (final MapEntry(:key, value: p) in plans.entries) key: {'income': p.income, 'fixed': p.fixed, 'save': p.save},
+    },
     'flags': flags,
     'thoughtTime': thoughtTime,
     'monthStart': monthStart,
@@ -92,6 +106,7 @@ class Kakebo extends ChangeNotifier {
   // ponytail: whole state rewritten as one JSON blob per change; move to drift/SQLite when history spans years.
   @override
   void notifyListeners() {
+    plans[monthKey(label)] = (income: income, fixed: fixedTotal, save: save); // this month's plan follows every change
     super.notifyListeners();
     _storage?.save(toJson());
   }
@@ -133,8 +148,24 @@ class Kakebo extends ChangeNotifier {
   double get left => math.max(0, available - spent);
   double get onTrack => math.max(0, income - fixedTotal - spent);
   double spentIn(Period p) => sum(inPeriod(p));
-  double leftIn(Period p) => math.max(0, available - spentIn(p));
-  double onTrackIn(Period p) => math.max(0, income - fixedTotal - spentIn(p));
+
+  /// The plan a month had: this one's as it stands, a past one's as it was when it ended (today's if none was kept).
+  Plan planOf(Period p) {
+    final now = (income: income, fixed: fixedTotal, save: save);
+    return p.start == period.start ? now : plans[monthKey(labelOf(p))] ?? now;
+  }
+
+  double availableIn(Period p) {
+    final plan = planOf(p);
+    return math.max(0, plan.income - plan.fixed - plan.save);
+  }
+
+  double leftIn(Period p) => math.max(0, availableIn(p) - spentIn(p));
+  double onTrackIn(Period p) {
+    final plan = planOf(p);
+    return math.max(0, plan.income - plan.fixed - spentIn(p));
+  }
+
   int get spentPct => math.min(100, (spent / _nz(available) * 100).round());
 
   /// Flowers on the savings branch: one per tenth of the goal, blooming while spending keeps the month's pace.
@@ -142,7 +173,7 @@ class Kakebo extends ChangeNotifier {
 
   /// The same for any month; one that is over counts all its days.
   int bloomedIn(Period p) {
-    final elapsed = p.start == period.start ? day / dim : 1.0, pace = spentIn(p) / _nz(available) / elapsed;
+    final elapsed = p.start == period.start ? day / dim : 1.0, pace = spentIn(p) / _nz(availableIn(p)) / elapsed;
     return (10 * elapsed * (pace <= 1 ? 1 : math.max(0, 2 - pace))).round();
   }
 

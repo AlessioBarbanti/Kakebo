@@ -2,6 +2,12 @@
 
 Tutte le modifiche di Kakebo che si notano usando l'app, dalla più recente. I numeri di versione seguono il [versionamento semantico](https://semver.org/lang/it/).
 
+## [1.1.1] - 2026-09-26
+
+### Correzioni
+
+- **Ogni mese ricorda i suoi conti.** Cambiare entrate, spese fisse o obiettivo di risparmio non modifica più le cifre dei mesi già finiti: se a ottobre aumenta l'affitto, settembre si chiude con le sue spese fisse. Vale per la revisione del mese, per la chiusura automatica e per la vista annuale del calendario. I mesi registrati prima di questa versione usano ancora i valori attuali.
+
 ## [1.1.0] - 2026-09-26
 
 ### Novità
@@ -33,5 +39,6 @@ La prima versione.
 - **I dati restano sul telefono:** nessun account e nessun permesso Internet; backup in un file ed esportazione in CSV.
 - **In italiano e in inglese.**
 
+[1.1.1]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.1
 [1.1.0]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.0
 [1.0.0]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.0.0

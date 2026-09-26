@@ -232,8 +232,8 @@ class _CalendarState extends State<Calendar> {
   }
 
   Widget _year() {
-    final now = app.now, year = app.label.year, avail = app.available;
-    // ponytail: past months use today's income and fixed costs unless sealed; store a monthly snapshot if those change often.
+    final now = app.now, year = app.label.year;
+    // Each month with its own plan (Kakebo.plans); months from before plans were kept use today's.
     final months = [
       for (var i = 0; i < 12; i++)
         () {
@@ -246,14 +246,21 @@ class _CalendarState extends State<Calendar> {
             by: Kakebo.spentBy(list),
             total: total,
             current: current,
-            saved: current ? app.onTrack : app.sealed[mk] ?? math.max(0.0, app.income - app.fixedTotal - total),
+            saved: current ? app.onTrack : app.sealed[mk] ?? app.onTrackIn(p),
+            avail: app.availableIn(p),
+            goal: app.planOf(p).save,
           );
         }(),
     ];
     final sm = months[selMonth], se = seasonOf(selMonth);
     // Each month is its spending against what was available: the pale column is the available, the narrow fill what went,
     // rising above the column when it went over. Pillars wait in the month's card, a tap away.
-    final top = [avail, for (final m in months) ?m?.total].reduce(math.max), track = ok(.93, .02, 150), fill = ok(.56, .08, 155);
+    final top = [
+          app.available,
+          for (final m in months) ...?(m == null ? null : [m.avail, m.total]),
+        ].reduce(math.max),
+        track = ok(.93, .02, 150),
+        fill = ok(.56, .08, 155);
     double h(double v) => v / (top == 0 ? 1 : top) * 170;
 
     return Column(
@@ -278,7 +285,7 @@ class _CalendarState extends State<Calendar> {
                         child: Semantics(
                           button: true,
                           selected: selMonth == i,
-                          label: m == null ? monthTitle(DateTime(year, i + 1)) : tr.spentOf(monthTitle(DateTime(year, i + 1)), fmt(m.total), fmt(avail)),
+                          label: m == null ? monthTitle(DateTime(year, i + 1)) : tr.spentOf(monthTitle(DateTime(year, i + 1)), fmt(m.total), fmt(m.avail)),
                           excludeSemantics: true,
                           child: GestureDetector(
                             behavior: HitTestBehavior.opaque,
@@ -292,7 +299,7 @@ class _CalendarState extends State<Calendar> {
                                   children: [
                                     Container(
                                       width: double.infinity,
-                                      height: m == null ? 6 : math.max(6, h(avail)),
+                                      height: m == null ? 6 : math.max(6, h(m.avail)),
                                       decoration: BoxDecoration(
                                         color: track,
                                         borderRadius: BorderRadius.circular(8),
@@ -372,7 +379,7 @@ class _CalendarState extends State<Calendar> {
                     ],
                   ),
               if (sm != null)
-                for (final (label, value) in [(tr.spentInPillars, sm.total), (sm.current ? tr.residualNow : tr.savedLabel, sm.saved), (tr.goal, app.save)])
+                for (final (label, value) in [(tr.spentInPillars, sm.total), (sm.current ? tr.residualNow : tr.savedLabel, sm.saved), (tr.goal, sm.goal)])
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
@@ -393,9 +400,9 @@ class _CalendarState extends State<Calendar> {
                           : tr.monthEmpty
                     : sm.current
                     ? tr.monthNow
-                    : sm.saved >= app.save
+                    : sm.saved >= sm.goal
                     ? tr.monthReached
-                    : tr.missedBy(fmt(app.save - sm.saved)),
+                    : tr.missedBy(fmt(sm.goal - sm.saved)),
                 style: sans(13, h: 1.5, c: ok(.36, .03, 160)),
               ),
             ],

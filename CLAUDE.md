@@ -34,6 +34,7 @@ To check a UI change visually, run the screenshot tool and look at the PNGs. It 
   - `onTrack` = income − fixed − spent, i.e. the savings goal is still included.
   - On screen `onTrack` is always "Residuo attuale" (`tr.residualNow`) and `left` is "Ti restano"; keep one name per number.
   - `bloomed` (the branch) measures spending *pace*. It must never be turned into money.
+  - A past month is computed with its own plan (`plans`, via `planOf`/`availableIn`/`onTrackIn`), not today's income and fixed costs: every change rewrites the current month's plan, so it freezes when the month ends.
 - **Navigation.** No Navigator routes: screens switch on the string `app.screen`.
   - `app/root.dart` shows `onboarding`, `monthStart` and `thought` full screen. Everything else goes through `app/shell.dart`.
   - The Shell draws the greeting header, the pinned tabs (`home`, `ledger`, `journal`, `calendar`, with swipe between them), the persistent add button, plus `review` and `settings`.
