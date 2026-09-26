@@ -24,9 +24,9 @@ class Kakebo extends ChangeNotifier {
 
   // Persisted.
   bool onboarded = false, rule = false;
-  double income = 2800, save = 300;
+  double income = 0, save = 0; // a new ledger asks, it does not suggest figures
   // A new ledger starts with one blank fixed cost, as if "add" had just been pressed: a row to fill, nothing to delete.
-  List<Fixed> fixed = [Fixed(1, tr.newItem, 0)];
+  List<Fixed> fixed = [Fixed(1, '', 0)];
   List<Entry> entries = [];
   Map<String, String> thoughts = {}; // yyyy-mm-dd → text
   Map<String, String> improve = {}; // yyyy-mm → answer to question 4
@@ -306,6 +306,8 @@ class Kakebo extends ChangeNotifier {
 
   /// Demo data, placed in the current month (`--dart-define=DEMO=true`).
   void seedDemo() {
+    income = 2800;
+    save = 300;
     fixed = [
       for (final (i, amt) in const [850.0, 120.0, 30.0, 25.0, 125.0].indexed) Fixed(i + 1, tr.defaultFixed[i], amt),
     ];

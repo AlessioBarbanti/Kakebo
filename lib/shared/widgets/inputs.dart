@@ -14,7 +14,12 @@ class NumField extends StatefulWidget {
   State<NumField> createState() => _NumFieldState();
 }
 
-String _num(double v) => v % 1 == 0 ? v.toInt().toString() : v.toString();
+// Zero shows as an empty field with a grey 0 in it: a value to type, not one to delete first.
+String _num(double v) => v == 0
+    ? ''
+    : v % 1 == 0
+    ? v.toInt().toString()
+    : v.toString();
 double _parse(String s) => double.tryParse(s.replaceAll(',', '.')) ?? 0;
 
 class _NumFieldState extends State<NumField> {
@@ -39,12 +44,17 @@ class _NumFieldState extends State<NumField> {
     textAlign: widget.align,
     style: widget.style,
     onChanged: (v) => widget.onChanged(_parse(v)),
-    decoration: boxed(),
+    decoration: boxed(
+      hint: '0',
+      hintStyle: widget.style.copyWith(color: ok(.72, .02, 160)),
+    ),
   );
 }
 
 /// The one look of every editable field in a form: white box, thin outline, green when focused.
-InputDecoration boxed() => InputDecoration(
+InputDecoration boxed({String? hint, TextStyle? hintStyle}) => InputDecoration(
+  hintText: hint,
+  hintStyle: hintStyle,
   isDense: true,
   filled: true,
   fillColor: card,

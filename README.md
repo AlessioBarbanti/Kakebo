@@ -48,7 +48,7 @@ Ogni spesa va in uno dei quattro pilastri. Ognuno ha la sua pianta, dai *quattro
 
 All'inizio e alla fine di ogni mese si risponde alle stesse quattro domande:
 
-1. **Quanto denaro hai?** Entrate del mese, meno le spese fisse.
+1. **Quanto entra questo mese?** Lo stipendio e le altre entrate; tolte le spese fisse, è quello che hai per il mese.
 2. **Quanto vorresti risparmiare?** L'obiettivo, messo da parte prima di spendere.
 3. **Quanto stai spendendo?** Tutto quello che annoti, pilastro per pilastro.
 4. **Come puoi migliorare?** Un'intenzione per il mese che viene.

@@ -266,6 +266,18 @@ abstract class AppLocalizations {
   /// **'Si ripetono ogni mese, modificabili quando vuoi'**
   String get fixedHint;
 
+  /// No description provided for @fixedNameHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Es. affitto'**
+  String get fixedNameHint;
+
+  /// No description provided for @incomeAfterFixed.
+  ///
+  /// In it, this message translates to:
+  /// **'Tolte le spese fisse ({fixed}), restano {left}'**
+  String incomeAfterFixed(String fixed, String left);
+
   /// No description provided for @fixedQuestion.
   ///
   /// In it, this message translates to:
@@ -847,12 +859,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Domanda {n}'**
   String question(int n);
-
-  /// No description provided for @incomeMinusFixed.
-  ///
-  /// In it, this message translates to:
-  /// **'Entrate meno spese fisse'**
-  String get incomeMinusFixed;
 
   /// No description provided for @goalFor.
   ///
@@ -1832,6 +1838,12 @@ abstract class AppLocalizations {
   /// **'Avanti'**
   String get next;
 
+  /// No description provided for @scrollMore.
+  ///
+  /// In it, this message translates to:
+  /// **'Scorri per continuare'**
+  String get scrollMore;
+
   /// No description provided for @setupFirst.
   ///
   /// In it, this message translates to:
@@ -1847,7 +1859,7 @@ abstract class AppLocalizations {
   /// No description provided for @fourQuestion1.
   ///
   /// In it, this message translates to:
-  /// **'Quanto denaro hai?'**
+  /// **'Quanto entra questo mese?'**
   String get fourQuestion1;
 
   /// No description provided for @fourQuestion2.

@@ -114,7 +114,7 @@ void main() {
     // Fields in order: income, the blank fixed cost waiting open (name, amount), the savings goal.
     final fields = find.byType(TextField);
     expect(fields, findsNWidgets(4));
-    expect(find.text(tr.newItem), findsOneWidget);
+    expect(find.text(tr.fixedNameHint), findsOneWidget); // an empty name with its grey hint
     await t.enterText(fields.first, '3000');
     expect(app.income, 3000);
     await t.enterText(fields.at(1), 'Affitto');
@@ -133,5 +133,28 @@ void main() {
     await t.pump();
     expect(find.text(tr.goalOverMargin(fmt(100))), findsOneWidget);
     expect(app.available, 0);
+  });
+
+  testWidgets('when more waits below the fold, a nudge says so and scrolls to it', (t) async {
+    await mount(t);
+    double shown() => t.widget<AnimatedOpacity>(find.ancestor(of: find.text(tr.scrollMore), matching: find.byType(AnimatedOpacity)).first).opacity;
+    await t.tap(find.text('Salta'));
+    await t.pumpAndSettle();
+    expect(shown(), 1); // at 360 x 800 the savings goal sits below the fold
+    final page = t.state<ScrollableState>(find.byType(Scrollable).first).position;
+    await t.tap(find.text(tr.scrollMore));
+    await t.pumpAndSettle();
+    expect(page.pixels, greaterThan(0));
+    page.jumpTo(page.maxScrollExtent);
+    await t.pumpAndSettle();
+    expect(shown(), 0); // at the bottom it goes
+  });
+
+  testWidgets('a swipe counts anywhere on the screen, the footer included', (t) async {
+    await mount(t);
+    final footer = Offset(40, t.getCenter(find.text('Avanti')).dy); // beside the button, level with it
+    await t.dragFrom(footer, const Offset(-250, 0));
+    await t.pumpAndSettle();
+    expect(find.text(tr.step2Title), findsOneWidget);
   });
 }

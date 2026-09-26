@@ -103,6 +103,14 @@ class AppLocalizationsIt extends AppLocalizations {
   String get fixedHint => 'Si ripetono ogni mese, modificabili quando vuoi';
 
   @override
+  String get fixedNameHint => 'Es. affitto';
+
+  @override
+  String incomeAfterFixed(String fixed, String left) {
+    return 'Tolte le spese fisse ($fixed), restano $left';
+  }
+
+  @override
   String get fixedQuestion => 'Quali spese si ripetono ogni mese?';
 
   @override
@@ -446,9 +454,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String question(int n) {
     return 'Domanda $n';
   }
-
-  @override
-  String get incomeMinusFixed => 'Entrate meno spese fisse';
 
   @override
   String goalFor(String month) {
@@ -979,6 +984,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get next => 'Avanti';
 
   @override
+  String get scrollMore => 'Scorri per continuare';
+
+  @override
   String get setupFirst =>
       'Tre risposte e il mese è pronto: ciò che resta è da spendere con consapevolezza.';
 
@@ -988,7 +996,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get fourQuestion1 => 'Quanto denaro hai?';
+  String get fourQuestion1 => 'Quanto entra questo mese?';
 
   @override
   String get fourQuestion2 => 'Quanto vorresti risparmiare?';

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'package:kakebo/app/app_scope.dart';
@@ -31,6 +33,19 @@ class _OnboardingState extends State<Onboarding> {
   final _scroll = ScrollController();
   int step = 0;
   double _drag = 0;
+  bool _more = false; // something below the fold, such as the setup's third answer
+
+  /// Follows the page's own scrolling and size (not the text fields' inside it) to know whether more waits below.
+  bool _below(ScrollMetrics m, int depth) {
+    final more = depth == 0 && m.axis == Axis.vertical && m.extentAfter > 24;
+    if (depth == 0 && more != _more) setState(() => _more = more);
+    return false;
+  }
+
+  void _scrollOn() {
+    final p = _scroll.position, to = math.min(p.maxScrollExtent, p.pixels + p.viewportDimension * .7);
+    MediaQuery.disableAnimationsOf(context) ? _scroll.jumpTo(to) : _scroll.animateTo(to, duration: const Duration(milliseconds: 450), curve: Curves.easeInOut);
+  }
 
   Kakebo get app => AppScope.read(context);
 
@@ -61,91 +76,140 @@ class _OnboardingState extends State<Onboarding> {
     final band = h * (setup ? .30 : .51), top = h * (setup ? .20 : .37);
     return ColoredBox(
       color: bg,
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onHorizontalDragStart: (_) => _drag = 0,
-                  onHorizontalDragUpdate: (d) => _drag += d.delta.dx,
-                  onHorizontalDragEnd: (e) => goStep(step - fling(e, _drag, 60)), // never past the setup: only its button starts the month
-                  child: SingleChildScrollView(
-                    controller: _scroll,
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: ExcludeSemantics(
-                            child: AnimatedContainer(
-                              duration: motion,
-                              curve: Curves.easeInOut,
-                              height: band,
-                              // Prints cross-fade in place, the old one fading out as the new one fades in. It cannot wait
-                              // at full strength underneath: the prints fade into the page, so it would show through the
-                              // new one's fade (and below a shorter band) and then vanish at once.
-                              child: AnimatedSwitcher(
-                                duration: motion,
-                                switchInCurve: Curves.easeInOut,
-                                switchOutCurve: Curves.easeInOut,
-                                layoutBuilder: (current, previous) => Stack(fit: StackFit.expand, children: [...previous, ?current]),
-                                child: _print(_prints[step]),
+      // The swipe listens on the whole screen, the footer with its dots and buttons included, not only on the page above.
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onHorizontalDragStart: (_) => _drag = 0,
+        onHorizontalDragUpdate: (d) => _drag += d.delta.dx,
+        onHorizontalDragEnd: (e) => goStep(step - fling(e, _drag, 60)), // never past the setup: only its button starts the month
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  NotificationListener<ScrollMetricsNotification>(
+                    onNotification: (n) => _below(n.metrics, n.depth),
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (n) => _below(n.metrics, n.depth),
+                      child: SingleChildScrollView(
+                        controller: _scroll,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              child: ExcludeSemantics(
+                                child: AnimatedContainer(
+                                  duration: motion,
+                                  curve: Curves.easeInOut,
+                                  height: band,
+                                  // Prints cross-fade in place, the old one fading out as the new one fades in. It cannot wait
+                                  // at full strength underneath: the prints fade into the page, so it would show through the
+                                  // new one's fade (and below a shorter band) and then vanish at once.
+                                  child: AnimatedSwitcher(
+                                    duration: motion,
+                                    switchInCurve: Curves.easeInOut,
+                                    switchOutCurve: Curves.easeInOut,
+                                    layoutBuilder: (current, previous) => Stack(fit: StackFit.expand, children: [...previous, ?current]),
+                                    child: _print(_prints[step]),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              AnimatedContainer(duration: motion, curve: Curves.easeInOut, height: top),
-                              Text('家計簿 · KAKEBO', style: serif(13, ls: 1.82, c: ok(.45, .08, 10))),
-                              const SizedBox(height: 20),
-                              // The words leave first, then the next ones come in where they were.
-                              AnimatedSwitcher(
-                                duration: motion,
-                                switchInCurve: const Interval(.35, 1, curve: Curves.easeOut),
-                                switchOutCurve: const Interval(.65, 1, curve: Curves.easeIn),
-                                layoutBuilder: (current, previous) => Stack(alignment: Alignment.topCenter, children: [...previous, ?current]),
-                                child: KeyedSubtree(key: ValueKey(step), child: _content(app)),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  AnimatedContainer(duration: motion, curve: Curves.easeInOut, height: top),
+                                  Text('家計簿 · KAKEBO', style: serif(13, ls: 1.82, c: ok(.45, .08, 10))),
+                                  const SizedBox(height: 20),
+                                  // The words leave first, then the next ones come in where they were.
+                                  AnimatedSwitcher(
+                                    duration: motion,
+                                    switchInCurve: const Interval(.35, 1, curve: Curves.easeOut),
+                                    switchOutCurve: const Interval(.65, 1, curve: Curves.easeIn),
+                                    layoutBuilder: (current, previous) => Stack(alignment: Alignment.topCenter, children: [...previous, ?current]),
+                                    child: KeyedSubtree(key: ValueKey(step), child: _content(app)),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (!setup)
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 4, 12, 0),
-                        child: TextButton(
-                          onPressed: () => goStep(_setup),
-                          style: TextButton.styleFrom(
-                            backgroundColor: bg.withValues(alpha: .85),
-                            foregroundColor: ink,
-                            minimumSize: const Size(64, 40),
-                            shape: const StadiumBorder(),
-                          ),
-                          child: Text(tr.skip, style: sans(14, c: ink)),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-              ],
+                  // More below the fold (on the setup, the savings goal): the page fades out and a nudge scrolls on.
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: ExcludeSemantics(
+                      excluding: !_more,
+                      child: IgnorePointer(
+                        ignoring: !_more,
+                        child: AnimatedOpacity(
+                          opacity: _more ? 1 : 0,
+                          duration: const Duration(milliseconds: 250),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [bg.withValues(alpha: 0), bg],
+                                stops: const [0, .55],
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 28),
+                              child: Center(
+                                child: TextButton.icon(
+                                  onPressed: _scrollOn,
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: ink,
+                                    backgroundColor: ok(.93, .025, 150),
+                                    minimumSize: const Size(0, 40),
+                                    shape: const StadiumBorder(),
+                                  ),
+                                  icon: const Icon(Icons.keyboard_arrow_down, size: 18),
+                                  label: Text(tr.scrollMore, style: sans(13, c: ink)),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (!setup)
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: SafeArea(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 4, 12, 0),
+                          child: TextButton(
+                            onPressed: () => goStep(_setup),
+                            style: TextButton.styleFrom(
+                              backgroundColor: bg.withValues(alpha: .85),
+                              foregroundColor: ink,
+                              minimumSize: const Size(64, 40),
+                              shape: const StadiumBorder(),
+                            ),
+                            child: Text(tr.skip, style: sans(14, c: ink)),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-          _footer(app),
-        ],
+            _footer(app),
+          ],
+        ),
       ),
     );
   }

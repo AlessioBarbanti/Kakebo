@@ -104,6 +104,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'They repeat every month; change them whenever you like';
 
   @override
+  String get fixedNameHint => 'E.g. rent';
+
+  @override
+  String incomeAfterFixed(String fixed, String left) {
+    return 'After fixed costs ($fixed), $left is left';
+  }
+
+  @override
   String get fixedQuestion => 'What do you pay every month?';
 
   @override
@@ -446,9 +454,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String question(int n) {
     return 'Question $n';
   }
-
-  @override
-  String get incomeMinusFixed => 'Income minus fixed costs';
 
   @override
   String goalFor(String month) {
@@ -975,6 +980,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get next => 'Next';
 
   @override
+  String get scrollMore => 'Scroll to continue';
+
+  @override
   String get setupFirst =>
       'Three answers and the month is ready: what is left is yours to spend mindfully.';
 
@@ -984,7 +992,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get fourQuestion1 => 'How much money do you have?';
+  String get fourQuestion1 => 'How much comes in this month?';
 
   @override
   String get fourQuestion2 => 'How much would you like to save?';

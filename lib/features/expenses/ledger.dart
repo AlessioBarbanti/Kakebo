@@ -135,7 +135,12 @@ class _LedgerState extends State<Ledger> {
                             alignment: Alignment.centerLeft,
                             decoration: BoxDecoration(color: p.soft, borderRadius: BorderRadius.circular(3)),
                             child: FractionallySizedBox(
-                              widthFactor: math.min(1, spent / b),
+                              // No budget yet (a new ledger before its income): empty, or full once anything is spent.
+                              widthFactor: b > 0
+                                  ? math.min(1, spent / b)
+                                  : spent > 0
+                                  ? 1
+                                  : 0,
                               child: Container(
                                 decoration: BoxDecoration(color: p.ink, borderRadius: BorderRadius.circular(3)),
                               ),

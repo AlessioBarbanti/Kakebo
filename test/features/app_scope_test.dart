@@ -42,7 +42,7 @@ void main() {
   });
 
   testWidgets('consumers follow a replacement scope and stop observing the old state', (tester) async {
-    final first = Kakebo(), second = Kakebo()..income = 4000;
+    final first = Kakebo()..income = 2800, second = Kakebo()..income = 4000;
     Widget tree(Kakebo state) => AppScope(
       notifier: state,
       child: MaterialApp(home: Builder(builder: (context) => Text('${AppScope.watch(context).income}'))),

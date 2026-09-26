@@ -33,7 +33,7 @@ class _ReviewState extends State<Review> {
     final sealed = app.sealed.containsKey(mk), over = p.start != app.period.start, bloomed = app.bloomedIn(p);
     final plan = app.planOf(p); // the month's own income, fixed costs and goal
     final questions = [
-      (tr.fourQuestions[0], fmt(plan.income - plan.fixed), tr.incomeMinusFixed),
+      (tr.fourQuestions[0], fmt(plan.income), tr.incomeAfterFixed(fmt(plan.fixed), fmt(plan.income - plan.fixed))),
       (tr.fourQuestions[1], fmt(plan.save), tr.goalFor(month)),
       (tr.fourQuestions[2], fmt(app.spentIn(p)), tr.acrossPillars),
     ];

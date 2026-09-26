@@ -278,7 +278,7 @@ class FixedList extends StatelessWidget {
           padding: const EdgeInsets.only(top: 6),
           child: TapText(
             tr.addFixed,
-            () => app.update(() => app.fixed.add(Fixed(DateTime.now().millisecondsSinceEpoch, tr.newItem, 0))),
+            () => app.update(() => app.fixed.add(Fixed(DateTime.now().millisecondsSinceEpoch, '', 0))),
             style: sans(14, w: FontWeight.w700, c: ok(.4, .06, 160)),
           ),
         ),
@@ -303,7 +303,15 @@ class _FixedRow extends StatelessWidget {
         spacing: 8,
         children: [
           Expanded(
-            child: TextFormField(initialValue: r.name, onChanged: (v) => app.update(() => r.name = v), style: sans(15), decoration: boxed()),
+            child: TextFormField(
+              initialValue: r.name,
+              onChanged: (v) => app.update(() => r.name = v),
+              style: sans(15),
+              decoration: boxed(
+                hint: tr.fixedNameHint,
+                hintStyle: sans(15, c: ok(.7, .02, 160)),
+              ),
+            ),
           ),
           SizedBox(
             width: 72,
@@ -312,7 +320,7 @@ class _FixedRow extends StatelessWidget {
           Text(currency, style: serif(15)),
           Semantics(
             button: true,
-            label: tr.remove(r.name),
+            label: tr.remove(r.name.isEmpty ? tr.newItem : r.name),
             child: InkResponse(
               onTap: () => app.update(() => app.fixed.remove(r)),
               radius: 24,

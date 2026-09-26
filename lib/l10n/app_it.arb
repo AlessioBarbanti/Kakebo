@@ -43,6 +43,9 @@
   "becomesGoal": "Diventa il tuo obiettivo del mese",
   "fixedTitle": "Spese fisse ricorrenti",
   "fixedHint": "Si ripetono ogni mese, modificabili quando vuoi",
+  "fixedNameHint": "Es. affitto",
+  "incomeAfterFixed": "Tolte le spese fisse ({fixed}), restano {left}",
+  "@incomeAfterFixed": {"placeholders": {"fixed": {"type": "String"}, "left": {"type": "String"}}},
   "fixedQuestion": "Quali spese si ripetono ogni mese?",
   "addFixed": "+ Aggiungi spesa fissa",
   "remove": "Rimuovi {name}",
@@ -285,7 +288,6 @@
       }
     }
   },
-  "incomeMinusFixed": "Entrate meno spese fisse",
   "goalFor": "Il tuo obiettivo per {month}",
   "@goalFor": {
     "placeholders": {
@@ -495,10 +497,11 @@
   "step3Title": "Quattro domande",
   "step3Body": "A inizio e fine mese rispondi sempre alle stesse quattro.",
   "next": "Avanti",
+  "scrollMore": "Scorri per continuare",
   "setupFirst": "Tre risposte e il mese è pronto: ciò che resta è da spendere con consapevolezza.",
   "introProgress": "Passaggio {current} di {total}",
   "@introProgress": {"placeholders": {"current": {"type": "int"}, "total": {"type": "int"}}},
-  "fourQuestion1": "Quanto denaro hai?",
+  "fourQuestion1": "Quanto entra questo mese?",
   "fourQuestion2": "Quanto vorresti risparmiare?",
   "fourQuestion3": "Quanto stai spendendo?",
   "fourQuestion4": "Come puoi migliorare?",
