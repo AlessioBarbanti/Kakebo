@@ -1,7 +1,7 @@
 // Turns the painted icon (assets/icon/source.png: ink on paper) into Android icon layers, in negative: the ensō in paper
 // colour on Kakebo green, so it stands out among the icons around it.
 //   dart run tool/icon.dart && dart run flutter_launcher_icons
-// Writes assets/icon/{foreground,monochrome,icon}.png and the white status-bar icon for notifications.
+// Writes assets/icon/{foreground,monochrome,icon,playstore}.png and the white status-bar icon for notifications.
 import 'dart:io';
 import 'dart:math';
 
@@ -30,7 +30,10 @@ void main() {
   _save('assets/icon/foreground.png', negative);
   _save('assets/icon/monochrome.png', _silhouette(negative, 0));
   final (gr, gg, gb) = green;
-  _save('assets/icon/icon.png', img.compositeImage(img.fill(img.Image(width: 1024, height: 1024), color: img.ColorRgb8(gr, gg, gb)), negative));
+  final icon = img.compositeImage(img.fill(img.Image(width: 1024, height: 1024), color: img.ColorRgb8(gr, gg, gb)), negative);
+  _save('assets/icon/icon.png', icon);
+  // Google Play's store icon: 512 px, full square (the store applies its own mask).
+  _save('assets/icon/playstore.png', img.copyResize(icon, width: 512, height: 512, interpolation: img.Interpolation.average));
 
   // Status-bar icon: white silhouette filling 24 dp with 2 dp padding, one file per density.
   const densities = {'mdpi': 24, 'hdpi': 36, 'xhdpi': 48, 'xxhdpi': 72, 'xxxhdpi': 96};

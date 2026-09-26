@@ -1,8 +1,19 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// Release signing with the Google Play upload key. CI passes it through the environment (GitHub secrets, see
+// .github/workflows/release.yml); locally it comes from android/key.properties, which git ignores. Without either,
+// release builds use the debug key, fine for trying on a phone but not accepted by the Play Store.
+val keyProperties = Properties().apply {
+    rootProject.file("key.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
+fun signing(env: String, property: String): String? = System.getenv(env) ?: keyProperties.getProperty(property)
+val uploadStore = signing("ANDROID_KEYSTORE_PATH", "storeFile")
 
 android {
     namespace = "com.alessiobarbanti.kakebo"
@@ -16,8 +27,19 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    signingConfigs {
+        if (uploadStore != null) {
+            create("upload") {
+                storeFile = file(uploadStore)
+                storePassword = signing("ANDROID_KEYSTORE_PASSWORD", "storePassword")
+                keyAlias = signing("ANDROID_KEY_ALIAS", "keyAlias")
+                keyPassword = signing("ANDROID_KEY_PASSWORD", "keyPassword")
+            }
+        }
+    }
+
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // Final: the Play Store identifies the app by it, and it can never change once published.
         applicationId = "com.alessiobarbanti.kakebo"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
@@ -33,9 +55,7 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("upload") ?: signingConfigs.getByName("debug")
         }
     }
 }

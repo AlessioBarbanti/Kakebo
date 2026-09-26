@@ -1,0 +1,107 @@
+# Builds the signed app. A tag like v1.0.0 (it must match the version in pubspec.yaml) also publishes a GitHub release
+# with the APK to install and the app bundle for Google Play. Run by hand (Actions > Release > Run workflow) it only
+# builds, and the files wait in the run's artifacts.
+#
+# Signing uses the Play upload key from the repository secrets ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
+# ANDROID_KEY_ALIAS and ANDROID_KEY_PASSWORD. They reach only the steps that need them and are never printed; the job
+# runs only on tags and by hand, never for pull requests, so forks cannot reach them.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write # creating the release
+    env:
+      FLUTTER_VERSION: 3.47.5 # the version the app is developed with
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Flutter
+        run: |
+          git clone --depth 1 --branch "$FLUTTER_VERSION" https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+
+      - name: Tag matches pubspec.yaml
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version=$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml)
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match version $version in pubspec.yaml"
+            exit 1
+          fi
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+      - name: Upload key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::The ANDROID_KEYSTORE_BASE64 secret is missing"
+            exit 1
+          fi
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+
+      - name: Build APK and app bundle
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/upload.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          flutter build apk --release
+          flutter build appbundle --release
+
+      - name: Remove the key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks"
+
+      # Without the secrets Gradle would fall back to the debug key: never ship that.
+      - name: Signed with the upload key
+        run: |
+          keytool -printcert -jarfile build/app/outputs/flutter-apk/app-release.apk > "$RUNNER_TEMP/cert.txt"
+          grep -E "^(Owner|SHA256):" "$RUNNER_TEMP/cert.txt"
+          if grep -q "CN=Android Debug" "$RUNNER_TEMP/cert.txt"; then
+            echo "::error::The APK is signed with the debug key"
+            exit 1
+          fi
+
+      - name: Name the files
+        run: |
+          mkdir dist
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/kakebo-$GITHUB_REF_NAME.apk"
+          cp build/app/outputs/bundle/release/app-release.aab "dist/kakebo-$GITHUB_REF_NAME-play.aab"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: kakebo-${{ github.ref_name }}
+          path: dist/
+          if-no-files-found: error
+
+      - name: GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "Kakebo $GITHUB_REF_NAME" --generate-notes --verify-tag

@@ -7,8 +7,11 @@ Il registro di casa giapponese, per Android (Flutter). Implementa il design *Kak
 ```sh
 flutter run                      # telefono collegato o emulatore
 flutter build apk --release      # APK in build/app/outputs/flutter-apk/app-release.apk
+flutter build appbundle --release # per Google Play, in build/app/outputs/bundle/release/app-release.aab
 flutter test
 ```
+
+Le build di release sono firmate con la chiave di caricamento per Google Play se `android/key.properties` esiste (vedi *Rilascio*), altrimenti con la chiave di debug: vanno bene per provare sul telefono, ma il Play Store non le accetta.
 
 Dati di esempio del design, con data fissa (utile per provare tutte le schermate):
 
@@ -23,6 +26,23 @@ flutter test tool/screenshots_test.dart
 ```
 
 Per aggiungere una schermata o uno stato, aggiungi una riga alla lista `_shots` in cima al file.
+
+## Rilascio
+
+1. Aggiorna `version` in `pubspec.yaml`: il nome (`1.0.1`) per le persone, il numero dopo `+` per Android e Google Play, che deve crescere a ogni caricamento.
+2. Fai commit su `main`, poi crea e invia il tag con lo stesso nome: `git tag v1.0.1 && git push origin v1.0.1`.
+3. La GitHub Action *Release* (`.github/workflows/release.yml`) esegue analisi e test, compila APK e app bundle firmati e pubblica la release su GitHub con i due file. L'APK si installa direttamente; il file `-play.aab` va caricato nella Play Console. Avviata a mano da GitHub (Actions → Release → Run workflow) compila soltanto, senza pubblicare.
+
+La chiave di caricamento (upload key) di Google Play non è nel repository:
+
+- in locale il file `.jks` sta fuori dal repository; il suo percorso, la password e l'alias sono in `android/key.properties`, ignorato da git;
+- per la Action sta nei secret del repository `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` e `ANDROID_KEY_PASSWORD`.
+
+Conserva una copia del file `.jks` e della password fuori da questo computer, per esempio in un gestore di password. Con la firma delle app di Google Play una chiave di caricamento persa si può sostituire, ma serve una richiesta dalla Play Console.
+
+Un'app firmata con un'altra chiave non si aggiorna sopra quella installata: passando dalle build di debug a quelle firmate va reinstallata, quindi prima salva un backup dall'app (Impostazioni → Salva un backup).
+
+L'icona per la scheda del Play Store (512 px) è `assets/icon/playstore.png`, generata da `dart run tool/icon.dart` insieme alle altre.
 
 ## Lingue
 
