@@ -13,7 +13,7 @@ Widget heading(String kick, String title) => Column(
   spacing: 6,
   children: [
     kicker(kick),
-    Text(title, style: serif(30, h: 1.2)),
+    Text(title, style: serif(26, h: 1.2)),
   ],
 );
 
@@ -48,7 +48,7 @@ class Btn extends StatelessWidget {
   );
 }
 
-/// Plain text that acts as a button, with a 44px touch target.
+/// Plain text that acts as a button, with a 48 dp touch target.
 class TapText extends StatelessWidget {
   const TapText(this.label, this.onTap, {super.key, this.style, this.pad = EdgeInsets.zero});
   final String label;
@@ -63,7 +63,7 @@ class TapText extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 44),
+        constraints: const BoxConstraints(minHeight: 48),
         child: Padding(
           padding: pad,
           child: Align(
@@ -84,12 +84,18 @@ Widget segmented(List<(String, String)> opts, String sel, ValueChanged<String> p
     spacing: 4,
     children: [
       for (final (k, label) in opts)
-        GestureDetector(
-          onTap: () => pick(k),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(color: sel == k ? card : Colors.transparent, borderRadius: BorderRadius.circular(10)),
-            child: Text(label, style: sans(14, w: sel == k ? FontWeight.w700 : FontWeight.w400)),
+        Semantics(
+          button: true,
+          selected: sel == k,
+          child: GestureDetector(
+            onTap: () => pick(k),
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 40), // 48 with the track's padding
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(color: sel == k ? card : Colors.transparent, borderRadius: BorderRadius.circular(10)),
+              child: Text(label, style: sans(14, w: sel == k ? FontWeight.w700 : FontWeight.w400)),
+            ),
           ),
         ),
     ],
@@ -100,22 +106,26 @@ class Toggle extends StatelessWidget {
   const Toggle(this.on, {super.key});
   final bool on;
 
+  // TalkBack hears on/off, not just a shape that looks like a switch.
   @override
-  Widget build(BuildContext context) => Container(
-    width: 46,
-    height: 28,
-    padding: const EdgeInsets.symmetric(horizontal: 3),
-    decoration: BoxDecoration(color: on ? ok(.56, .08, 155) : ok(.85, .01, 160), borderRadius: BorderRadius.circular(14)),
-    child: AnimatedAlign(
-      duration: const Duration(milliseconds: 150),
-      alignment: on ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        width: 22,
-        height: 22,
-        decoration: BoxDecoration(
-          color: card,
-          shape: BoxShape.circle,
-          boxShadow: [BoxShadow(color: ok(.3, .02, 160, .25), blurRadius: 2, offset: const Offset(0, 1))],
+  Widget build(BuildContext context) => Semantics(
+    toggled: on,
+    child: Container(
+      width: 46,
+      height: 28,
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      decoration: BoxDecoration(color: on ? ok(.56, .08, 155) : ok(.85, .01, 160), borderRadius: BorderRadius.circular(14)),
+      child: AnimatedAlign(
+        duration: const Duration(milliseconds: 150),
+        alignment: on ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          width: 22,
+          height: 22,
+          decoration: BoxDecoration(
+            color: card,
+            shape: BoxShape.circle,
+            boxShadow: [BoxShadow(color: ok(.3, .02, 160, .25), blurRadius: 2, offset: const Offset(0, 1))],
+          ),
         ),
       ),
     ),

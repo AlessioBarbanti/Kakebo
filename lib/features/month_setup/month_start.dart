@@ -10,7 +10,6 @@ import 'package:kakebo/shared/theme/color.dart';
 import 'package:kakebo/shared/theme/pillars.dart';
 import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/shared/widgets/controls.dart';
-import 'package:kakebo/shared/widgets/dashed.dart';
 import 'package:kakebo/shared/widgets/inputs.dart';
 
 class MonthStart extends StatelessWidget {
@@ -47,194 +46,212 @@ class MonthStart extends StatelessWidget {
 
     return SafeArea(
       bottom: false,
-      child: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(20, 12, 20, 40 + MediaQuery.paddingOf(context).bottom),
-        child: Reveal(
-          children: [
-            Align(alignment: Alignment.centerLeft, child: TapText(tr.backToLedger, () => app.go('home'))),
-            Padding(padding: const EdgeInsets.only(top: 24), child: kicker(monthYearCaps(pm))),
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(tr.setupTitle, style: serif(26, h: 1.3)),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 28),
-              child: Column(
-                spacing: 12,
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+              // Income, fixed costs, goal: the order the money flows in.
+              child: Reveal(
                 children: [
-                  field(tr.income, tr.incomeHint, income, (v) => app.update(() => app.income = v), ok(.93, .04, 155)),
-                  field(
-                    tr.savingGoal,
-                    tr.savingHint,
-                    app.save,
-                    (v) => app.update(() {
-                      app.save = v;
-                      app.rule = false;
-                    }),
-                    ok(.94, .035, 10),
+                  Align(alignment: Alignment.centerLeft, child: TapText(tr.backToLedger, () => app.go('home'))),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Text(tr.setupTitle(monthName(pm)), style: serif(28, h: 1.2)),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(tr.setupIntro, style: sans(14, h: 1.5, c: sub)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: field(tr.income, tr.incomeHint, income, (v) => app.update(() => app.income = v), ok(.93, .04, 155)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(16, 18, 8, 18), // the rows' × brings its own margin
+                      decoration: BoxDecoration(color: ok(.95, .025, 150), borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 4,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Wrap(
+                              alignment: WrapAlignment.spaceBetween,
+                              crossAxisAlignment: WrapCrossAlignment.end,
+                              spacing: 8,
+                              runSpacing: 4,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  spacing: 2,
+                                  children: [
+                                    Text(tr.fixedTitle, style: sans(13, w: FontWeight.w700)),
+                                    Text(tr.fixedHint, style: sans(12, c: sub)),
+                                  ],
+                                ),
+                                Text(fmt(fixed), style: serif(24, w: FontWeight.w700)),
+                              ],
+                            ),
+                          ),
+                          for (final r in app.fixed) _FixedRow(r, key: ValueKey(r.id)),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: TapText(
+                              tr.addFixed,
+                              () => app.update(() => app.fixed.add(Fixed(DateTime.now().millisecondsSinceEpoch, tr.newItem, 0))),
+                              style: sans(14, w: FontWeight.w700, c: ok(.4, .06, 160)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: field(
+                      tr.savingGoal,
+                      tr.savingHint,
+                      app.save,
+                      (v) => app.update(() {
+                        app.save = v;
+                        app.rule = false;
+                      }),
+                      ok(.94, .035, 10),
+                    ),
+                  ),
+                  Padding(padding: const EdgeInsets.only(top: 12), child: _Rule(sub)),
+                  const Padding(padding: EdgeInsets.only(top: 12), child: _Budgets()),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                decoration: BoxDecoration(
-                  color: ok(.99, .006, 140, .8),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: ok(.9, .025, 150)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 12,
-                  children: [
-                    Row(
-                      spacing: 12,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            spacing: 3,
-                            children: [
-                              Text(tr.ruleTitle, style: sans(13, w: FontWeight.w700)),
-                              Text(tr.ruleBody, style: sans(12, h: 1.45, c: sub)),
-                            ],
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: app.toggleRule,
-                          child: Container(
-                            constraints: const BoxConstraints(minHeight: 44),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(color: app.rule ? ok(.93, .04, 155) : green, borderRadius: BorderRadius.circular(12)),
-                            child: Text(
-                              app.rule ? tr.applied : tr.apply,
-                              style: sans(14, w: FontWeight.w700, c: app.rule ? ink : onGreen),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (app.rule)
-                      Column(
-                        children: [
-                          for (final (pct, label, note, v) in [
-                            ('50%', pillars['needs']!.name, fixed > income * .5 ? tr.fixedOverHalf : tr.fixedPart(fmt(fixed)), .5),
-                            ('30%', tr.otherPillars, tr.shareAmongThree, .3),
-                            ('20%', tr.savings, tr.becomesGoal, .2),
-                          ])
-                            Container(
-                              padding: const EdgeInsets.symmetric(vertical: 9),
-                              decoration: BoxDecoration(
-                                border: Border(top: BorderSide(color: ok(.93, .02, 150))),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                spacing: 10,
-                                children: [
-                                  SizedBox(
-                                    width: 38,
-                                    child: Text(pct, style: serif(15, w: FontWeight.w700)),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      spacing: 1,
-                                      children: [
-                                        Text(label, style: sans(14)),
-                                        Text(note, style: sans(12, c: sub)),
-                                      ],
-                                    ),
-                                  ),
-                                  Text(fmt((income * v).round()), style: serif(16)),
-                                ],
-                              ),
-                            ),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
+          ),
+          // What is left to spend and the final step stay in reach while the form scrolls.
+          Container(
+            padding: EdgeInsets.fromLTRB(20, 12, 20, 12 + MediaQuery.paddingOf(context).bottom),
+            decoration: BoxDecoration(
+              color: card,
+              border: Border(top: BorderSide(color: line)),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                decoration: BoxDecoration(color: ok(.95, .025, 150), borderRadius: BorderRadius.circular(20)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 4,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Wrap(
-                        alignment: WrapAlignment.spaceBetween,
-                        crossAxisAlignment: WrapCrossAlignment.end,
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            spacing: 2,
-                            children: [
-                              Text(tr.fixedTitle, style: sans(13, w: FontWeight.w700)),
-                              Text(tr.fixedHint, style: sans(12, c: sub)),
-                            ],
-                          ),
-                          Text(fmt(fixed), style: serif(24, w: FontWeight.w700)),
-                        ],
-                      ),
-                    ),
-                    for (final r in app.fixed) _FixedRow(r, key: ValueKey(r.id)),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: TapText(
-                        tr.addFixed,
-                        () => app.update(() => app.fixed.add(Fixed(DateTime.now().millisecondsSinceEpoch, tr.newItem, 0))),
-                        style: sans(14, w: FontWeight.w700, c: ok(.4, .06, 160)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 12), child: _Budgets()),
-            Padding(
-              padding: const EdgeInsets.only(top: 14),
-              child: CustomPaint(
-                foregroundPainter: Dashed(ok(.78, .05, 150), 20),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
-                  decoration: BoxDecoration(color: ok(.99, .006, 140, .7), borderRadius: BorderRadius.circular(20)),
-                  child: Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: 12,
-                    runSpacing: 8,
+            child: Row(
+              spacing: 12,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 1,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 2,
-                        children: [
-                          Text(tr.mindful, style: sans(14, w: FontWeight.w700)),
-                          Text(tr.perWeek(fmt((avail * 7 / app.dim).round())), style: sans(13, c: ok(.45, .03, 160))),
-                        ],
+                      Text(
+                        tr.mindful,
+                        style: sans(12, w: FontWeight.w700, c: sub),
                       ),
-                      Text(fmt(avail), style: serif(32, w: FontWeight.w700)),
+                      Text(fmt(avail), style: serif(24, w: FontWeight.w700)),
+                      Text(tr.perWeek(fmt((avail * 7 / app.dim).round())), style: sans(12, c: sub)),
                     ],
                   ),
                 ),
+                Btn(tr.startMonth(monthName(pm)), () => app.go('home'), pad: const EdgeInsets.symmetric(horizontal: 22, vertical: 15)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The 50/30/20 hint, folded away until wanted (open by itself once applied).
+class _Rule extends StatelessWidget {
+  const _Rule(this.sub);
+  final Color sub;
+
+  @override
+  Widget build(BuildContext context) {
+    final app = AppScope.watch(context);
+    final fixed = app.fixedTotal, income = app.income;
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: ok(.99, .006, 140, .8),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: ok(.9, .025, 150)),
+      ),
+      child: ExpansionTile(
+        initiallyExpanded: app.rule,
+        shape: const Border(),
+        collapsedShape: const Border(),
+        tilePadding: const EdgeInsets.symmetric(horizontal: 20),
+        childrenPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        iconColor: sub,
+        collapsedIconColor: sub,
+        title: Text(tr.ruleTitle, style: sans(13, w: FontWeight.w700)),
+        children: [
+          Row(
+            spacing: 12,
+            children: [
+              Expanded(
+                child: Text(tr.ruleBody, style: sans(12, h: 1.45, c: sub)),
+              ),
+              GestureDetector(
+                onTap: app.toggleRule,
+                child: Container(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(color: app.rule ? ok(.93, .04, 155) : green, borderRadius: BorderRadius.circular(12)),
+                  child: Text(
+                    app.rule ? tr.applied : tr.apply,
+                    style: sans(14, w: FontWeight.w700, c: app.rule ? ink : onGreen),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (app.rule)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Column(
+                children: [
+                  for (final (pct, label, note, v) in [
+                    ('50%', pillars['needs']!.name, fixed > income * .5 ? tr.fixedOverHalf : tr.fixedPart(fmt(fixed)), .5),
+                    ('30%', tr.otherPillars, tr.shareAmongThree, .3),
+                    ('20%', tr.savings, tr.becomesGoal, .2),
+                  ])
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 9),
+                      decoration: BoxDecoration(
+                        border: Border(top: BorderSide(color: ok(.93, .02, 150))),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        spacing: 10,
+                        children: [
+                          SizedBox(
+                            width: 38,
+                            child: Text(pct, style: serif(15, w: FontWeight.w700)),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              spacing: 1,
+                              children: [
+                                Text(label, style: sans(14)),
+                                Text(note, style: sans(12, c: sub)),
+                              ],
+                            ),
+                          ),
+                          Text(fmt((income * v).round()), style: serif(16)),
+                        ],
+                      ),
+                    ),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 28),
-              child: Align(alignment: Alignment.centerRight, child: Btn(tr.startMonth(monthName(pm)), () => app.go('home'))),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -256,16 +273,11 @@ class _FixedRow extends StatelessWidget {
         spacing: 8,
         children: [
           Expanded(
-            child: TextFormField(
-              initialValue: r.name,
-              onChanged: (v) => app.update(() => r.name = v),
-              style: sans(15),
-              decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 6)),
-            ),
+            child: TextFormField(initialValue: r.name, onChanged: (v) => app.update(() => r.name = v), style: sans(15), decoration: boxed()),
           ),
           SizedBox(
-            width: 80,
-            child: NumField(r.amt, (v) => app.update(() => r.amt = v), style: serif(16), align: TextAlign.right, fill: card),
+            width: 72,
+            child: NumField(r.amt, (v) => app.update(() => r.amt = v), style: serif(16), align: TextAlign.right),
           ),
           Text(currency, style: serif(15)),
           Semantics(
@@ -273,9 +285,9 @@ class _FixedRow extends StatelessWidget {
             label: tr.remove(r.name),
             child: InkResponse(
               onTap: () => app.update(() => app.fixed.remove(r)),
-              radius: 22,
+              radius: 24,
               child: SizedBox.square(
-                dimension: 44,
+                dimension: 48,
                 child: Center(
                   child: Text('×', style: sans(20, c: ok(.38, .04, 160))),
                 ),
@@ -330,7 +342,7 @@ class _Budgets extends StatelessWidget {
                   Expanded(child: Text(p.name, style: sans(15))),
                   SizedBox(
                     width: 90,
-                    child: NumField(app.budget(key), (v) => app.setBudget(key, v), style: serif(16), align: TextAlign.right, fill: ok(.95, .025, 150)),
+                    child: NumField(app.budget(key), (v) => app.setBudget(key, v), style: serif(16), align: TextAlign.right),
                   ),
                   Text(currency, style: serif(15)),
                 ],

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
+import 'package:kakebo/shared/theme/color.dart';
+import 'package:kakebo/shared/theme/tokens.dart';
+
 class NumField extends StatefulWidget {
-  const NumField(this.value, this.onChanged, {super.key, required this.style, this.align = TextAlign.start, this.fill});
+  const NumField(this.value, this.onChanged, {super.key, required this.style, this.align = TextAlign.start});
   final double value;
   final ValueChanged<double> onChanged;
   final TextStyle style;
   final TextAlign align;
-  final Color? fill;
 
   @override
   State<NumField> createState() => _NumFieldState();
@@ -37,15 +39,25 @@ class _NumFieldState extends State<NumField> {
     textAlign: widget.align,
     style: widget.style,
     onChanged: (v) => widget.onChanged(_parse(v)),
-    decoration: InputDecoration(
-      isDense: true,
-      filled: widget.fill != null,
-      fillColor: widget.fill,
-      contentPadding: widget.fill != null ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6) : EdgeInsets.zero,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-    ),
+    decoration: boxed(),
   );
 }
+
+/// The one look of every editable field in a form: white box, thin outline, green when focused.
+InputDecoration boxed() => InputDecoration(
+  isDense: true,
+  filled: true,
+  fillColor: card,
+  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: BorderSide(color: ok(.85, .02, 150)),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: BorderSide(color: green, width: 1.5),
+  ),
+);
 
 InputDecoration softInput(String hint, Color fill, double radius, EdgeInsets pad) => InputDecoration(
   hintText: hint,

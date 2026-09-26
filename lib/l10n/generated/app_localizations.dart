@@ -140,11 +140,23 @@ abstract class AppLocalizations {
   /// **'← Torna al registro'**
   String get backToLedger;
 
+  /// No description provided for @backHome.
+  ///
+  /// In it, this message translates to:
+  /// **'← Oggi'**
+  String get backHome;
+
   /// No description provided for @setupTitle.
   ///
   /// In it, this message translates to:
-  /// **'Prima di iniziare, scrivi cosa entra e cosa deve uscire.'**
-  String get setupTitle;
+  /// **'Prepara {month}'**
+  String setupTitle(String month);
+
+  /// No description provided for @setupIntro.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa entra, cosa esce ogni mese, cosa mettere da parte: il resto è da spendere con consapevolezza.'**
+  String get setupIntro;
 
   /// No description provided for @income.
   ///
@@ -353,14 +365,122 @@ abstract class AppLocalizations {
   /// No description provided for @branchTitle.
   ///
   /// In it, this message translates to:
-  /// **'Il ramo del risparmio'**
+  /// **'Il ritmo del mese'**
   String get branchTitle;
+
+  /// No description provided for @paceExplanation.
+  ///
+  /// In it, this message translates to:
+  /// **'Come si legge il ritmo'**
+  String get paceExplanation;
+
+  /// No description provided for @writeThought.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrivi un pensiero'**
+  String get writeThought;
+
+  /// No description provided for @expenseReflection.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripensando a questa spesa'**
+  String get expenseReflection;
+
+  /// No description provided for @optionalReflection.
+  ///
+  /// In it, this message translates to:
+  /// **'Facoltativo, anche solo poche parole.'**
+  String get optionalReflection;
+
+  /// No description provided for @expenseReflectionPrompt.
+  ///
+  /// In it, this message translates to:
+  /// **'Come ti senti rispetto a questa scelta?'**
+  String get expenseReflectionPrompt;
+
+  /// No description provided for @reflectionPlaceholder.
+  ///
+  /// In it, this message translates to:
+  /// **'Se ti va, lascia qualche parola…'**
+  String get reflectionPlaceholder;
+
+  /// No description provided for @reflectionInvitation.
+  ///
+  /// In it, this message translates to:
+  /// **'Prenditi il tempo che vuoi. Puoi rispondere a una sola domanda, o tornare più tardi.'**
+  String get reflectionInvitation;
+
+  /// No description provided for @reflectionAutosaved.
+  ///
+  /// In it, this message translates to:
+  /// **'Le parole si salvano mentre scrivi. Puoi tornare a cambiarle.'**
+  String get reflectionAutosaved;
+
+  /// No description provided for @monthNumbers.
+  ///
+  /// In it, this message translates to:
+  /// **'I numeri del mese'**
+  String get monthNumbers;
+
+  /// No description provided for @monthGood.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa ti ha fatto stare bene?'**
+  String get monthGood;
+
+  /// No description provided for @monthChange.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa faresti diversamente?'**
+  String get monthChange;
+
+  /// No description provided for @monthIntention.
+  ///
+  /// In it, this message translates to:
+  /// **'Quale piccola intenzione vuoi portare nel prossimo mese?'**
+  String get monthIntention;
+
+  /// No description provided for @intentionForThisMonth.
+  ///
+  /// In it, this message translates to:
+  /// **'Un’intenzione da ritrovare'**
+  String get intentionForThisMonth;
+
+  /// No description provided for @intentionGentle.
+  ///
+  /// In it, this message translates to:
+  /// **'L’hai scritta il mese scorso. Puoi tenerla con te, oppure scegliere una strada diversa.'**
+  String get intentionGentle;
+
+  /// No description provided for @weekReflection.
+  ///
+  /// In it, this message translates to:
+  /// **'Un momento per riflettere'**
+  String get weekReflection;
+
+  /// No description provided for @reflectionMemory.
+  ///
+  /// In it, this message translates to:
+  /// **'Parole del mese'**
+  String get reflectionMemory;
+
+  /// No description provided for @moreMemories.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostra altri ricordi'**
+  String get moreMemories;
+
+  /// No description provided for @weekReflectionPrompt.
+  ///
+  /// In it, this message translates to:
+  /// **'C’è una scelta di questa settimana che vorresti ripetere?'**
+  String get weekReflectionPrompt;
 
   /// No description provided for @branchRule.
   ///
   /// In it, this message translates to:
-  /// **'Ogni fiore vale {flower} del tuo obiettivo. Sboccia quando la spesa resta nel ritmo del mese: finora {soFar} su {goal}.'**
-  String branchRule(String flower, String soFar, String goal);
+  /// **'Un fiore sboccia per ogni decimo di mese trascorso, se la spesa resta nel ritmo del disponibile. Misura il passo, non i soldi messi da parte.'**
+  String get branchRule;
 
   /// No description provided for @today.
   ///
@@ -368,11 +488,11 @@ abstract class AppLocalizations {
   /// **'Oggi'**
   String get today;
 
-  /// No description provided for @addShort.
+  /// No description provided for @addExpense.
   ///
   /// In it, this message translates to:
-  /// **'+ Annota'**
-  String get addShort;
+  /// **'Annota spesa'**
+  String get addExpense;
 
   /// No description provided for @emptyLedger.
   ///
@@ -551,7 +671,7 @@ abstract class AppLocalizations {
   /// No description provided for @questionsFrom.
   ///
   /// In it, this message translates to:
-  /// **'Le quattro domande · dal {date}'**
+  /// **'Rivedi il mese · termina il {date}'**
   String questionsFrom(String date);
 
   /// No description provided for @sealed.
@@ -575,7 +695,7 @@ abstract class AppLocalizations {
   /// No description provided for @questionsHint.
   ///
   /// In it, this message translates to:
-  /// **'Quanto hai, quanto vuoi risparmiare, quanto spendi, come migliorare.'**
+  /// **'Ciò che ti ha fatto stare bene, ciò che cambieresti, una piccola intenzione per il futuro.'**
   String get questionsHint;
 
   /// No description provided for @timeline.
@@ -599,7 +719,7 @@ abstract class AppLocalizations {
   /// No description provided for @questionsOf.
   ///
   /// In it, this message translates to:
-  /// **'Le quattro domande · {month}'**
+  /// **'Riflessioni · {month}'**
   String questionsOf(String month);
 
   /// No description provided for @sealedSaved.
@@ -635,26 +755,20 @@ abstract class AppLocalizations {
   /// No description provided for @reviewTitle.
   ///
   /// In it, this message translates to:
-  /// **'Le quattro domande'**
+  /// **'Uno sguardo al mese'**
   String get reviewTitle;
 
-  /// No description provided for @soFar.
+  /// No description provided for @residualNow.
   ///
   /// In it, this message translates to:
-  /// **'{month}, FINORA'**
-  String soFar(String month);
+  /// **'RESIDUO ATTUALE'**
+  String get residualNow;
 
-  /// No description provided for @towardSaving.
+  /// No description provided for @residualNote.
   ///
   /// In it, this message translates to:
-  /// **'verso il risparmio · obiettivo {goal}'**
-  String towardSaving(String goal);
-
-  /// No description provided for @flowerWorth.
-  ///
-  /// In it, this message translates to:
-  /// **'Ogni fiore vale {flower}. Finora {soFar} su {goal} messi da parte.'**
-  String flowerWorth(String flower, String soFar, String goal);
+  /// **'Entrate meno spese fisse e spese annotate. Tolto l\'obiettivo di {goal}, restano {left} da spendere.'**
+  String residualNote(String goal, String left);
 
   /// No description provided for @question.
   ///
@@ -721,6 +835,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Una giornata tranquilla. Nessuna spesa annotata.'**
   String get quietDay;
+
+  /// No description provided for @dayWithSpending.
+  ///
+  /// In it, this message translates to:
+  /// **'Con spese'**
+  String get dayWithSpending;
+
+  /// No description provided for @dayOver.
+  ///
+  /// In it, this message translates to:
+  /// **'Oltre {amount}'**
+  String dayOver(String amount);
 
   /// No description provided for @goalReached.
   ///
@@ -815,8 +941,14 @@ abstract class AppLocalizations {
   /// No description provided for @ready.
   ///
   /// In it, this message translates to:
-  /// **'Sono pronto'**
+  /// **'Scrivi ora'**
   String get ready;
+
+  /// No description provided for @sound.
+  ///
+  /// In it, this message translates to:
+  /// **'Suono delle campane'**
+  String get sound;
 
   /// No description provided for @smallThing.
   ///
@@ -965,7 +1097,7 @@ abstract class AppLocalizations {
   /// No description provided for @proverbHint.
   ///
   /// In it, this message translates to:
-  /// **'Un proverbio giapponese in fondo a Oggi'**
+  /// **'Un pensiero per oggi sotto il saluto, con originale e fonte al tocco'**
   String get proverbHint;
 
   /// No description provided for @eveningNote.
@@ -1211,7 +1343,7 @@ abstract class AppLocalizations {
   /// No description provided for @printsList.
   ///
   /// In it, this message translates to:
-  /// **'Utagawa Hiroshige, Giardino di susini a Kameido (Cento vedute famose di Edo), 1857.\nZheng Xie, Bambù e rocce. Google Art Project.\nZheng Xie, Orchidee. Princeton University Art Museum, 2014-128.\nKatsushika Hokusai, Crisantemi e ape, c. 1832.\nWang Mian, Pruno in inchiostro (lo sfondo di ogni schermata).\n\nOpere in pubblico dominio, riprodotte da Wikimedia Commons.'**
+  /// **'Utagawa Hiroshige, Giardino di susini a Kameido (Cento vedute famose di Edo), 1857.\nZheng Xie, Bambù e rocce. Google Art Project.\nZheng Xie, Orchidee. Princeton University Art Museum, 2014-128.\nKatsushika Hokusai, Crisantemi e ape, c. 1832.\n\nOpere in pubblico dominio, riprodotte da Wikimedia Commons.'**
   String get printsList;
 
   /// No description provided for @pillarNeeds.
@@ -1219,12 +1351,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Necessità'**
   String get pillarNeeds;
-
-  /// No description provided for @pillarNeedsJp.
-  ///
-  /// In it, this message translates to:
-  /// **'必要 hitsuyō · bambù'**
-  String get pillarNeedsJp;
 
   /// No description provided for @pillarNeedsVirtue.
   ///
@@ -1238,12 +1364,6 @@ abstract class AppLocalizations {
   /// **'Desideri'**
   String get pillarWants;
 
-  /// No description provided for @pillarWantsJp.
-  ///
-  /// In it, this message translates to:
-  /// **'欲しい hoshii · susino'**
-  String get pillarWantsJp;
-
   /// No description provided for @pillarWantsVirtue.
   ///
   /// In it, this message translates to:
@@ -1256,12 +1376,6 @@ abstract class AppLocalizations {
   /// **'Cultura'**
   String get pillarCulture;
 
-  /// No description provided for @pillarCultureJp.
-  ///
-  /// In it, this message translates to:
-  /// **'文化 bunka · orchidea'**
-  String get pillarCultureJp;
-
   /// No description provided for @pillarCultureVirtue.
   ///
   /// In it, this message translates to:
@@ -1273,12 +1387,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Imprevisti'**
   String get pillarUnexpected;
-
-  /// No description provided for @pillarUnexpectedJp.
-  ///
-  /// In it, this message translates to:
-  /// **'予想外 yosōgai · crisantemo'**
-  String get pillarUnexpectedJp;
 
   /// No description provided for @pillarUnexpectedVirtue.
   ///
@@ -1334,47 +1442,245 @@ abstract class AppLocalizations {
   /// **'Luna piena'**
   String get seasonAutumnPlant;
 
-  /// No description provided for @proverb1Meaning.
+  /// No description provided for @japaneseSaying.
+  ///
+  /// In it, this message translates to:
+  /// **'Detto giapponese'**
+  String get japaneseSaying;
+
+  /// No description provided for @phrase1.
   ///
   /// In it, this message translates to:
   /// **'Anche la polvere, accumulandosi, diventa una montagna.'**
-  String get proverb1Meaning;
+  String get phrase1;
 
-  /// No description provided for @proverb2Meaning.
+  /// No description provided for @phrase2.
   ///
   /// In it, this message translates to:
   /// **'Sapere quando si ha abbastanza.'**
-  String get proverb2Meaning;
+  String get phrase2;
 
-  /// No description provided for @proverb3Meaning.
+  /// No description provided for @phrase2Source.
+  ///
+  /// In it, this message translates to:
+  /// **'Laozi, Tao Te Ching, 33'**
+  String get phrase2Source;
+
+  /// No description provided for @phrase3.
   ///
   /// In it, this message translates to:
   /// **'Se hai fretta, prendi la strada lunga.'**
-  String get proverb3Meaning;
+  String get phrase3;
 
-  /// No description provided for @proverb4Meaning.
+  /// No description provided for @phrase4.
   ///
   /// In it, this message translates to:
-  /// **'Chi compra ciò che costa poco, perde denaro.'**
-  String get proverb4Meaning;
+  /// **'Ogni giorno è un buon giorno.'**
+  String get phrase4;
 
-  /// No description provided for @proverb5Meaning.
+  /// No description provided for @phrase4Source.
+  ///
+  /// In it, this message translates to:
+  /// **'Yunmen, dalla Raccolta della Roccia Blu, 6'**
+  String get phrase4Source;
+
+  /// No description provided for @phrase5.
   ///
   /// In it, this message translates to:
   /// **'Anche una pietra si scalda, se ci siedi sopra tre anni.'**
-  String get proverb5Meaning;
+  String get phrase5;
 
-  /// No description provided for @proverb6Meaning.
+  /// No description provided for @phrase6.
+  ///
+  /// In it, this message translates to:
+  /// **'In ciò che resta c\'è fortuna.'**
+  String get phrase6;
+
+  /// No description provided for @phrase7.
   ///
   /// In it, this message translates to:
   /// **'Cadi sette volte, rialzati otto.'**
-  String get proverb6Meaning;
+  String get phrase7;
 
-  /// No description provided for @proverb7Meaning.
+  /// No description provided for @phrase8.
+  ///
+  /// In it, this message translates to:
+  /// **'Si guardano i fiori solo in piena fioritura, e la luna solo senza nubi?'**
+  String get phrase8;
+
+  /// No description provided for @phrase8Source.
+  ///
+  /// In it, this message translates to:
+  /// **'Yoshida Kenkô, Tsurezuregusa, 137'**
+  String get phrase8Source;
+
+  /// No description provided for @phrase9.
+  ///
+  /// In it, this message translates to:
+  /// **'Chi si prepara non ha di che preoccuparsi.'**
+  String get phrase9;
+
+  /// No description provided for @phrase10.
+  ///
+  /// In it, this message translates to:
+  /// **'Anche il cammino più lungo comincia da un passo.'**
+  String get phrase10;
+
+  /// No description provided for @phrase11.
   ///
   /// In it, this message translates to:
   /// **'Ogni incontro accade una volta sola.'**
-  String get proverb7Meaning;
+  String get phrase11;
+
+  /// No description provided for @phrase11Source.
+  ///
+  /// In it, this message translates to:
+  /// **'Ii Naosuke, Chanoyu ichie shû, 1858'**
+  String get phrase11Source;
+
+  /// No description provided for @phrase12.
+  ///
+  /// In it, this message translates to:
+  /// **'La fortuna entra nella casa dove si ride.'**
+  String get phrase12;
+
+  /// No description provided for @phrase13.
+  ///
+  /// In it, this message translates to:
+  /// **'Il troppo vale quanto il troppo poco.'**
+  String get phrase13;
+
+  /// No description provided for @phrase13Source.
+  ///
+  /// In it, this message translates to:
+  /// **'Confucio, Dialoghi, XI'**
+  String get phrase13Source;
+
+  /// No description provided for @phrase14.
+  ///
+  /// In it, this message translates to:
+  /// **'Domani soffierà il vento di domani.'**
+  String get phrase14;
+
+  /// No description provided for @phrase15.
+  ///
+  /// In it, this message translates to:
+  /// **'Col sole si coltiva, con la pioggia si legge.'**
+  String get phrase15;
+
+  /// No description provided for @phrase16.
+  ///
+  /// In it, this message translates to:
+  /// **'Farlo è più facile che preoccuparsene.'**
+  String get phrase16;
+
+  /// No description provided for @phrase17.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripassare l\'antico per capire il nuovo.'**
+  String get phrase17;
+
+  /// No description provided for @phrase17Source.
+  ///
+  /// In it, this message translates to:
+  /// **'Confucio, Dialoghi, II'**
+  String get phrase17Source;
+
+  /// No description provided for @phrase18.
+  ///
+  /// In it, this message translates to:
+  /// **'Dopo la pioggia la terra si fa più salda.'**
+  String get phrase18;
+
+  /// No description provided for @phrase19.
+  ///
+  /// In it, this message translates to:
+  /// **'Il bastone si prende prima di cadere.'**
+  String get phrase19;
+
+  /// No description provided for @phrase20.
+  ///
+  /// In it, this message translates to:
+  /// **'Non dimenticare lo spirito degli inizi.'**
+  String get phrase20;
+
+  /// No description provided for @phrase20Source.
+  ///
+  /// In it, this message translates to:
+  /// **'Zeami, Kakyô'**
+  String get phrase20Source;
+
+  /// No description provided for @phrase21.
+  ///
+  /// In it, this message translates to:
+  /// **'Dove vivi, lì è la tua capitale.'**
+  String get phrase21;
+
+  /// No description provided for @phrase22.
+  ///
+  /// In it, this message translates to:
+  /// **'Anche le scimmie cadono dagli alberi.'**
+  String get phrase22;
+
+  /// No description provided for @phrase23.
+  ///
+  /// In it, this message translates to:
+  /// **'Il fiume scorre senza sosta, e la sua acqua non è mai la stessa.'**
+  String get phrase23;
+
+  /// No description provided for @phrase23Source.
+  ///
+  /// In it, this message translates to:
+  /// **'Kamo no Chômei, Hôjôki'**
+  String get phrase23Source;
+
+  /// No description provided for @phrase24.
+  ///
+  /// In it, this message translates to:
+  /// **'A saper aspettare, arriva il tempo buono per salpare.'**
+  String get phrase24;
+
+  /// No description provided for @phrase25.
+  ///
+  /// In it, this message translates to:
+  /// **'Fortuna e sfortuna si scambiano spesso di posto.'**
+  String get phrase25;
+
+  /// No description provided for @phrase26.
+  ///
+  /// In it, this message translates to:
+  /// **'La goccia di pioggia scava la pietra.'**
+  String get phrase26;
+
+  /// No description provided for @phrase27.
+  ///
+  /// In it, this message translates to:
+  /// **'Il bene più alto è come l\'acqua.'**
+  String get phrase27;
+
+  /// No description provided for @phrase27Source.
+  ///
+  /// In it, this message translates to:
+  /// **'Laozi, Tao Te Ching, 8'**
+  String get phrase27Source;
+
+  /// No description provided for @phrase28.
+  ///
+  /// In it, this message translates to:
+  /// **'Da sveglio ti basta mezzo tatami, sdraiato uno.'**
+  String get phrase28;
+
+  /// No description provided for @phrase29.
+  ///
+  /// In it, this message translates to:
+  /// **'Fai tutto ciò che puoi, poi lascia fare al cielo.'**
+  String get phrase29;
+
+  /// No description provided for @phrase30.
+  ///
+  /// In it, this message translates to:
+  /// **'Se un dio ti lascia, un altro ti raccoglie.'**
+  String get phrase30;
 
   /// No description provided for @defaultFixed1.
   ///

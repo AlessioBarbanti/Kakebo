@@ -69,7 +69,17 @@ class _LocaleWatcher with WidgetsBindingObserver {
   }
 }
 
-const artwork = ['assets/art/plum.jpg', 'assets/art/bamboo.jpg', 'assets/art/orchid.jpg', 'assets/art/chrys.jpg', 'assets/art/ink_plum_wash.png'];
+const artwork = [
+  'assets/art/plum.jpg',
+  'assets/art/bamboo.jpg',
+  'assets/art/orchid.jpg',
+  'assets/art/chrys.jpg',
+  'assets/art/paper.webp',
+  'assets/art/sprig_bamboo.webp',
+  'assets/art/sprig_plum.webp',
+  'assets/art/sprig_orchid.webp',
+  'assets/art/sprig_chrys.webp',
+];
 
 Future<void> _precache() => Future.wait([
   for (final path in artwork)

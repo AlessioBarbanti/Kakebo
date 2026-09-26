@@ -71,11 +71,38 @@ void main() {
     await t.tap(find.bySemanticsLabel('Impostazioni'));
     await t.pumpAndSettle();
     expect(app.screen, 'settings');
-    expect(find.text('IMPOSTAZIONI'), findsOneWidget);
+    expect(find.text('Impostazioni'), findsOneWidget);
     app.go('home');
     app.addEntry(4.5, 'Tè al parco', 'wants');
     await t.pumpAndSettle();
     expect(find.text('Tè al parco'), findsOneWidget); // Oggi shows it right away
+  });
+
+  testWidgets('adding an expense takes one tap without scrolling, on narrow and common phones', (t) async {
+    addTearDown(t.view.reset);
+    for (final size in const [Size(360, 800), Size(393, 852)]) {
+      t.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      app.go('home');
+      await t.pumpWidget(
+        AppScope(
+          notifier: app,
+          child: const MaterialApp(home: Scaffold(body: Shell())),
+        ),
+      );
+      await t.pump(const Duration(seconds: 2));
+      expect(
+        t.getRect(find.byType(CustomScrollView)).bottom,
+        lessThanOrEqualTo(t.getRect(find.byType(FilledButton)).top),
+        reason: 'The add action must not overlap the scrolling content at $size',
+      );
+      expect(t.getRect(find.text('Annota spesa')).bottom, lessThanOrEqualTo(size.height), reason: '$size');
+      await t.tap(find.text('Annota spesa'));
+      await t.pumpAndSettle();
+      expect(find.text('Nuova spesa'), findsOneWidget, reason: '$size');
+      await t.pumpWidget(const SizedBox());
+    }
   });
 
   testWidgets('a scrolled-away greeting stays hidden on the next tab, a visible one stays visible', (t) async {

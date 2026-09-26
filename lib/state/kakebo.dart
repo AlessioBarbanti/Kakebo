@@ -28,8 +28,10 @@ class Kakebo extends ChangeNotifier {
   List<Entry> entries = [];
   Map<String, String> thoughts = {}; // yyyy-mm-dd → text
   Map<String, String> improve = {}; // yyyy-mm → answer to question 4
+  Map<String, Map<String, String>> reflections = {}; // budgeting month → good/change
+  Map<String, String> weeklyReflections = {}; // Sunday yyyy-mm-dd → reflection
   Map<String, double> sealed = {}; // yyyy-mm → saved when sealed
-  Map<String, bool> flags = {'weekly': true, 'phraseOn': true, 'reminders': true, 'thoughtOn': true};
+  Map<String, bool> flags = {'weekly': true, 'phraseOn': true, 'reminders': true, 'thoughtOn': true, 'sound': true};
   String thoughtTime = '21:00', noteTime = '20:00';
   int monthStart = 1; // day the budgeting month begins (1–28), e.g. payday
   Map<String, double>? budgets; // null → split what is available like the design
@@ -57,6 +59,8 @@ class Kakebo extends ChangeNotifier {
     entries = [for (final e in j['entries']) Entry.fromJson(e)];
     thoughts = Map.from(j['thoughts']);
     improve = Map.from(j['improve']);
+    reflections = {for (final e in (j['reflections'] as Map? ?? {}).entries) e.key as String: Map<String, String>.from(e.value as Map)};
+    weeklyReflections = Map<String, String>.from(j['weeklyReflections'] as Map? ?? {});
     sealed = {for (final e in (j['sealed'] as Map).entries) e.key: (e.value as num).toDouble()};
     flags = {...flags, ...Map<String, bool>.from(j['flags'])};
     thoughtTime = j['thoughtTime'];
@@ -76,6 +80,8 @@ class Kakebo extends ChangeNotifier {
     'entries': entries,
     'thoughts': thoughts,
     'improve': improve,
+    'reflections': reflections,
+    'weeklyReflections': weeklyReflections,
     'sealed': sealed,
     'flags': flags,
     'thoughtTime': thoughtTime,
@@ -149,6 +155,7 @@ class Kakebo extends ChangeNotifier {
   String? get thoughtToday => thoughts[dateKey(now)];
   bool get isSealed => sealed.containsKey(monthKey(label));
   DateTime get nextMonth => DateTime(label.year, label.month + 1);
+  String get currentIntention => improve[monthKey(DateTime(label.year, label.month - 1))]?.trim() ?? '';
 
   /// The month the setup screen plans: next one once this one is sealed.
   DateTime get planMonth => isSealed ? nextMonth : label;
@@ -161,8 +168,9 @@ class Kakebo extends ChangeNotifier {
   void addEntry(double amt, String note, String p) =>
       update(() => entries.insert(0, Entry(DateTime(now.year, now.month, now.day), note.isEmpty ? tr.pillars[p]!.name : note, amt, p)));
 
-  void editEntry(Entry old, double amt, String note, String p) =>
-      update(() => entries[entries.indexOf(old)] = Entry(old.date, note.isEmpty ? tr.pillars[p]!.name : note, amt, p));
+  void editEntry(Entry old, double amt, String note, String p, {String? reflection}) => update(
+    () => entries[entries.indexOf(old)] = Entry(old.date, note.isEmpty ? tr.pillars[p]!.name : note, amt, p, reflection: reflection ?? old.reflection),
+  );
 
   /// Removes an expense and returns where it was, for undo.
   int removeEntry(Entry e) {

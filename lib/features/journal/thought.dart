@@ -147,6 +147,19 @@ class _ThoughtState extends State<Thought> {
               ),
             ),
           ),
+          if (!saved && !breathed)
+            Positioned(
+              top: pad.top + 8,
+              left: 8,
+              child: IconButton(
+                isSelected: app.flags['sound'],
+                tooltip: tr.sound,
+                color: violet,
+                icon: const Icon(Icons.volume_off_outlined),
+                selectedIcon: const Icon(Icons.volume_up_outlined),
+                onPressed: () => app.update(() => app.flags['sound'] = !app.flags['sound']!),
+              ),
+            ),
           Positioned(
             top: pad.top + 8,
             right: 16,

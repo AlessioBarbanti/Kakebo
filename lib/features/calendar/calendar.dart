@@ -59,13 +59,16 @@ class _CalendarState extends State<Calendar> {
       byDay.putIfAbsent(dateKey(e.date), () => []).add(e);
     }
     final sel = byDay[dateKey(selDay)] ?? [];
+    // A day's mark says how much, never whether it was good: no red, and the legend below says where the step is.
+    final light = ok(.7, .07, 150), deep = ok(.45, .08, 155);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 16,
       children: [
         Container(
-          padding: const EdgeInsets.all(22),
+          // No inner padding or column gaps: seven 48 dp targets fit at 360 wide.
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 16),
           decoration: BoxDecoration(color: card, borderRadius: BorderRadius.circular(26), boxShadow: shadow),
           child: Column(
             children: [
@@ -84,12 +87,15 @@ class _CalendarState extends State<Calendar> {
                     ),
                 ],
               ),
-              GridView.count(
-                crossAxisCount: 7,
+              GridView(
+                padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 6,
-                crossAxisSpacing: 6,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  mainAxisExtent: math.max(52, MediaQuery.textScalerOf(context).scale(20) + 30),
+                  mainAxisSpacing: 2,
+                ),
                 children: [
                   for (var i = 0; i < cells; i++)
                     if (i < offset || i - offset >= app.dim)
@@ -97,45 +103,73 @@ class _CalendarState extends State<Calendar> {
                     else
                       () {
                         final d = DateTime(first.year, first.month, first.day + i - offset), t = sum(byDay[dateKey(d)] ?? []), isSel = d == selDay;
-                        return GestureDetector(
-                          onTap: () => setState(() => selDay = d),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: isSel ? green : Colors.transparent,
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: d == today && !isSel ? ok(.62, .1, 10) : Colors.transparent, width: 1.5),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              spacing: 5,
-                              children: [
-                                Text(
-                                  '${d.day}',
-                                  style: serif(
-                                    16,
-                                    c: isSel
-                                        ? onGreen
-                                        : d.isAfter(today)
-                                        ? ok(.68, .02, 160)
-                                        : ink,
+                        return Semantics(
+                          button: true,
+                          selected: isSel,
+                          label: t == 0 ? dayLabel(d) : '${dayLabel(d)}, ${fmt(t)}',
+                          excludeSemantics: true,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => setState(() => selDay = d),
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: isSel ? green : Colors.transparent,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(color: d == today && !isSel ? ok(.62, .1, 10) : Colors.transparent, width: 1.5),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                spacing: 5,
+                                children: [
+                                  Text(
+                                    '${d.day}',
+                                    textAlign: TextAlign.center,
+                                    style: sans(
+                                      16,
+                                      c: isSel
+                                          ? onGreen
+                                          : d.isAfter(today)
+                                          ? ok(.55, .02, 160)
+                                          : ink,
+                                    ),
                                   ),
-                                ),
-                                dot(
-                                  6,
-                                  t == 0
-                                      ? Colors.transparent
-                                      : t > 50
-                                      ? ok(.62, .1, 10)
-                                      : isSel
-                                      ? ok(.9, .05, 150)
-                                      : ok(.7, .07, 150),
-                                ),
-                              ],
+                                  dot(
+                                    t > 50 ? 8 : 6,
+                                    t == 0
+                                        ? Colors.transparent
+                                        : isSel
+                                        ? onGreen.withValues(alpha: t > 50 ? 1 : .6)
+                                        : t > 50
+                                        ? deep
+                                        : light,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
                       }(),
                 ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 18,
+                  runSpacing: 6,
+                  children: [
+                    for (final (size, color, label) in [(6.0, light, tr.dayWithSpending), (8.0, deep, tr.dayOver(fmt(50)))])
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 6,
+                        children: [
+                          dot(size, color),
+                          Text(label, style: sans(12, c: muted)),
+                        ],
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -151,7 +185,7 @@ class _CalendarState extends State<Calendar> {
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
                 children: [
-                  Text(dayLabel(selDay), style: serif(20)),
+                  Expanded(child: Text(dayLabel(selDay), style: serif(20))),
                   Text(fmt(sum(sel)), style: serif(17, c: ok(.42, .04, 160))),
                 ],
               ),
@@ -183,8 +217,16 @@ class _CalendarState extends State<Calendar> {
                 ),
               if (sel.isEmpty)
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  child: Text(tr.quietDay, style: sans(15, c: ok(.45, .03, 160))),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    spacing: 14,
+                    children: [
+                      Image.asset(pillars.values.elementAt(selDay.day % 4).art, width: 64, height: 64, excludeFromSemantics: true),
+                      Expanded(
+                        child: Text(tr.quietDay, style: sans(15, h: 1.5, c: ok(.45, .03, 160))),
+                      ),
+                    ],
+                  ),
                 ),
             ],
           ),

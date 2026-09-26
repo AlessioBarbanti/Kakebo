@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
+import 'package:kakebo/app/app_scope.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/shared/theme/color.dart';
 import 'package:kakebo/shared/theme/tokens.dart';
@@ -28,6 +29,7 @@ class _BreathState extends State<Breath> with SingleTickerProviderStateMixin {
     final p = _c.value < .5 ? 0 : 1;
     if (p == _phase) return;
     _phase = p;
+    if (!AppScope.read(context).flags['sound']!) return;
     _bowls[p].play(AssetSource(p == 0 ? 'sounds/inspira.wav' : 'sounds/espira.wav'), volume: .6, ctx: _ctx);
   }
 
@@ -82,5 +84,3 @@ class _Fn extends Animatable<double> {
   @override
   double transform(double t) => f(t);
 }
-
-/// Dashed rounded outline (the "envelope" around the money left to spend).

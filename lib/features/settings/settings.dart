@@ -21,29 +21,32 @@ class Settings extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = AppScope.watch(context);
     final sub = ok(.45, .03, 160);
-    Widget row(String label, String note, {String value = '', String? flag, VoidCallback? tap}) => InkWell(
-      onTap: flag != null ? () => app.update(() => app.flags[flag] = !app.flags[flag]!) : tap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: ok(.94, .02, 150))),
-        ),
-        child: Row(
-          spacing: 12,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 2,
-                children: [
-                  Text(label, style: sans(15)),
-                  Text(note, style: sans(13, c: sub)),
-                ],
+    // One node for TalkBack: label, note and the switch's on/off together.
+    Widget row(String label, String note, {String value = '', String? flag, VoidCallback? tap}) => MergeSemantics(
+      child: InkWell(
+        onTap: flag != null ? () => app.update(() => app.flags[flag] = !app.flags[flag]!) : tap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: ok(.94, .02, 150))),
+          ),
+          child: Row(
+            spacing: 12,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 2,
+                  children: [
+                    Text(label, style: sans(15)),
+                    Text(note, style: sans(13, c: sub)),
+                  ],
+                ),
               ),
-            ),
-            if (value.isNotEmpty) Text(value, style: sans(14, c: ok(.42, .04, 160))),
-            if (flag != null) Toggle(app.flags[flag]!),
-          ],
+              if (value.isNotEmpty) Text(value, style: sans(14, c: ok(.42, .04, 160))),
+              if (flag != null) Toggle(app.flags[flag]!),
+            ],
+          ),
         ),
       ),
     );
@@ -70,7 +73,8 @@ class Settings extends StatelessWidget {
     return Reveal(
       spacing: 24,
       children: [
-        heading(tr.settingsKicker, tr.settings),
+        Align(alignment: Alignment.centerLeft, child: TapText(tr.backHome, () => app.go('home'))),
+        Text(tr.settings, style: serif(26, h: 1.2)),
         group(tr.ledgerGroup, [
           row(
             tr.monthStartLabel,

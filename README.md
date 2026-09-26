@@ -41,10 +41,9 @@ Le frasi non ancora tradotte finiscono in `build/untranslated-messages.json`.
 - `lib/shared/`: `theme` per colori, tipografia e presentazione dei pilastri; `widgets` per i controlli comuni; `illustrations` per ramo, sigillo ed ensō; `animations` per transizioni e respiro
 - `lib/l10n/`: sorgenti ARB, `generated/` per l'output Flutter, `localization.dart` per lingua e testi, `formatters.dart` per date e importi
 - `test/`: test suddivisi per modelli, stato, servizi, funzionalità, localizzazione e componenti condivisi
-- `assets/art/`: stampe di pubblico dominio (Wikimedia Commons)
+- `assets/art/`: stampe di pubblico dominio (Wikimedia Commons) per l'introduzione; rametti dei pilastri (`sprig_*.webp`) e fondo a inchiostro (`paper.webp`) ridotti da `python tool/art.py` dai master in `assets/src/botanical/` (prompt in `PROMPTS.md`)
 - `assets/sounds/`: campane tibetane sintetizzate da `dart run tool/bowl.dart` (note, volume e durata sono in cima al file)
 - `assets/fonts/`: Shippori Mincho e Zen Kaku Gothic New (OFL), ridotti ai soli caratteri usati nel codice e nelle traduzioni. Se aggiungi testo giapponese o una lingua nuova, rigenerali con `python tool/fonts.py <cartella dei font completi>`
-- `assets/art/ink_plum_wash.png`: lo sfondo a inchiostro già elaborato da `dart run tool/wash.dart` (sorgente in `assets/src/`)
 - `assets/icon/`: icona dipinta (`source.png`); `dart run tool/icon.dart && dart run flutter_launcher_icons` crea le icone Android e quella delle notifiche
 
 Le schermate leggono lo stato con `AppScope.watch(context)` durante il build e con `AppScope.read(context)` nei callback. Non esiste uno stato globale `app`. Le finestre modali ricevono lo scope della schermata che le apre. I modelli non importano la UI: colori e nomi tradotti dei pilastri sono estensioni di presentazione in `shared/theme/`.

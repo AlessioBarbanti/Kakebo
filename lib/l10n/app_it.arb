@@ -7,7 +7,16 @@
   "skip": "Salta",
   "back": "Indietro",
   "backToLedger": "← Torna al registro",
-  "setupTitle": "Prima di iniziare, scrivi cosa entra e cosa deve uscire.",
+  "backHome": "← Oggi",
+  "setupTitle": "Prepara {month}",
+  "@setupTitle": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "setupIntro": "Cosa entra, cosa esce ogni mese, cosa mettere da parte: il resto è da spendere con consapevolezza.",
   "income": "Entrate del mese",
   "incomeHint": "Stipendio e altre entrate",
   "savingGoal": "Obiettivo di risparmio",
@@ -98,23 +107,28 @@
       }
     }
   },
-  "branchTitle": "Il ramo del risparmio",
-  "branchRule": "Ogni fiore vale {flower} del tuo obiettivo. Sboccia quando la spesa resta nel ritmo del mese: finora {soFar} su {goal}.",
-  "@branchRule": {
-    "placeholders": {
-      "flower": {
-        "type": "String"
-      },
-      "soFar": {
-        "type": "String"
-      },
-      "goal": {
-        "type": "String"
-      }
-    }
-  },
+  "branchTitle": "Il ritmo del mese",
+  "paceExplanation": "Come si legge il ritmo",
+  "writeThought": "Scrivi un pensiero",
+  "expenseReflection": "Ripensando a questa spesa",
+  "optionalReflection": "Facoltativo, anche solo poche parole.",
+  "expenseReflectionPrompt": "Come ti senti rispetto a questa scelta?",
+  "reflectionPlaceholder": "Se ti va, lascia qualche parola…",
+  "reflectionInvitation": "Prenditi il tempo che vuoi. Puoi rispondere a una sola domanda, o tornare più tardi.",
+  "reflectionAutosaved": "Le parole si salvano mentre scrivi. Puoi tornare a cambiarle.",
+  "monthNumbers": "I numeri del mese",
+  "monthGood": "Cosa ti ha fatto stare bene?",
+  "monthChange": "Cosa faresti diversamente?",
+  "monthIntention": "Quale piccola intenzione vuoi portare nel prossimo mese?",
+  "intentionForThisMonth": "Un’intenzione da ritrovare",
+  "intentionGentle": "L’hai scritta il mese scorso. Puoi tenerla con te, oppure scegliere una strada diversa.",
+  "weekReflection": "Un momento per riflettere",
+  "reflectionMemory": "Parole del mese",
+  "moreMemories": "Mostra altri ricordi",
+  "weekReflectionPrompt": "C’è una scelta di questa settimana che vorresti ripetere?",
+  "branchRule": "Un fiore sboccia per ogni decimo di mese trascorso, se la spesa resta nel ritmo del disponibile. Misura il passo, non i soldi messi da parte.",
   "today": "Oggi",
-  "addShort": "+ Annota",
+  "addExpense": "Annota spesa",
   "emptyLedger": "Il registro è ancora vuoto. Annota la prima spesa del mese: basta un importo e un pilastro.",
   "quietToday": "Nessuna spesa oggi. Una giornata leggera.",
   "newExpense": "Nuova spesa",
@@ -182,7 +196,7 @@
     }
   },
   "theMonth": "Il mese",
-  "questionsFrom": "Le quattro domande · dal {date}",
+  "questionsFrom": "Rivedi il mese · termina il {date}",
   "@questionsFrom": {
     "placeholders": {
       "date": {
@@ -200,7 +214,7 @@
       }
     }
   },
-  "questionsHint": "Quanto hai, quanto vuoi risparmiare, quanto spendi, come migliorare.",
+  "questionsHint": "Ciò che ti ha fatto stare bene, ciò che cambieresti, una piccola intenzione per il futuro.",
   "timeline": "Cronologia",
   "week": "La settimana · {span}",
   "@week": {
@@ -211,7 +225,7 @@
     }
   },
   "weekNoSpending": "Una settimana senza spese.",
-  "questionsOf": "Le quattro domande · {month}",
+  "questionsOf": "Riflessioni · {month}",
   "@questionsOf": {
     "placeholders": {
       "month": {
@@ -241,33 +255,15 @@
   },
   "backToJournal": "← Diario",
   "reviewKicker": "FINE MESE",
-  "reviewTitle": "Le quattro domande",
-  "soFar": "{month}, FINORA",
-  "@soFar": {
-    "placeholders": {
-      "month": {
-        "type": "String"
-      }
-    }
-  },
-  "towardSaving": "verso il risparmio · obiettivo {goal}",
-  "@towardSaving": {
+  "reviewTitle": "Uno sguardo al mese",
+  "residualNow": "RESIDUO ATTUALE",
+  "residualNote": "Entrate meno spese fisse e spese annotate. Tolto l'obiettivo di {goal}, restano {left} da spendere.",
+  "@residualNote": {
     "placeholders": {
       "goal": {
         "type": "String"
-      }
-    }
-  },
-  "flowerWorth": "Ogni fiore vale {flower}. Finora {soFar} su {goal} messi da parte.",
-  "@flowerWorth": {
-    "placeholders": {
-      "flower": {
-        "type": "String"
       },
-      "soFar": {
-        "type": "String"
-      },
-      "goal": {
+      "left": {
         "type": "String"
       }
     }
@@ -318,6 +314,15 @@
   "month": "Mese",
   "year": "Anno",
   "quietDay": "Una giornata tranquilla. Nessuna spesa annotata.",
+  "dayWithSpending": "Con spese",
+  "dayOver": "Oltre {amount}",
+  "@dayOver": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "goalReached": "Obiettivo di risparmio raggiunto",
   "spentInPillars": "Speso nei pilastri",
   "onTrack": "Sulla strada per risparmiare",
@@ -340,7 +345,8 @@
   "backToLedgerShort": "Torna al registro",
   "breathFirst": "Prima, un respiro",
   "followCircle": "Segui il cerchio per tre respiri, poi scrivi.",
-  "ready": "Sono pronto",
+  "ready": "Scrivi ora",
+  "sound": "Suono delle campane",
   "smallThing": "Anche una cosa piccola. Fai un respiro, poi scrivi.",
   "todayHint": "Oggi…",
   "later": "Più tardi",
@@ -379,7 +385,7 @@
   "weekly": "Riepilogo della domenica",
   "weeklyHint": "La settimana raccolta nel diario, niente da scrivere",
   "proverb": "Frase del giorno",
-  "proverbHint": "Un proverbio giapponese in fondo a Oggi",
+  "proverbHint": "Un pensiero per oggi sotto il saluto, con originale e fonte al tocco",
   "eveningNote": "Nota serale",
   "eveningNoteHint": "Un invito a scrivere le spese del giorno",
   "noteTime": "Orario della nota",
@@ -420,18 +426,14 @@
   "licenses": "Licenze",
   "licensesHint": "Font, stampe e librerie usate",
   "prints": "Stampe (pubblico dominio, Wikimedia Commons)",
-  "printsList": "Utagawa Hiroshige, Giardino di susini a Kameido (Cento vedute famose di Edo), 1857.\nZheng Xie, Bambù e rocce. Google Art Project.\nZheng Xie, Orchidee. Princeton University Art Museum, 2014-128.\nKatsushika Hokusai, Crisantemi e ape, c. 1832.\nWang Mian, Pruno in inchiostro (lo sfondo di ogni schermata).\n\nOpere in pubblico dominio, riprodotte da Wikimedia Commons.",
+  "printsList": "Utagawa Hiroshige, Giardino di susini a Kameido (Cento vedute famose di Edo), 1857.\nZheng Xie, Bambù e rocce. Google Art Project.\nZheng Xie, Orchidee. Princeton University Art Museum, 2014-128.\nKatsushika Hokusai, Crisantemi e ape, c. 1832.\n\nOpere in pubblico dominio, riprodotte da Wikimedia Commons.",
   "pillarNeeds": "Necessità",
-  "pillarNeedsJp": "必要 hitsuyō · bambù",
   "pillarNeedsVirtue": "Il bambù: si piega ma non si spezza",
   "pillarWants": "Desideri",
-  "pillarWantsJp": "欲しい hoshii · susino",
   "pillarWantsVirtue": "Il susino: fiorisce quando serve gioia",
   "pillarCulture": "Cultura",
-  "pillarCultureJp": "文化 bunka · orchidea",
   "pillarCultureVirtue": "L'orchidea: nutre la mente in silenzio",
   "pillarUnexpected": "Imprevisti",
-  "pillarUnexpectedJp": "予想外 yosōgai · crisantemo",
   "pillarUnexpectedVirtue": "Il crisantemo: resiste al freddo inatteso",
   "seasonWinter": "Inverno",
   "seasonWinterPlant": "Nandina",
@@ -441,13 +443,46 @@
   "seasonSummerPlant": "Pesce rosso",
   "seasonAutumn": "Autunno",
   "seasonAutumnPlant": "Luna piena",
-  "proverb1Meaning": "Anche la polvere, accumulandosi, diventa una montagna.",
-  "proverb2Meaning": "Sapere quando si ha abbastanza.",
-  "proverb3Meaning": "Se hai fretta, prendi la strada lunga.",
-  "proverb4Meaning": "Chi compra ciò che costa poco, perde denaro.",
-  "proverb5Meaning": "Anche una pietra si scalda, se ci siedi sopra tre anni.",
-  "proverb6Meaning": "Cadi sette volte, rialzati otto.",
-  "proverb7Meaning": "Ogni incontro accade una volta sola.",
+  "japaneseSaying": "Detto giapponese",
+  "phrase1": "Anche la polvere, accumulandosi, diventa una montagna.",
+  "phrase2": "Sapere quando si ha abbastanza.",
+  "phrase2Source": "Laozi, Tao Te Ching, 33",
+  "phrase3": "Se hai fretta, prendi la strada lunga.",
+  "phrase4": "Ogni giorno è un buon giorno.",
+  "phrase4Source": "Yunmen, dalla Raccolta della Roccia Blu, 6",
+  "phrase5": "Anche una pietra si scalda, se ci siedi sopra tre anni.",
+  "phrase6": "In ciò che resta c'è fortuna.",
+  "phrase7": "Cadi sette volte, rialzati otto.",
+  "phrase8": "Si guardano i fiori solo in piena fioritura, e la luna solo senza nubi?",
+  "phrase8Source": "Yoshida Kenkô, Tsurezuregusa, 137",
+  "phrase9": "Chi si prepara non ha di che preoccuparsi.",
+  "phrase10": "Anche il cammino più lungo comincia da un passo.",
+  "phrase11": "Ogni incontro accade una volta sola.",
+  "phrase11Source": "Ii Naosuke, Chanoyu ichie shû, 1858",
+  "phrase12": "La fortuna entra nella casa dove si ride.",
+  "phrase13": "Il troppo vale quanto il troppo poco.",
+  "phrase13Source": "Confucio, Dialoghi, XI",
+  "phrase14": "Domani soffierà il vento di domani.",
+  "phrase15": "Col sole si coltiva, con la pioggia si legge.",
+  "phrase16": "Farlo è più facile che preoccuparsene.",
+  "phrase17": "Ripassare l'antico per capire il nuovo.",
+  "phrase17Source": "Confucio, Dialoghi, II",
+  "phrase18": "Dopo la pioggia la terra si fa più salda.",
+  "phrase19": "Il bastone si prende prima di cadere.",
+  "phrase20": "Non dimenticare lo spirito degli inizi.",
+  "phrase20Source": "Zeami, Kakyô",
+  "phrase21": "Dove vivi, lì è la tua capitale.",
+  "phrase22": "Anche le scimmie cadono dagli alberi.",
+  "phrase23": "Il fiume scorre senza sosta, e la sua acqua non è mai la stessa.",
+  "phrase23Source": "Kamo no Chômei, Hôjôki",
+  "phrase24": "A saper aspettare, arriva il tempo buono per salpare.",
+  "phrase25": "Fortuna e sfortuna si scambiano spesso di posto.",
+  "phrase26": "La goccia di pioggia scava la pietra.",
+  "phrase27": "Il bene più alto è come l'acqua.",
+  "phrase27Source": "Laozi, Tao Te Ching, 8",
+  "phrase28": "Da sveglio ti basta mezzo tatami, sdraiato uno.",
+  "phrase29": "Fai tutto ciò che puoi, poi lascia fare al cielo.",
+  "phrase30": "Se un dio ti lascia, un altro ti raccoglie.",
   "defaultFixed1": "Affitto",
   "defaultFixed2": "Bollette luce e gas",
   "defaultFixed3": "Internet e telefono",

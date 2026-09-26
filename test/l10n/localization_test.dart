@@ -5,6 +5,7 @@ import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/model/pillar.dart';
 import 'package:kakebo/shared/theme/pillars.dart';
+import 'package:kakebo/shared/theme/seasons.dart';
 import 'package:kakebo/state/kakebo.dart';
 
 void main() {
@@ -35,5 +36,21 @@ void main() {
     setLocale(const Locale('it', 'IT'));
     expect(fmt(1650), '1.650 €');
     expect(tr.flowers(1), '1 fiore su 10');
+  });
+
+  test('a new saying every day, running on across months, with a meaning in each language', () {
+    final app = Kakebo();
+    int on(DateTime d) {
+      Kakebo.clock = () => d;
+      return app.phraseIndex;
+    }
+
+    // Before, the choice was the day of the month: it jumped back when a month ended.
+    expect(on(DateTime(2026, 10, 1, 8)), (on(DateTime(2026, 9, 30, 23)) + 1) % phrases.length);
+    expect({for (var d = 0; d < phrases.length; d++) on(DateTime(2026, 9, 1 + d))}.length, phrases.length);
+    for (final l in const [Locale('it', 'IT'), Locale('en', 'GB')]) {
+      setLocale(l);
+      expect(tr.phraseMeanings.length, phrases.length, reason: '$l');
+    }
   });
 }

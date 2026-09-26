@@ -31,8 +31,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backToLedger => '← Back to the ledger';
 
   @override
-  String get setupTitle =>
-      'Before you begin, write down what comes in and what has to go out.';
+  String get backHome => '← Today';
+
+  @override
+  String setupTitle(String month) {
+    return 'Plan $month';
+  }
+
+  @override
+  String get setupIntro =>
+      'What comes in, what goes out every month, what to put aside: the rest is yours to spend mindfully.';
 
   @override
   String get income => 'Income this month';
@@ -155,18 +163,76 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get branchTitle => 'The savings branch';
+  String get branchTitle => 'The month\'s pace';
 
   @override
-  String branchRule(String flower, String soFar, String goal) {
-    return 'Each flower is worth $flower of your goal. It blooms while spending keeps the month\'s pace: so far $soFar of $goal.';
-  }
+  String get paceExplanation => 'Understanding the pace';
+
+  @override
+  String get writeThought => 'Write a thought';
+
+  @override
+  String get expenseReflection => 'Looking back on this expense';
+
+  @override
+  String get optionalReflection => 'Optional, even just a few words.';
+
+  @override
+  String get expenseReflectionPrompt => 'How do you feel about this choice?';
+
+  @override
+  String get reflectionPlaceholder => 'Leave a few words, if you like…';
+
+  @override
+  String get reflectionInvitation =>
+      'Take your time. You can answer just one question, or come back later.';
+
+  @override
+  String get reflectionAutosaved =>
+      'Your words are saved as you write. You can change them later.';
+
+  @override
+  String get monthNumbers => 'The month in numbers';
+
+  @override
+  String get monthGood => 'What made you feel good?';
+
+  @override
+  String get monthChange => 'What would you do differently?';
+
+  @override
+  String get monthIntention =>
+      'What small intention would you like to carry into next month?';
+
+  @override
+  String get intentionForThisMonth => 'An intention to return to';
+
+  @override
+  String get intentionGentle =>
+      'You wrote this last month. You can carry it with you, or choose a different path.';
+
+  @override
+  String get weekReflection => 'A moment to reflect';
+
+  @override
+  String get reflectionMemory => 'Words from the month';
+
+  @override
+  String get moreMemories => 'Show earlier memories';
+
+  @override
+  String get weekReflectionPrompt =>
+      'Is there a choice from this week you would like to make again?';
+
+  @override
+  String get branchRule =>
+      'A flower opens for each tenth of the month gone by, as long as spending keeps pace with what is available. It measures pace, not money put aside.';
 
   @override
   String get today => 'Today';
 
   @override
-  String get addShort => '+ Add';
+  String get addExpense => 'Add expense';
 
   @override
   String get emptyLedger =>
@@ -269,7 +335,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String questionsFrom(String date) {
-    return 'The four questions · from $date';
+    return 'Review the month · ends $date';
   }
 
   @override
@@ -285,7 +351,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get questionsHint =>
-      'What you have, what you want to save, what you spend, how to improve.';
+      'What felt good, what you would change, a small intention for the future.';
 
   @override
   String get timeline => 'Timeline';
@@ -300,7 +366,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String questionsOf(String month) {
-    return 'The four questions · $month';
+    return 'Reflections · $month';
   }
 
   @override
@@ -323,21 +389,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewKicker => 'END OF MONTH';
 
   @override
-  String get reviewTitle => 'The four questions';
+  String get reviewTitle => 'Looking back on the month';
 
   @override
-  String soFar(String month) {
-    return '$month, SO FAR';
-  }
+  String get residualNow => 'CURRENT BALANCE';
 
   @override
-  String towardSaving(String goal) {
-    return 'toward savings · goal $goal';
-  }
-
-  @override
-  String flowerWorth(String flower, String soFar, String goal) {
-    return 'Each flower is worth $flower. So far $soFar of $goal put aside.';
+  String residualNote(String goal, String left) {
+    return 'Income minus fixed costs and the expenses you wrote down. Take away the $goal goal and $left is left to spend.';
   }
 
   @override
@@ -382,6 +441,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quietDay => 'A quiet day. No expenses written down.';
+
+  @override
+  String get dayWithSpending => 'With expenses';
+
+  @override
+  String dayOver(String amount) {
+    return 'Over $amount';
+  }
 
   @override
   String get goalReached => 'Savings goal reached';
@@ -433,7 +500,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get followCircle => 'Follow the circle for three breaths, then write.';
 
   @override
-  String get ready => 'I\'m ready';
+  String get ready => 'Write now';
+
+  @override
+  String get sound => 'Bowl sound';
 
   @override
   String get smallThing => 'Even something small. Take a breath, then write.';
@@ -513,7 +583,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get proverb => 'Saying of the day';
 
   @override
-  String get proverbHint => 'A Japanese proverb at the bottom of Today';
+  String get proverbHint =>
+      'A thought for today under the greeting; tap for the original and its source';
 
   @override
   String get eveningNote => 'Evening note';
@@ -640,13 +711,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get printsList =>
-      'Utagawa Hiroshige, Plum Park in Kameido (One Hundred Famous Views of Edo), 1857.\nZheng Xie, Bamboo and Rocks. Google Art Project.\nZheng Xie, Orchids. Princeton University Art Museum, 2014-128.\nKatsushika Hokusai, Chrysanthemums and Bee, c. 1832.\nWang Mian, Ink Plum (the background of every screen).\n\nPublic domain works, reproduced from Wikimedia Commons.';
+      'Utagawa Hiroshige, Plum Park in Kameido (One Hundred Famous Views of Edo), 1857.\nZheng Xie, Bamboo and Rocks. Google Art Project.\nZheng Xie, Orchids. Princeton University Art Museum, 2014-128.\nKatsushika Hokusai, Chrysanthemums and Bee, c. 1832.\n\nPublic domain works, reproduced from Wikimedia Commons.';
 
   @override
   String get pillarNeeds => 'Needs';
-
-  @override
-  String get pillarNeedsJp => '必要 hitsuyō · bamboo';
 
   @override
   String get pillarNeedsVirtue => 'Bamboo: it bends but does not break';
@@ -655,25 +723,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pillarWants => 'Wants';
 
   @override
-  String get pillarWantsJp => '欲しい hoshii · plum';
-
-  @override
   String get pillarWantsVirtue => 'Plum blossom: it flowers when joy is needed';
 
   @override
   String get pillarCulture => 'Culture';
 
   @override
-  String get pillarCultureJp => '文化 bunka · orchid';
-
-  @override
   String get pillarCultureVirtue => 'Orchid: it feeds the mind in silence';
 
   @override
   String get pillarUnexpected => 'Unexpected';
-
-  @override
-  String get pillarUnexpectedJp => '予想外 yosōgai · chrysanthemum';
 
   @override
   String get pillarUnexpectedVirtue =>
@@ -704,27 +763,127 @@ class AppLocalizationsEn extends AppLocalizations {
   String get seasonAutumnPlant => 'Full moon';
 
   @override
-  String get proverb1Meaning => 'Even dust, piled up, becomes a mountain.';
+  String get japaneseSaying => 'Japanese saying';
 
   @override
-  String get proverb2Meaning => 'Know when you have enough.';
+  String get phrase1 => 'Even dust, piled up, becomes a mountain.';
 
   @override
-  String get proverb3Meaning =>
-      'If you are in a hurry, take the long way round.';
+  String get phrase2 => 'Know when you have enough.';
 
   @override
-  String get proverb4Meaning => 'Buy cheap, lose money.';
+  String get phrase2Source => 'Laozi, Tao Te Ching, 33';
 
   @override
-  String get proverb5Meaning =>
+  String get phrase3 => 'If you are in a hurry, take the long way round.';
+
+  @override
+  String get phrase4 => 'Every day is a good day.';
+
+  @override
+  String get phrase4Source => 'Yunmen, from the Blue Cliff Record, 6';
+
+  @override
+  String get phrase5 =>
       'Even a stone grows warm if you sit on it for three years.';
 
   @override
-  String get proverb6Meaning => 'Fall seven times, get up eight.';
+  String get phrase6 => 'There is luck in what is left.';
 
   @override
-  String get proverb7Meaning => 'Every meeting happens only once.';
+  String get phrase7 => 'Fall seven times, get up eight.';
+
+  @override
+  String get phrase8 =>
+      'Are blossoms only for full bloom, and the moon only for a cloudless sky?';
+
+  @override
+  String get phrase8Source => 'Yoshida Kenkô, Tsurezuregusa, 137';
+
+  @override
+  String get phrase9 => 'Be prepared and there is nothing to worry about.';
+
+  @override
+  String get phrase10 => 'Even the longest road begins with one step.';
+
+  @override
+  String get phrase11 => 'Every meeting happens only once.';
+
+  @override
+  String get phrase11Source => 'Ii Naosuke, Chanoyu ichie shû, 1858';
+
+  @override
+  String get phrase12 => 'Good fortune comes to the house that laughs.';
+
+  @override
+  String get phrase13 => 'Too much is as bad as too little.';
+
+  @override
+  String get phrase13Source => 'Confucius, Analects, XI';
+
+  @override
+  String get phrase14 => 'Tomorrow\'s wind will blow tomorrow.';
+
+  @override
+  String get phrase15 => 'Farm when it is sunny, read when it rains.';
+
+  @override
+  String get phrase16 => 'Doing it is easier than worrying about it.';
+
+  @override
+  String get phrase17 => 'Revisit the old to understand the new.';
+
+  @override
+  String get phrase17Source => 'Confucius, Analects, II';
+
+  @override
+  String get phrase18 => 'After the rain, the ground grows firmer.';
+
+  @override
+  String get phrase19 => 'Take the walking stick before you fall.';
+
+  @override
+  String get phrase20 => 'Never forget the spirit of beginnings.';
+
+  @override
+  String get phrase20Source => 'Zeami, Kakyô';
+
+  @override
+  String get phrase21 => 'Wherever you live becomes your capital.';
+
+  @override
+  String get phrase22 => 'Even monkeys fall from trees.';
+
+  @override
+  String get phrase23 =>
+      'The river flows on without end, and its water is never the same.';
+
+  @override
+  String get phrase23Source => 'Kamo no Chômei, Hôjôki';
+
+  @override
+  String get phrase24 => 'Wait, and the weather turns fair for sailing.';
+
+  @override
+  String get phrase25 => 'Good and bad fortune often trade places.';
+
+  @override
+  String get phrase26 => 'Dripping rain wears through stone.';
+
+  @override
+  String get phrase27 => 'The highest good is like water.';
+
+  @override
+  String get phrase27Source => 'Laozi, Tao Te Ching, 8';
+
+  @override
+  String get phrase28 => 'Awake you need half a mat, asleep a whole one.';
+
+  @override
+  String get phrase29 => 'Do all you can, then leave the rest to heaven.';
+
+  @override
+  String get phrase30 => 'If one god turns away, another takes you in.';
 
   @override
   String get defaultFixed1 => 'Rent';

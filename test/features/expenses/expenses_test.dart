@@ -61,8 +61,10 @@ void main() {
     await t.pumpAndSettle();
     expect(find.text('Modifica spesa'), findsOneWidget);
     expect(find.descendant(of: find.byType(AddSheet), matching: find.text('7\u00A0€')), findsOneWidget);
-    await t.tap(find.text('⌫'));
+    await t.tap(find.byIcon(Icons.backspace_outlined));
     await t.tap(find.text('9'));
+    await t.ensureVisible(find.text('Salva'));
+    await t.pumpAndSettle();
     await t.tap(find.text('Salva'));
     await t.pumpAndSettle();
     expect(app.entries.first.amt, 9);

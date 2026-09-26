@@ -33,14 +33,25 @@ void main() {
     first.addEntry(12.5, 'Spesa', 'needs');
     expect(storage.writes, 2);
 
+    first.editEntry(first.entries.single, 12.5, 'Spesa', 'needs', reflection: 'Una scelta utile');
+    first.update(() {
+      first.reflections['2026-09'] = {'good': 'Tempo per me'};
+      first.weeklyReflections['2026-09-20'] = 'Il pranzo insieme';
+      first.improve['2026-09'] = 'Prendermi tempo';
+    });
+
     first.refresh();
-    expect(storage.writes, 2);
+    expect(storage.writes, 4);
     final second = await Kakebo.load(storage: storage);
     expect(second.screen, 'home');
     expect(second.monthStart, 27);
     expect(second.entries.single.note, 'Spesa');
     expect(second.entries.single.amt, 12.5);
-    expect(storage.writes, 2);
+    expect(second.entries.single.reflection, 'Una scelta utile');
+    expect(second.reflections['2026-09']?['good'], 'Tempo per me');
+    expect(second.weeklyReflections['2026-09-20'], 'Il pranzo insieme');
+    expect(second.improve['2026-09'], 'Prendermi tempo');
+    expect(storage.writes, 4);
     first.dispose();
     second.dispose();
   });
