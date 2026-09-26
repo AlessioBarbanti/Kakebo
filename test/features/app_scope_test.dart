@@ -31,6 +31,7 @@ void main() {
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('5'));
+    await tester.tap(find.text('Cultura')); // a new expense starts with no pillar
     await tester.tap(find.text('Salva'));
     await tester.pumpAndSettle();
     expect(inner.entries.single.amt, 5);

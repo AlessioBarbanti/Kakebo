@@ -17,12 +17,12 @@ void main() {
     Kakebo.clock = () => DateTime(2026, 9, 24, 21);
     final a = Kakebo()..seedDemo();
     a.setBudget('wants', 350);
-    a.noteTime = '19:45';
+    a.thoughtTime = '19:45';
     final b = Kakebo();
     expect(b.restore(a.backup()), isTrue);
     expect(b.entries.length, a.entries.length);
     expect(b.budget('wants'), 350);
-    expect(b.noteTime, '19:45');
+    expect(b.thoughtTime, '19:45');
     expect(b.restore('{"not": "a backup"}'), isFalse);
     expect(b.restore('garbage'), isFalse);
     expect(b.entries.length, a.entries.length);

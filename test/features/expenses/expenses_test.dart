@@ -43,6 +43,28 @@ void main() {
     expect(app.entries.single.p, 'wants');
   });
 
+  testWidgets('a new expense has no pillar until one is picked', (t) async {
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: MaterialApp(
+          home: Builder(
+            builder: (c) => TextButton(onPressed: () => openAdd(c), child: const Text('apri')),
+          ),
+        ),
+      ),
+    );
+    await t.tap(find.text('apri'));
+    await t.pumpAndSettle();
+    await t.tap(find.text('8'));
+    expect(find.text('Scegli un pilastro'), findsOneWidget);
+    await t.tap(find.text('Salva'));
+    expect(app.entries, isEmpty);
+    await t.tap(find.text('Cultura'));
+    await t.tap(find.text('Salva'));
+    expect(app.entries.single.p, 'culture');
+  });
+
   testWidgets('tapping an expense edits it; deleting it can be undone', (t) async {
     Kakebo.clock = () => DateTime(2026, 9, 24, 21);
     app.onboarded = true;
@@ -79,5 +101,16 @@ void main() {
     await t.tap(find.text('Annulla'));
     await t.pumpAndSettle();
     expect(app.entries.first.note, 'Pane');
+
+    await t.tap(find.text('Pane'));
+    await t.pumpAndSettle();
+    await t.ensureVisible(find.text('Elimina spesa'));
+    await t.pumpAndSettle();
+    await t.tap(find.text('Elimina spesa'));
+    await t.pumpAndSettle();
+    expect(find.text('Spesa eliminata'), findsOneWidget);
+    await t.pump(const Duration(seconds: 6));
+    await t.pumpAndSettle();
+    expect(find.text('Spesa eliminata'), findsNothing, reason: 'the undo offer leaves on its own');
   });
 }

@@ -9,6 +9,7 @@ import 'package:kakebo/features/journal/journal.dart';
 import 'package:kakebo/features/journal/review.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
+import 'package:kakebo/model/entry.dart';
 import 'package:kakebo/state/kakebo.dart';
 
 void main() {
@@ -156,6 +157,25 @@ void main() {
     expect(find.text(tr.addExpense), findsNothing);
     await t.tap(find.text(tr.writeThought));
     expect(app.screen, 'thought');
+  });
+
+  testWidgets('each Sunday recap says what changed since the week before; sealed months show what was written', (t) async {
+    final app = Kakebo()
+      ..entries = [
+        Entry(DateTime(2026, 8, 26), 'Spesa', 40, 'needs'), // the week before the first recap
+        Entry(DateTime(2026, 9, 2), 'Spesa', 40, 'needs'), // 31 Aug – 6 Sep: the same
+        Entry(DateTime(2026, 9, 9), 'Spesa', 40, 'needs'), // 7 – 13 Sep: 30 more, all in wants
+        Entry(DateTime(2026, 9, 10), 'Cena', 30, 'wants'),
+        Entry(DateTime(2026, 9, 16), 'Libro', 12, 'culture'), // 14 – 20 Sep: 58 less, mostly needs
+      ]
+      ..sealed.addAll({'2026-07': 300, '2026-08': 200})
+      ..improve['2026-07'] = 'Meno cene fuori';
+    await mount(t, app, const Journal());
+    expect(find.text(tr.weekSame), findsOneWidget);
+    expect(find.text(tr.weekMore(fmt(30), 'Desideri')), findsOneWidget);
+    expect(find.text(tr.weekLess(fmt(58), 'Necessità')), findsOneWidget);
+    expect(find.text(tr.resolutionFor('agosto', 'Meno cene fuori')), findsOneWidget);
+    expect(find.text(tr.sealedSaved(fmt(200))), findsOneWidget); // August, sealed with nothing written: no stock line under it
   });
 
   testWidgets('unfinished monthly reflections remain in the diary and older memories can be reached', (t) async {

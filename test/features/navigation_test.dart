@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kakebo/app/app_scope.dart';
 import 'package:kakebo/app/shell.dart';
+import 'package:kakebo/features/home/home.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/shared/theme/seasons.dart';
@@ -105,7 +106,44 @@ void main() {
     }
   });
 
+  testWidgets('every tab has the same header, so the tab bar never moves', (t) async {
+    app.go('home');
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: const MaterialApp(home: Scaffold(body: Shell())),
+      ),
+    );
+    await t.pump(const Duration(seconds: 2));
+    final tabsTop = t.getRect(find.text('Registro')).top;
+    for (final tab in ['Registro', 'Diario', 'Calendario', 'Oggi']) {
+      await t.tap(find.text(tab));
+      await t.pumpAndSettle();
+      expect(t.getRect(find.text('Registro')).top, tabsTop, reason: tab);
+      expect(find.text(app.greeting), findsOneWidget, reason: tab);
+      expect(find.byType(DailyPhrase), findsOneWidget, reason: tab);
+    }
+  });
+
+  testWidgets('a short Today does not scroll into empty space', (t) async {
+    t.view
+      ..physicalSize =
+          const Size(1080, 4000) // tall enough for Today even in the wide test font
+      ..devicePixelRatio = 2.625;
+    addTearDown(t.view.reset);
+    app.go('home');
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: const MaterialApp(home: Scaffold(body: Shell())),
+      ),
+    );
+    await t.pump(const Duration(seconds: 2));
+    expect(t.state<ScrollableState>(find.byType(Scrollable).first).position.maxScrollExtent, 0);
+  });
+
   testWidgets('a scrolled-away greeting stays hidden on the next tab, a visible one stays visible', (t) async {
+    app.seedDemo(); // a Today long enough to scroll
     app.go('home');
     await t.pumpWidget(
       AppScope(

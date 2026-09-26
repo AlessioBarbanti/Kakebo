@@ -27,6 +27,46 @@ class Home extends StatelessWidget {
     return Reveal(
       spacing: 28,
       children: [
+        // First thing in the evening (from the thought's time), one compact line; the thought keeps its own quiet screen.
+        if (notice)
+          Semantics(
+            button: true,
+            child: Material(
+              color: ok(.95, .025, 295),
+              borderRadius: BorderRadius.circular(18),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(18),
+                onTap: () => app.go('thought'),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Row(
+                    spacing: 12,
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(radius: .707, colors: [ok(.99, .01, 295), ok(.88, .05, 295)], stops: const [0, .7]),
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 1,
+                          children: [
+                            Text(tr.eveningThought, style: sans(12, c: ok(.4, .04, 290))),
+                            Text(tr.happyQuestion, style: serif(16, h: 1.3)),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.chevron_right, color: ok(.4, .04, 290)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.fromLTRB(6, 4, 6, 0),
           child: Column(
@@ -92,68 +132,6 @@ class Home extends StatelessWidget {
                 ),
               ),
           ],
-        ),
-        // One compact line; the thought itself keeps its own quiet screen.
-        if (notice)
-          Semantics(
-            button: true,
-            child: Material(
-              color: ok(.95, .025, 295),
-              borderRadius: BorderRadius.circular(18),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(18),
-                onTap: () => app.go('thought'),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    spacing: 12,
-                    children: [
-                      Container(
-                        width: 28,
-                        height: 28,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: RadialGradient(radius: .707, colors: [ok(.99, .01, 295), ok(.88, .05, 295)], stops: const [0, .7]),
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 1,
-                          children: [
-                            Text(tr.eveningThought, style: sans(12, c: ok(.4, .04, 290))),
-                            Text(tr.happyQuestion, style: serif(16, h: 1.3)),
-                          ],
-                        ),
-                      ),
-                      Icon(Icons.chevron_right, color: ok(.4, .04, 290)),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        GestureDetector(
-          onTap: () => app.go('ledger'),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
-            decoration: BoxDecoration(color: card, borderRadius: BorderRadius.circular(22), boxShadow: shadow),
-            child: Row(
-              children: [
-                for (final MapEntry(:key, value: p) in pillars.entries)
-                  Expanded(
-                    child: Column(
-                      spacing: 3,
-                      children: [
-                        Text(p.kanji, style: serif(22, c: p.ink)),
-                        Text(p.name, style: sans(12, c: muted)),
-                        Text(fmt(by[key]!.round()), style: serif(15)),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
         ),
         // The branch shows pace, not money: its flowers are never turned into euros.
         Column(

@@ -44,7 +44,7 @@ class Review extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 6,
                 children: [
-                  Text(tr.residualNow, style: sans(12, ls: 1.68, c: ok(.38, .04, 160))),
+                  Text(tr.residualNow.toUpperCase(), style: sans(12, ls: 1.68, c: ok(.38, .04, 160))), // the calendar's label too
                   Text(fmt(app.onTrack), style: serif(36, w: FontWeight.w700)),
                   Text(tr.residualNote(fmt(app.save), fmt(app.left)), style: sans(13, h: 1.5, c: dim)),
                 ],

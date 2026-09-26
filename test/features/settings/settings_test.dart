@@ -37,18 +37,13 @@ void main() {
       ),
     );
     await open();
-    for (final (label, flag) in [
-      ('Riepilogo della domenica', 'weekly'),
-      ('Frase del giorno', 'phraseOn'),
-      ('Nota serale', 'reminders'),
-      ('Notifica del pensiero', 'thoughtOn'),
-    ]) {
+    for (final (label, flag) in [('Riepilogo della domenica', 'weekly'), ('Frase del giorno', 'phraseOn'), ('Promemoria serale', 'thoughtOn')]) {
       final before = app.flags[flag]!;
       await tapRow(label);
       expect(app.flags[flag], !before, reason: label);
       await tapRow(label);
     }
-    for (final label in ['Orario', 'Orario della nota']) {
+    for (final label in ['Orario']) {
       await tapRow(label);
       expect(find.byType(TimePickerDialog), findsOneWidget, reason: label);
       await tapRow('Cancel');

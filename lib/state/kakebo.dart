@@ -31,8 +31,8 @@ class Kakebo extends ChangeNotifier {
   Map<String, Map<String, String>> reflections = {}; // budgeting month → good/change
   Map<String, String> weeklyReflections = {}; // Sunday yyyy-mm-dd → reflection
   Map<String, double> sealed = {}; // yyyy-mm → saved when sealed
-  Map<String, bool> flags = {'weekly': true, 'phraseOn': true, 'reminders': true, 'thoughtOn': true, 'sound': true};
-  String thoughtTime = '21:00', noteTime = '20:00';
+  Map<String, bool> flags = {'weekly': true, 'phraseOn': true, 'thoughtOn': true, 'sound': true}; // thoughtOn: the one evening reminder
+  String thoughtTime = '21:00';
   int monthStart = 1; // day the budgeting month begins (1–28), e.g. payday
   Map<String, double>? budgets; // null → split what is available like the design
 
@@ -64,7 +64,6 @@ class Kakebo extends ChangeNotifier {
     sealed = {for (final e in (j['sealed'] as Map).entries) e.key: (e.value as num).toDouble()};
     flags = {...flags, ...Map<String, bool>.from(j['flags'])};
     thoughtTime = j['thoughtTime'];
-    noteTime = j['noteTime'] ?? noteTime;
     monthStart = j['monthStart'] ?? 1;
     budgets = j['budgets'] == null ? null : {for (final e in (j['budgets'] as Map).entries) e.key as String: (e.value as num).toDouble()};
   }
@@ -85,7 +84,6 @@ class Kakebo extends ChangeNotifier {
     'sealed': sealed,
     'flags': flags,
     'thoughtTime': thoughtTime,
-    'noteTime': noteTime,
     'monthStart': monthStart,
     'budgets': ?budgets,
   };

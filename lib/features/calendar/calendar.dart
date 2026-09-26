@@ -236,7 +236,7 @@ class _CalendarState extends State<Calendar> {
   }
 
   Widget _year() {
-    final now = app.now, year = app.label.year, keys = pillars.keys.toList();
+    final now = app.now, year = app.label.year, avail = app.available;
     // ponytail: past months use today's income and fixed costs unless sealed; store a monthly snapshot if those change often.
     final months = [
       for (var i = 0; i < 12; i++)
@@ -245,9 +245,9 @@ class _CalendarState extends State<Calendar> {
           if (p.start.isAfter(now) || (!current && list.isEmpty && !app.sealed.containsKey(mk))) {
             return null;
           }
-          final by = Kakebo.spentBy(list), total = sum(list);
+          final total = sum(list);
           return (
-            by: [for (final k in keys) by[k]!],
+            by: Kakebo.spentBy(list),
             total: total,
             current: current,
             saved: current ? app.onTrack : app.sealed[mk] ?? math.max(0.0, app.income - app.fixedTotal - total),
@@ -255,6 +255,10 @@ class _CalendarState extends State<Calendar> {
         }(),
     ];
     final sm = months[selMonth], se = seasonOf(selMonth);
+    // Each month is its spending against what was available: the pale column is the available, the narrow fill what went,
+    // rising above the column when it went over. Pillars wait in the month's card, a tap away.
+    final top = [avail, for (final m in months) ?m?.total].reduce(math.max), track = ok(.93, .02, 150), fill = ok(.56, .08, 155);
+    double h(double v) => v / (top == 0 ? 1 : top) * 170;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -275,46 +279,43 @@ class _CalendarState extends State<Calendar> {
                   children: [
                     for (final (i, m) in months.indexed)
                       Expanded(
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () => setState(() => selMonth = i),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            spacing: 6,
-                            children: [
-                              () {
-                                final h = math.max(6.0, (m?.total ?? 0) / 1500 * 170);
-                                return Container(
-                                  width: 34,
-                                  height: h,
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                    color: ok(.94, .02, 150),
-                                    borderRadius: BorderRadius.circular(8),
-                                    boxShadow: selMonth == i ? [BoxShadow(color: green, spreadRadius: 2)] : null,
-                                  ),
-                                  child: Column(
-                                    verticalDirection: VerticalDirection.up,
-                                    children: [
-                                      if (m != null)
-                                        for (final (k, v) in m.by.indexed)
-                                          Container(height: h * v / (m.total == 0 ? 1 : m.total), color: pillars[keys[k]]!.ink),
-                                    ],
-                                  ),
-                                );
-                              }(),
-                              dot(
-                                8,
-                                m == null
-                                    ? Colors.transparent
-                                    : m.current
-                                    ? ok(.8, .03, 150)
-                                    : m.saved >= app.save
-                                    ? sealRed
-                                    : ok(.85, .01, 160),
-                              ),
-                              Text(monthLetter(i + 1), style: sans(12, w: selMonth == i ? FontWeight.w700 : FontWeight.w400)),
-                            ],
+                        child: Semantics(
+                          button: true,
+                          selected: selMonth == i,
+                          label: m == null ? monthTitle(DateTime(year, i + 1)) : tr.spentOf(monthTitle(DateTime(year, i + 1)), fmt(m.total), fmt(avail)),
+                          excludeSemantics: true,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => setState(() => selMonth = i),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              spacing: 6,
+                              children: [
+                                Stack(
+                                  alignment: Alignment.bottomCenter,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: m == null ? 6 : math.max(6, h(avail)),
+                                      decoration: BoxDecoration(
+                                        color: track,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: selMonth == i ? [BoxShadow(color: green, spreadRadius: 2)] : null,
+                                      ),
+                                    ),
+                                    if (m != null && m.total > 0)
+                                      FractionallySizedBox(
+                                        widthFactor: .5,
+                                        child: Container(
+                                          height: math.max(4, h(m.total)),
+                                          decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(6)),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                Text(monthLetter(i + 1), style: sans(12, w: selMonth == i ? FontWeight.w700 : FontWeight.w400)),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -325,23 +326,15 @@ class _CalendarState extends State<Calendar> {
                 spacing: 16,
                 runSpacing: 8,
                 children: [
-                  for (final p in pillars.values)
+                  for (final (color, label) in [(track, tr.availableLabel), (fill, tr.spentLabel)])
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       spacing: 6,
                       children: [
-                        dot(10, p.ink, radius: 3),
-                        Text(p.name, style: sans(12, c: muted)),
+                        dot(10, color, radius: 3),
+                        Text(label, style: sans(12, c: muted)),
                       ],
                     ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 6,
-                    children: [
-                      dot(8, sealRed),
-                      Text(tr.goalReached, style: sans(12, c: muted)),
-                    ],
-                  ),
                 ],
               ),
             ],
@@ -364,7 +357,26 @@ class _CalendarState extends State<Calendar> {
                 ],
               ),
               if (sm != null)
-                for (final (label, value) in [(tr.spentInPillars, sm.total), (sm.current ? tr.onTrack : tr.savedLabel, sm.saved), (tr.goal, app.save)])
+                for (final MapEntry(:key, value: p) in pillars.entries)
+                  Row(
+                    spacing: 10,
+                    children: [
+                      SizedBox(
+                        width: 22,
+                        child: Text(
+                          p.kanji,
+                          textAlign: TextAlign.center,
+                          style: serif(16, c: p.ink),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(p.name, style: sans(14, c: muted)),
+                      ),
+                      Text(fmt(sm.by[key]!), style: serif(15)),
+                    ],
+                  ),
+              if (sm != null)
+                for (final (label, value) in [(tr.spentInPillars, sm.total), (sm.current ? tr.residualNow : tr.savedLabel, sm.saved), (tr.goal, app.save)])
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(

@@ -13,7 +13,7 @@ void setLocale(Locale device) {
 }
 
 typedef PillarText = ({String name, String virtue});
-typedef StepText = ({String title, String body, String cta});
+typedef StepText = ({String title, String body});
 
 /// The ARB files are flat; these put the numbered messages back into the lists the app walks through.
 extension Lists on AppLocalizations {
@@ -66,11 +66,7 @@ extension Lists on AppLocalizations {
   ];
   List<String> get defaultFixed => [defaultFixed1, defaultFixed2, defaultFixed3, defaultFixed4, defaultFixed5];
   List<String> get csvHeader => [csvDate, csvNote, csvAmount, csvPillar];
-  List<StepText> get steps => [
-    (title: step1Title, body: step1Body, cta: step1Cta),
-    (title: step2Title, body: step2Body, cta: step2Cta),
-    (title: step3Title, body: step3Body, cta: step3Cta),
-  ];
+  List<StepText> get steps => [(title: step1Title, body: step1Body), (title: step2Title, body: step2Body), (title: step3Title, body: step3Body)];
   List<String> get fourQuestions => [fourQuestion1, fourQuestion2, fourQuestion3, fourQuestion4];
   List<String> get tabs => [tabToday, tabLedger, tabJournal, tabCalendar];
 }

@@ -34,9 +34,20 @@ class _ShellState extends State<Shell> {
   double drag = 0;
   double? op;
   bool dragging = false;
+  // The greeting was scrolled away when the tab changed: a short tab stretches so it stays away, and the tabs stay put.
+  bool _keepHidden = false;
   Timer? _t;
 
   String get navScreen => app.screen == 'review' ? 'journal' : app.screen;
+
+  @override
+  void initState() {
+    super.initState();
+    // Back at the top, a short tab stops stretching: it no longer scrolls into empty space.
+    _scroll.addListener(() {
+      if (_keepHidden && _scroll.offset <= 0) setState(() => _keepHidden = false);
+    });
+  }
 
   @override
   void dispose() {
@@ -59,12 +70,13 @@ class _ShellState extends State<Shell> {
     _move(drag - d * (drag == 0 ? 120.0 : 160.0), 0, false);
     _t = Timer(const Duration(milliseconds: 260), () {
       if (!mounted) return;
+      _keepHidden = _scroll.hasClients && _scroll.offset > 0;
       _move(d * 40.0, 0, true);
       app.go(k);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         // The new tab opens at its top; the greeting stays hidden if it was scrolled away (it returns on scroll up).
-        // Measured after the switch: only Home has the tall greeting.
+        // Measured after the switch, when the new tab is laid out.
         if (_scroll.hasClients) {
           _scroll.jumpTo(math.min(_scroll.offset, _headerKey.currentContext?.size?.height ?? 0));
         }
@@ -105,43 +117,46 @@ class _ShellState extends State<Shell> {
           Expanded(
             child: SafeArea(
               bottom: !_tabs.contains(app.screen),
-              child: CustomScrollView(
-                controller: _scroll,
-                slivers: [
-                  if (app.screen != 'settings')
-                    SliverToBoxAdapter(
-                      child: KeyedSubtree(key: _headerKey, child: _header()),
-                    ),
-                  if (app.screen != 'settings') PinnedHeaderSliver(child: _navBar()),
-                  SliverToBoxAdapter(
-                    child: AnimatedOpacity(
-                      opacity: op ?? math.max(.1, 1 - drag.abs() / 280),
-                      duration: Duration(
-                        milliseconds: dragging
-                            ? 0
-                            : out
-                            ? 260
-                            : 500,
+              child: LayoutBuilder(
+                builder: (context, viewport) => CustomScrollView(
+                  controller: _scroll,
+                  slivers: [
+                    if (app.screen != 'settings')
+                      SliverToBoxAdapter(
+                        child: KeyedSubtree(key: _headerKey, child: _header()),
                       ),
-                      curve: Curves.easeOut,
-                      child: AnimatedContainer(
+                    if (app.screen != 'settings') PinnedHeaderSliver(child: _navBar()),
+                    SliverToBoxAdapter(
+                      child: AnimatedOpacity(
+                        opacity: op ?? math.max(.1, 1 - drag.abs() / 280),
                         duration: Duration(
                           milliseconds: dragging
                               ? 0
                               : out
                               ? 260
-                              : 1000,
+                              : 500,
                         ),
-                        curve: out ? Curves.easeOutCubic : const Cubic(.16, 1, .3, 1),
-                        transform: Matrix4.translationValues(drag * .6, 0, 0),
-                        padding: EdgeInsets.fromLTRB(app.screen == 'calendar' ? 12 : 16, 16, app.screen == 'calendar' ? 12 : 16, 24),
-                        // At least a screen tall below the tabs, so even a short tab can keep the greeting scrolled away.
-                        constraints: BoxConstraints(minHeight: MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).top - 48),
-                        child: RepaintBoundary(child: content),
+                        curve: Curves.easeOut,
+                        child: AnimatedContainer(
+                          duration: Duration(
+                            milliseconds: dragging
+                                ? 0
+                                : out
+                                ? 260
+                                : 1000,
+                          ),
+                          curve: out ? Curves.easeOutCubic : const Cubic(.16, 1, .3, 1),
+                          transform: Matrix4.translationValues(drag * .6, 0, 0),
+                          padding: EdgeInsets.fromLTRB(app.screen == 'calendar' ? 12 : 16, 16, app.screen == 'calendar' ? 12 : 16, 24),
+                          // While the greeting stays hidden, as tall as the space under the tabs (48 dp), so a short tab keeps it away;
+                          // otherwise only as tall as it is, so a short tab never scrolls into empty space.
+                          constraints: BoxConstraints(minHeight: _keepHidden ? viewport.maxHeight - 48 : 0),
+                          child: RepaintBoundary(child: content),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -181,23 +196,22 @@ class _ShellState extends State<Shell> {
     );
   }
 
-  /// Full greeting and season on Home; one compact line on the other screens.
+  /// The same greeting, season and saying of the day on every tab, so the tabs below never jump.
   Widget _header() {
-    final home = navScreen == 'home',
-        s = app.season,
+    final s = app.season,
         fs = s.plant.length > 2
             ? 9.0
             : s.plant.length > 1
             ? 12.0
             : 16.0;
-    final phrase = home && app.flags['phraseOn']!;
+    final phrase = app.flags['phraseOn']!;
     return Padding(
-      padding: EdgeInsets.fromLTRB(22, home ? 10 : 4, 22, phrase ? 4 : (home ? 16 : 4)),
+      padding: EdgeInsets.fromLTRB(22, 10, 22, phrase ? 4 : 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            crossAxisAlignment: home ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 12,
             children: [
               Expanded(
@@ -209,32 +223,31 @@ class _ShellState extends State<Shell> {
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
-                      child: Text(app.greeting, maxLines: 1, style: serif(home ? 34 : 20, h: 1.1)),
+                      child: Text(app.greeting, maxLines: 1, style: serif(34, h: 1.1)),
                     ),
-                    if (home)
-                      Row(
-                        spacing: 8,
-                        children: [
-                          Container(
-                            width: 30,
-                            height: 30,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(shape: BoxShape.circle, color: s.soft),
-                            child: Text(
-                              s.plant,
-                              style: serif(fs, h: 1, c: s.ink, ls: -.06 * fs),
-                            ),
+                    Row(
+                      spacing: 8,
+                      children: [
+                        Container(
+                          width: 30,
+                          height: 30,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(shape: BoxShape.circle, color: s.soft),
+                          child: Text(
+                            s.plant,
+                            style: serif(fs, h: 1, c: s.ink, ls: -.06 * fs),
                           ),
-                          Flexible(
-                            child: Text(
-                              '${s.plantName} · ${s.name}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: sans(13, c: s.deep),
-                            ),
+                        ),
+                        Flexible(
+                          child: Text(
+                            '${s.plantName} · ${s.name}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: sans(13, c: s.deep),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

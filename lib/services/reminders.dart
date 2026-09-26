@@ -52,15 +52,15 @@ class Reminders {
   // ponytail: one-shot alarms for the next 14 days, renewed each time the app opens; unopened longer → reminders pause.
   Future<void> sync() async {
     if (!k.onboarded) return;
-    final thought = k.flags['thoughtOn']!, note = k.flags['reminders']!;
-    if (thought || note) {
+    final on = k.flags['thoughtOn']!;
+    if (on) {
       if (!_wanted) _asked = false; // switched back on: ask again (Android stops asking after two refusals)
       if (!_asked && !const ['onboarding', 'monthStart'].contains(k.screen)) {
         _asked = true;
         await _android?.requestNotificationsPermission();
       }
     }
-    _wanted = thought || note;
+    _wanted = on;
 
     final can = await _android?.canScheduleExactNotifications() ?? false;
     if (can != exact) {
@@ -70,15 +70,13 @@ class Reminders {
 
     await _p.cancelAll();
     final now = k.now;
-    final (th, tm) = hm(k.thoughtTime);
-    final (nh, nm) = hm(k.noteTime);
+    final (h, m) = hm(k.thoughtTime);
+    // One evening reminder, today's expenses and then the thought; it opens Today, where both wait at the top.
+    // None tonight once the thought is written.
     for (var d = 0; d < 14; d++) {
-      final thoughtAt = DateTime(now.year, now.month, now.day + d, th, tm), noteAt = DateTime(now.year, now.month, now.day + d, nh, nm);
-      if (thought && thoughtAt.isAfter(now) && !(d == 0 && k.thoughtToday != null)) {
-        await _at(100 + d, thoughtAt, tr.eveningThought, tr.happyQuestion, 'thought');
-      }
-      if (note && noteAt.isAfter(now) && !(d == 0 && k.today.isNotEmpty)) {
-        await _at(200 + d, noteAt, tr.noteTitle, tr.noteBody, 'note');
+      final at = DateTime(now.year, now.month, now.day + d, h, m);
+      if (on && at.isAfter(now) && !(d == 0 && k.thoughtToday != null)) {
+        await _at(100 + d, at, tr.noteTitle, tr.noteBody, 'home');
       }
     }
   }

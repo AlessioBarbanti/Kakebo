@@ -716,6 +716,60 @@ abstract class AppLocalizations {
   /// **'Una settimana senza spese.'**
   String get weekNoSpending;
 
+  /// No description provided for @backToToday.
+  ///
+  /// In it, this message translates to:
+  /// **'Torna a Oggi'**
+  String get backToToday;
+
+  /// No description provided for @choosePillar.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli un pilastro'**
+  String get choosePillar;
+
+  /// No description provided for @reminderHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Le spese di oggi e un pensiero felice'**
+  String get reminderHint;
+
+  /// No description provided for @weekSame.
+  ///
+  /// In it, this message translates to:
+  /// **'Come la settimana prima.'**
+  String get weekSame;
+
+  /// No description provided for @weekMore.
+  ///
+  /// In it, this message translates to:
+  /// **'{amount} in più della settimana prima, soprattutto in {pillar}.'**
+  String weekMore(String amount, String pillar);
+
+  /// No description provided for @weekLess.
+  ///
+  /// In it, this message translates to:
+  /// **'{amount} in meno della settimana prima, soprattutto in {pillar}.'**
+  String weekLess(String amount, String pillar);
+
+  /// No description provided for @availableLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Disponibile'**
+  String get availableLabel;
+
+  /// No description provided for @spentLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Speso'**
+  String get spentLabel;
+
+  /// No description provided for @spentOf.
+  ///
+  /// In it, this message translates to:
+  /// **'{month}: {spent} su {available}'**
+  String spentOf(String month, String spent, String available);
+
   /// No description provided for @questionsOf.
   ///
   /// In it, this message translates to:
@@ -727,12 +781,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Sigillato · {amount} risparmiati'**
   String sealedSaved(String amount);
-
-  /// No description provided for @monthClosed.
-  ///
-  /// In it, this message translates to:
-  /// **'Mese chiuso con il sigillo.'**
-  String get monthClosed;
 
   /// No description provided for @resolutionFor.
   ///
@@ -761,7 +809,7 @@ abstract class AppLocalizations {
   /// No description provided for @residualNow.
   ///
   /// In it, this message translates to:
-  /// **'RESIDUO ATTUALE'**
+  /// **'Residuo attuale'**
   String get residualNow;
 
   /// No description provided for @residualNote.
@@ -842,23 +890,11 @@ abstract class AppLocalizations {
   /// **'Oltre {amount}'**
   String dayOver(String amount);
 
-  /// No description provided for @goalReached.
-  ///
-  /// In it, this message translates to:
-  /// **'Obiettivo di risparmio raggiunto'**
-  String get goalReached;
-
   /// No description provided for @spentInPillars.
   ///
   /// In it, this message translates to:
   /// **'Speso nei pilastri'**
   String get spentInPillars;
-
-  /// No description provided for @onTrack.
-  ///
-  /// In it, this message translates to:
-  /// **'Sulla strada per risparmiare'**
-  String get onTrack;
 
   /// No description provided for @savedLabel.
   ///
@@ -913,12 +949,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Modifica'**
   String get edit;
-
-  /// No description provided for @backToLedgerShort.
-  ///
-  /// In it, this message translates to:
-  /// **'Torna al registro'**
-  String get backToLedgerShort;
 
   /// No description provided for @breathFirst.
   ///
@@ -1007,7 +1037,7 @@ abstract class AppLocalizations {
   /// No description provided for @noteBody.
   ///
   /// In it, this message translates to:
-  /// **'Annota le spese di oggi: basta un importo e un pilastro.'**
+  /// **'Annota le spese di oggi, poi scrivi cosa ti ha reso felice.'**
   String get noteBody;
 
   /// No description provided for @ledgerGroup.
@@ -1088,35 +1118,11 @@ abstract class AppLocalizations {
   /// **'Un pensiero per oggi sotto il saluto, con originale e fonte al tocco'**
   String get proverbHint;
 
-  /// No description provided for @eveningNote.
-  ///
-  /// In it, this message translates to:
-  /// **'Nota serale'**
-  String get eveningNote;
-
-  /// No description provided for @eveningNoteHint.
-  ///
-  /// In it, this message translates to:
-  /// **'Un invito a scrivere le spese del giorno'**
-  String get eveningNoteHint;
-
-  /// No description provided for @noteTime.
-  ///
-  /// In it, this message translates to:
-  /// **'Orario della nota'**
-  String get noteTime;
-
   /// No description provided for @tapToChange.
   ///
   /// In it, this message translates to:
   /// **'Tocca per cambiare'**
   String get tapToChange;
-
-  /// No description provided for @noteTimeDialog.
-  ///
-  /// In it, this message translates to:
-  /// **'Orario della nota serale'**
-  String get noteTimeDialog;
 
   /// No description provided for @evenings.
   ///
@@ -1127,7 +1133,7 @@ abstract class AppLocalizations {
   /// No description provided for @thoughtNotice.
   ///
   /// In it, this message translates to:
-  /// **'Notifica del pensiero'**
+  /// **'Promemoria serale'**
   String get thoughtNotice;
 
   /// No description provided for @time.
@@ -1736,12 +1742,6 @@ abstract class AppLocalizations {
   /// **'Nato in Giappone nel 1904: annoti ogni spesa, ti fermi un momento, osservi dove vanno i soldi.'**
   String get step1Body;
 
-  /// No description provided for @step1Cta.
-  ///
-  /// In it, this message translates to:
-  /// **'Avanti'**
-  String get step1Cta;
-
   /// No description provided for @step2Title.
   ///
   /// In it, this message translates to:
@@ -1754,12 +1754,6 @@ abstract class AppLocalizations {
   /// **'Ogni spesa va in uno di quattro pilastri, ognuno con la sua pianta.'**
   String get step2Body;
 
-  /// No description provided for @step2Cta.
-  ///
-  /// In it, this message translates to:
-  /// **'Avanti'**
-  String get step2Cta;
-
   /// No description provided for @step3Title.
   ///
   /// In it, this message translates to:
@@ -1769,14 +1763,26 @@ abstract class AppLocalizations {
   /// No description provided for @step3Body.
   ///
   /// In it, this message translates to:
-  /// **'A inizio e fine mese rispondi sempre alle stesse quattro. Scorri per iniziare.'**
+  /// **'A inizio e fine mese rispondi sempre alle stesse quattro.'**
   String get step3Body;
 
-  /// No description provided for @step3Cta.
+  /// No description provided for @next.
   ///
   /// In it, this message translates to:
-  /// **'Inizia il mio mese'**
-  String get step3Cta;
+  /// **'Avanti'**
+  String get next;
+
+  /// No description provided for @setupFirst.
+  ///
+  /// In it, this message translates to:
+  /// **'Rispondi alle prime due domande: ciò che resta è da spendere con consapevolezza.'**
+  String get setupFirst;
+
+  /// No description provided for @introProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'Passaggio {current} di {total}'**
+  String introProgress(int current, int total);
 
   /// No description provided for @fourQuestion1.
   ///
@@ -1837,12 +1843,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'{n, plural, =1{1 fiore su 10} other{{n} fiori su 10}}'**
   String flowers(int n);
-
-  /// No description provided for @weekFullest.
-  ///
-  /// In it, this message translates to:
-  /// **'Il pilastro più pieno: {pillar}.'**
-  String weekFullest(String pillar);
 }
 
 class _AppLocalizationsDelegate

@@ -96,15 +96,7 @@ class MonthStart extends StatelessWidget {
                               ],
                             ),
                           ),
-                          for (final r in app.fixed) _FixedRow(r, key: ValueKey(r.id)),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 6),
-                            child: TapText(
-                              tr.addFixed,
-                              () => app.update(() => app.fixed.add(Fixed(DateTime.now().millisecondsSinceEpoch, tr.newItem, 0))),
-                              style: sans(14, w: FontWeight.w700, c: ok(.4, .06, 160)),
-                            ),
-                          ),
+                          const FixedList(),
                         ],
                       ),
                     ),
@@ -257,6 +249,31 @@ class _Rule extends StatelessWidget {
   }
 }
 
+/// Every fixed cost as an editable row, then the button that adds one; also the intro's last step.
+class FixedList extends StatelessWidget {
+  const FixedList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final app = AppScope.watch(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 4,
+      children: [
+        for (final r in app.fixed) _FixedRow(r, key: ValueKey(r.id)),
+        Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: TapText(
+            tr.addFixed,
+            () => app.update(() => app.fixed.add(Fixed(DateTime.now().millisecondsSinceEpoch, tr.newItem, 0))),
+            style: sans(14, w: FontWeight.w700, c: ok(.4, .06, 160)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _FixedRow extends StatelessWidget {
   const _FixedRow(this.r, {super.key});
   final Fixed r;
@@ -355,7 +372,7 @@ class _Budgets extends StatelessWidget {
                 : gap > 0
                 ? tr.toAssign(fmt(gap))
                 : tr.overBy(fmt(-gap)),
-            style: sans(13, w: FontWeight.w700, c: gap < -.5 && !auto ? sealRed : sub),
+            style: sans(13, w: FontWeight.w700, c: gap < -.5 && !auto ? ink : sub), // vermilion is the seal's alone
           ),
           if (!auto)
             TapText(

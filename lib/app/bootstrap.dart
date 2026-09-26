@@ -66,10 +66,10 @@ class _LocaleWatcher with WidgetsBindingObserver {
 }
 
 const artwork = [
-  'assets/art/plum.jpg',
-  'assets/art/bamboo.jpg',
-  'assets/art/orchid.jpg',
-  'assets/art/chrys.jpg',
+  'assets/art/print_suruga.webp',
+  'assets/art/print_plum.webp',
+  'assets/art/print_kyobashi.webp',
+  'assets/art/print_mama.webp',
   'assets/art/paper.webp',
   'assets/art/sprig_bamboo.webp',
   'assets/art/sprig_plum.webp',

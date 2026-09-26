@@ -15,6 +15,17 @@ import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/shared/widgets/controls.dart';
 import 'package:kakebo/state/kakebo.dart';
 
+/// What moved since the week before: the difference, and the pillar that moved it most.
+String _weekChange(List<Entry> week, List<Entry> before) {
+  final delta = sum(week) - sum(before);
+  if (sum(week) == 0) return tr.weekNoSpending;
+  if (delta.abs() < 1) return tr.weekSame;
+  final now = Kakebo.spentBy(week), then = Kakebo.spentBy(before);
+  double moved(String k) => (now[k]! - then[k]!) * delta.sign;
+  final name = pillars[pillars.keys.reduce((a, b) => moved(b) > moved(a) ? b : a)]!.name;
+  return delta > 0 ? tr.weekMore(fmt(delta.round()), name) : tr.weekLess(fmt(-delta.round()), name);
+}
+
 /// Diary history, newest first: evening thoughts, Sunday recaps of this month, sealed months.
 List<(String, String, String, Color, String?)> _timeline(Kakebo app) {
   final items = <(DateTime, String, String, String, Color, String?)>[];
@@ -25,19 +36,12 @@ List<(String, String, String, Color, String?)> _timeline(Kakebo app) {
   });
   if (app.flags['weekly']!) {
     final first = app.period.start;
+    List<Entry> between(DateTime from, DateTime to) => app.entries.where((e) => !e.date.isBefore(from) && !e.date.isAfter(to)).toList();
     for (var mon = DateTime(first.year, first.month, first.day - first.weekday + 1); ; mon = DateTime(mon.year, mon.month, mon.day + 7)) {
       final sun = DateTime(mon.year, mon.month, mon.day + 6);
       if (!sun.isBefore(today)) break;
-      final list = app.entries.where((e) => !e.date.isBefore(mon) && !e.date.isAfter(sun)).toList(), total = sum(list);
-      final by = Kakebo.spentBy(list).entries.reduce((a, b) => b.value > a.value ? b : a);
-      items.add((
-        sun,
-        tr.week('${dayMonth(mon)} – ${dayMonth(sun)}'),
-        fmt(total),
-        total == 0 ? tr.weekNoSpending : tr.weekFullest(pillars[by.key]!.name),
-        app.season.ink,
-        dateKey(sun),
-      ));
+      final list = between(mon, sun), before = between(DateTime(mon.year, mon.month, mon.day - 7), DateTime(mon.year, mon.month, mon.day - 1));
+      items.add((sun, tr.week('${dayMonth(mon)} – ${dayMonth(sun)}'), fmt(sum(list)), _weekChange(list, before), app.season.ink, dateKey(sun)));
     }
   }
   for (final mk in {...app.sealed.keys, ...app.reflections.keys, ...app.improve.keys}) {
@@ -51,7 +55,7 @@ List<(String, String, String, Color, String?)> _timeline(Kakebo app) {
       [
         if ((app.reflections[mk]?['good'] ?? '').trim().isNotEmpty) '${tr.monthGood}\n${app.reflections[mk]!['good']}',
         if ((app.reflections[mk]?['change'] ?? '').trim().isNotEmpty) '${tr.monthChange}\n${app.reflections[mk]!['change']}',
-        goal.isEmpty ? tr.monthClosed : tr.resolutionFor(monthName(next), goal),
+        if (goal.isNotEmpty) tr.resolutionFor(monthName(next), goal), // the intention written, not a stock line
       ].join('\n\n'),
       sealRed,
       null,

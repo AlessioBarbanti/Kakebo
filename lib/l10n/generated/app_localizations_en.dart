@@ -365,6 +365,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weekNoSpending => 'A week without spending.';
 
   @override
+  String get backToToday => 'Back to Today';
+
+  @override
+  String get choosePillar => 'Choose a pillar';
+
+  @override
+  String get reminderHint => 'Today\'s expenses and one happy thought';
+
+  @override
+  String get weekSame => 'Much like the week before.';
+
+  @override
+  String weekMore(String amount, String pillar) {
+    return '$amount more than the week before, mostly $pillar.';
+  }
+
+  @override
+  String weekLess(String amount, String pillar) {
+    return '$amount less than the week before, mostly $pillar.';
+  }
+
+  @override
+  String get availableLabel => 'Available';
+
+  @override
+  String get spentLabel => 'Spent';
+
+  @override
+  String spentOf(String month, String spent, String available) {
+    return '$month: $spent of $available';
+  }
+
+  @override
   String questionsOf(String month) {
     return 'Reflections · $month';
   }
@@ -373,9 +406,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String sealedSaved(String amount) {
     return 'Sealed · $amount saved';
   }
-
-  @override
-  String get monthClosed => 'Month closed with the seal.';
 
   @override
   String resolutionFor(String month, String goal) {
@@ -392,7 +422,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewTitle => 'Looking back on the month';
 
   @override
-  String get residualNow => 'CURRENT BALANCE';
+  String get residualNow => 'Current balance';
 
   @override
   String residualNote(String goal, String left) {
@@ -446,13 +476,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get goalReached => 'Savings goal reached';
-
-  @override
   String get spentInPillars => 'Spent in the pillars';
-
-  @override
-  String get onTrack => 'On track to save';
 
   @override
   String get savedLabel => 'Saved';
@@ -484,9 +508,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get edit => 'Edit';
-
-  @override
-  String get backToLedgerShort => 'Back to the ledger';
 
   @override
   String get breathFirst => 'First, a breath';
@@ -532,7 +553,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noteBody =>
-      'Write down today\'s expenses: an amount and a pillar are enough.';
+      'Write down today\'s expenses, then what made you happy.';
 
   @override
   String get ledgerGroup => 'LEDGER';
@@ -579,25 +600,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'A thought for today under the greeting; tap for the original and its source';
 
   @override
-  String get eveningNote => 'Evening note';
-
-  @override
-  String get eveningNoteHint => 'A nudge to write down the day\'s expenses';
-
-  @override
-  String get noteTime => 'Note time';
-
-  @override
   String get tapToChange => 'Tap to change';
-
-  @override
-  String get noteTimeDialog => 'Time of the evening note';
 
   @override
   String get evenings => 'EVENINGS';
 
   @override
-  String get thoughtNotice => 'Thought notification';
+  String get thoughtNotice => 'Evening reminder';
 
   @override
   String get time => 'Time';
@@ -912,9 +921,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Born in Japan in 1904: you write down every expense, pause for a moment, and see where the money goes.';
 
   @override
-  String get step1Cta => 'Next';
-
-  @override
   String get step2Title => 'Four pillars, four gentlemen';
 
   @override
@@ -922,17 +928,23 @@ class AppLocalizationsEn extends AppLocalizations {
       'Every expense goes into one of four pillars, each with its own plant.';
 
   @override
-  String get step2Cta => 'Next';
-
-  @override
   String get step3Title => 'Four questions';
 
   @override
   String get step3Body =>
-      'At the start and end of every month you answer the same four. Swipe to begin.';
+      'At the start and end of every month you answer the same four.';
 
   @override
-  String get step3Cta => 'Start my month';
+  String get next => 'Next';
+
+  @override
+  String get setupFirst =>
+      'Answer the first two questions: what is left is yours to spend mindfully.';
+
+  @override
+  String introProgress(int current, int total) {
+    return 'Step $current of $total';
+  }
 
   @override
   String get fourQuestion1 => 'How much money do you have?';
@@ -972,10 +984,5 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String flowers(int n) {
     return '$n of 10 flowers';
-  }
-
-  @override
-  String weekFullest(String pillar) {
-    return 'Fullest pillar: $pillar.';
   }
 }

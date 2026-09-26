@@ -16,6 +16,14 @@ Dati di esempio del design, con data fissa (utile per provare tutte le schermate
 flutter run --dart-define=DEMO=true --dart-define=TODAY=2026-09-24T21:30
 ```
 
+Screenshot di tutte le schermate, parte superiore e (se scorre) inferiore, in `screenshots/<schermata>/` (formato Pixel 9, dati di esempio, italiano; la cartella viene svuotata a ogni esecuzione e non è in git):
+
+```sh
+flutter test tool/screenshots_test.dart
+```
+
+Per aggiungere una schermata o uno stato, aggiungi una riga alla lista `_shots` in cima al file.
+
 ## Lingue
 
 L'app segue la lingua del telefono: italiano, altrimenti inglese. Valuta, numeri e date seguono il paese del telefono (it_IT → "1.650 €", en_GB → "£1,650"), l'orario le sue 24 ore o AM/PM.
@@ -41,7 +49,7 @@ Le frasi non ancora tradotte finiscono in `build/untranslated-messages.json`.
 - `lib/shared/`: `theme` per colori, tipografia e presentazione dei pilastri; `widgets` per i controlli comuni; `illustrations` per ramo, sigillo ed ensō; `animations` per transizioni e respiro
 - `lib/l10n/`: sorgenti ARB, `generated/` per l'output Flutter, `localization.dart` per lingua e testi, `formatters.dart` per date e importi
 - `test/`: test suddivisi per modelli, stato, servizi, funzionalità, localizzazione e componenti condivisi
-- `assets/art/`: stampe di pubblico dominio (Wikimedia Commons) per l'introduzione; rametti dei pilastri (`sprig_*.webp`) e fondo a inchiostro (`paper.webp`) ridotti da `python tool/art.py` dai master in `assets/src/botanical/` (prompt in `PROMPTS.md`)
+- `assets/art/`: generata da `python tool/art.py`. Stampe dell'introduzione (`print_*.webp`: Hiroshige, *Cento vedute di Edo*, pubblico dominio da Wikimedia Commons) ritagliate e portate alla stessa saturazione dai master in `assets/src/prints/`; rametti dei pilastri (`sprig_*.webp`) e fondo a inchiostro (`paper.webp`) dai master in `assets/src/botanical/` (prompt in `PROMPTS.md`)
 - `assets/sounds/`: campane tibetane sintetizzate da `dart run tool/bowl.dart` (note, volume e durata sono in cima al file)
 - `assets/fonts/`: Shippori Mincho e Zen Kaku Gothic New (OFL), ridotti ai soli caratteri usati nel codice e nelle traduzioni. Se aggiungi testo giapponese o una lingua nuova, rigenerali con `python tool/fonts.py <cartella dei font completi>`
 - `assets/icon/`: icona dipinta (`source.png`); `dart run tool/icon.dart && dart run flutter_launcher_icons` crea le icone Android e quella delle notifiche

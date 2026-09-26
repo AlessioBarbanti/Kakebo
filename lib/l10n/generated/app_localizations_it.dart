@@ -365,6 +365,39 @@ class AppLocalizationsIt extends AppLocalizations {
   String get weekNoSpending => 'Una settimana senza spese.';
 
   @override
+  String get backToToday => 'Torna a Oggi';
+
+  @override
+  String get choosePillar => 'Scegli un pilastro';
+
+  @override
+  String get reminderHint => 'Le spese di oggi e un pensiero felice';
+
+  @override
+  String get weekSame => 'Come la settimana prima.';
+
+  @override
+  String weekMore(String amount, String pillar) {
+    return '$amount in più della settimana prima, soprattutto in $pillar.';
+  }
+
+  @override
+  String weekLess(String amount, String pillar) {
+    return '$amount in meno della settimana prima, soprattutto in $pillar.';
+  }
+
+  @override
+  String get availableLabel => 'Disponibile';
+
+  @override
+  String get spentLabel => 'Speso';
+
+  @override
+  String spentOf(String month, String spent, String available) {
+    return '$month: $spent su $available';
+  }
+
+  @override
   String questionsOf(String month) {
     return 'Riflessioni · $month';
   }
@@ -373,9 +406,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String sealedSaved(String amount) {
     return 'Sigillato · $amount risparmiati';
   }
-
-  @override
-  String get monthClosed => 'Mese chiuso con il sigillo.';
 
   @override
   String resolutionFor(String month, String goal) {
@@ -392,7 +422,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get reviewTitle => 'Uno sguardo al mese';
 
   @override
-  String get residualNow => 'RESIDUO ATTUALE';
+  String get residualNow => 'Residuo attuale';
 
   @override
   String residualNote(String goal, String left) {
@@ -446,13 +476,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get goalReached => 'Obiettivo di risparmio raggiunto';
-
-  @override
   String get spentInPillars => 'Speso nei pilastri';
-
-  @override
-  String get onTrack => 'Sulla strada per risparmiare';
 
   @override
   String get savedLabel => 'Risparmiato';
@@ -484,9 +508,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get edit => 'Modifica';
-
-  @override
-  String get backToLedgerShort => 'Torna al registro';
 
   @override
   String get breathFirst => 'Prima, un respiro';
@@ -533,7 +554,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get noteBody =>
-      'Annota le spese di oggi: basta un importo e un pilastro.';
+      'Annota le spese di oggi, poi scrivi cosa ti ha reso felice.';
 
   @override
   String get ledgerGroup => 'REGISTRO';
@@ -581,25 +602,13 @@ class AppLocalizationsIt extends AppLocalizations {
       'Un pensiero per oggi sotto il saluto, con originale e fonte al tocco';
 
   @override
-  String get eveningNote => 'Nota serale';
-
-  @override
-  String get eveningNoteHint => 'Un invito a scrivere le spese del giorno';
-
-  @override
-  String get noteTime => 'Orario della nota';
-
-  @override
   String get tapToChange => 'Tocca per cambiare';
-
-  @override
-  String get noteTimeDialog => 'Orario della nota serale';
 
   @override
   String get evenings => 'LA SERA';
 
   @override
-  String get thoughtNotice => 'Notifica del pensiero';
+  String get thoughtNotice => 'Promemoria serale';
 
   @override
   String get time => 'Orario';
@@ -916,9 +925,6 @@ class AppLocalizationsIt extends AppLocalizations {
       'Nato in Giappone nel 1904: annoti ogni spesa, ti fermi un momento, osservi dove vanno i soldi.';
 
   @override
-  String get step1Cta => 'Avanti';
-
-  @override
   String get step2Title => 'Quattro pilastri, quattro gentiluomini';
 
   @override
@@ -926,17 +932,23 @@ class AppLocalizationsIt extends AppLocalizations {
       'Ogni spesa va in uno di quattro pilastri, ognuno con la sua pianta.';
 
   @override
-  String get step2Cta => 'Avanti';
-
-  @override
   String get step3Title => 'Quattro domande';
 
   @override
   String get step3Body =>
-      'A inizio e fine mese rispondi sempre alle stesse quattro. Scorri per iniziare.';
+      'A inizio e fine mese rispondi sempre alle stesse quattro.';
 
   @override
-  String get step3Cta => 'Inizia il mio mese';
+  String get next => 'Avanti';
+
+  @override
+  String get setupFirst =>
+      'Rispondi alle prime due domande: ciò che resta è da spendere con consapevolezza.';
+
+  @override
+  String introProgress(int current, int total) {
+    return 'Passaggio $current di $total';
+  }
 
   @override
   String get fourQuestion1 => 'Quanto denaro hai?';
@@ -982,10 +994,5 @@ class AppLocalizationsIt extends AppLocalizations {
       one: '1 fiore su 10',
     );
     return '$_temp0';
-  }
-
-  @override
-  String weekFullest(String pillar) {
-    return 'Il pilastro più pieno: $pillar.';
   }
 }

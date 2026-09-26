@@ -225,6 +225,18 @@
     }
   },
   "weekNoSpending": "Una settimana senza spese.",
+  "backToToday": "Torna a Oggi",
+  "choosePillar": "Scegli un pilastro",
+  "reminderHint": "Le spese di oggi e un pensiero felice",
+  "weekSame": "Come la settimana prima.",
+  "weekMore": "{amount} in più della settimana prima, soprattutto in {pillar}.",
+  "@weekMore": {"placeholders": {"amount": {"type": "String"}, "pillar": {"type": "String"}}},
+  "weekLess": "{amount} in meno della settimana prima, soprattutto in {pillar}.",
+  "@weekLess": {"placeholders": {"amount": {"type": "String"}, "pillar": {"type": "String"}}},
+  "availableLabel": "Disponibile",
+  "spentLabel": "Speso",
+  "spentOf": "{month}: {spent} su {available}",
+  "@spentOf": {"placeholders": {"month": {"type": "String"}, "spent": {"type": "String"}, "available": {"type": "String"}}},
   "questionsOf": "Riflessioni · {month}",
   "@questionsOf": {
     "placeholders": {
@@ -241,7 +253,6 @@
       }
     }
   },
-  "monthClosed": "Mese chiuso con il sigillo.",
   "resolutionFor": "Proposito per {month}: {goal}",
   "@resolutionFor": {
     "placeholders": {
@@ -256,7 +267,7 @@
   "backToJournal": "← Diario",
   "reviewKicker": "FINE MESE",
   "reviewTitle": "Uno sguardo al mese",
-  "residualNow": "RESIDUO ATTUALE",
+  "residualNow": "Residuo attuale",
   "residualNote": "Entrate meno spese fisse e spese annotate. Tolto l'obiettivo di {goal}, restano {left} da spendere.",
   "@residualNote": {
     "placeholders": {
@@ -315,9 +326,7 @@
       }
     }
   },
-  "goalReached": "Obiettivo di risparmio raggiunto",
   "spentInPillars": "Speso nei pilastri",
-  "onTrack": "Sulla strada per risparmiare",
   "savedLabel": "Risparmiato",
   "goal": "Obiettivo",
   "monthAhead": "Mese ancora da vivere.",
@@ -334,7 +343,6 @@
   },
   "savedGoodnight": "Salvato nel diario. Buonanotte.",
   "edit": "Modifica",
-  "backToLedgerShort": "Torna al registro",
   "breathFirst": "Prima, un respiro",
   "followCircle": "Segui il cerchio per tre respiri, poi scrivi.",
   "ready": "Scrivi ora",
@@ -349,7 +357,7 @@
   "channel": "La sera",
   "channelInfo": "Il pensiero della sera e la nota delle spese",
   "noteTitle": "La nota della sera",
-  "noteBody": "Annota le spese di oggi: basta un importo e un pilastro.",
+  "noteBody": "Annota le spese di oggi, poi scrivi cosa ti ha reso felice.",
   "ledgerGroup": "REGISTRO",
   "monthStartLabel": "Inizio del mese",
   "monthStartHint": "Per esempio il giorno dello stipendio",
@@ -377,13 +385,9 @@
   "weeklyHint": "La settimana raccolta nel diario, niente da scrivere",
   "proverb": "Frase del giorno",
   "proverbHint": "Un pensiero per oggi sotto il saluto, con originale e fonte al tocco",
-  "eveningNote": "Nota serale",
-  "eveningNoteHint": "Un invito a scrivere le spese del giorno",
-  "noteTime": "Orario della nota",
   "tapToChange": "Tocca per cambiare",
-  "noteTimeDialog": "Orario della nota serale",
   "evenings": "LA SERA",
-  "thoughtNotice": "Notifica del pensiero",
+  "thoughtNotice": "Promemoria serale",
   "time": "Orario",
   "thoughtTimeDialog": "Orario del pensiero della sera",
   "precise": "Orario preciso",
@@ -485,13 +489,14 @@
   "csvPillar": "pilastro",
   "step1Title": "Un registro per la casa",
   "step1Body": "Nato in Giappone nel 1904: annoti ogni spesa, ti fermi un momento, osservi dove vanno i soldi.",
-  "step1Cta": "Avanti",
   "step2Title": "Quattro pilastri, quattro gentiluomini",
   "step2Body": "Ogni spesa va in uno di quattro pilastri, ognuno con la sua pianta.",
-  "step2Cta": "Avanti",
   "step3Title": "Quattro domande",
-  "step3Body": "A inizio e fine mese rispondi sempre alle stesse quattro. Scorri per iniziare.",
-  "step3Cta": "Inizia il mio mese",
+  "step3Body": "A inizio e fine mese rispondi sempre alle stesse quattro.",
+  "next": "Avanti",
+  "setupFirst": "Rispondi alle prime due domande: ciò che resta è da spendere con consapevolezza.",
+  "introProgress": "Passaggio {current} di {total}",
+  "@introProgress": {"placeholders": {"current": {"type": "int"}, "total": {"type": "int"}}},
   "fourQuestion1": "Quanto denaro hai?",
   "fourQuestion2": "Quanto vorresti risparmiare?",
   "fourQuestion3": "Quanto stai spendendo?",
@@ -516,14 +521,6 @@
     "placeholders": {
       "n": {
         "type": "int"
-      }
-    }
-  },
-  "weekFullest": "Il pilastro più pieno: {pillar}.",
-  "@weekFullest": {
-    "placeholders": {
-      "pillar": {
-        "type": "String"
       }
     }
   }

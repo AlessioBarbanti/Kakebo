@@ -87,7 +87,7 @@ class _ThoughtState extends State<Thought> {
                           style: sans(15, c: violet),
                           pad: const EdgeInsets.symmetric(horizontal: 18),
                         ),
-                        Btn(tr.backToLedgerShort, home, pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 14)),
+                        Btn(tr.backToToday, home, pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 14)),
                       ],
                     ),
                   ] else if (!breathed) ...[

@@ -37,13 +37,13 @@ class AddSheet extends StatefulWidget {
 class _AddSheetState extends State<AddSheet> {
   Kakebo get app => AppScope.read(context);
   late final Entry? e = widget.edit;
-  late String amt = e == null ? '' : (e!.amt % 1 == 0 ? e!.amt.toInt().toString() : e!.amt.toStringAsFixed(2)),
-      note = e?.note ?? '',
-      pillar = e?.p ?? 'culture';
+  late String amt = e == null ? '' : (e!.amt % 1 == 0 ? e!.amt.toInt().toString() : e!.amt.toStringAsFixed(2)), note = e?.note ?? '';
+  late String? pillar = e?.p; // a new expense starts with none: the note may suggest one, the user picks
   late String reflection = e?.reflection ?? '';
   late bool touched = e != null; // an edited expense keeps its pillar
 
   double get value => double.tryParse(amt) ?? 0;
+  bool get ready => value > 0 && pillar != null;
 
   void press(String k) => setState(() {
     if (k == '⌫') {
@@ -58,17 +58,21 @@ class _AddSheetState extends State<AddSheet> {
   });
 
   void save() {
-    if (value == 0) return;
-    e == null ? app.addEntry(value, note.trim(), pillar) : app.editEntry(e!, value, note.trim(), pillar, reflection: reflection.trim());
+    if (!ready) return;
+    e == null ? app.addEntry(value, note.trim(), pillar!) : app.editEntry(e!, value, note.trim(), pillar!, reflection: reflection.trim());
     Navigator.pop(context);
   }
 
   void delete() {
     final app = AppScope.read(context);
-    final messenger = ScaffoldMessenger.of(context), old = e!, at = app.removeEntry(old);
+    final messenger = ScaffoldMessenger.of(context), talkBack = MediaQuery.accessibleNavigationOf(context), old = e!, at = app.removeEntry(old);
     Navigator.pop(context);
     messenger.showSnackBar(
       SnackBar(
+        // Flutter keeps a snack bar with an action until tapped; six seconds is time enough to undo.
+        // A screen reader user still gets it until they reach it.
+        duration: const Duration(seconds: 6),
+        persist: talkBack,
         content: Text(tr.expenseDeleted),
         action: SnackBarAction(label: tr.undo, onPressed: () => app.restoreEntry(at, old)),
       ),
@@ -155,7 +159,11 @@ class _AddSheetState extends State<AddSheet> {
           SizedBox(
             height: 16,
             child: Text(
-              guess != null ? tr.suggested(pillars[guess]!.name) : '',
+              guess != null
+                  ? tr.suggested(pillars[guess]!.name)
+                  : pillar == null
+                  ? tr.choosePillar
+                  : '',
               textAlign: TextAlign.center,
               style: sans(12, c: muted),
             ),
@@ -204,7 +212,7 @@ class _AddSheetState extends State<AddSheet> {
               ],
             ),
           Material(
-            color: value > 0 ? green : ok(.75, .03, 160),
+            color: ready ? green : ok(.75, .03, 160),
             borderRadius: BorderRadius.circular(16),
             child: InkWell(
               borderRadius: BorderRadius.circular(16),
@@ -225,7 +233,7 @@ class _AddSheetState extends State<AddSheet> {
               child: TapText(
                 tr.deleteExpense,
                 delete,
-                style: sans(14, w: FontWeight.w700, c: sealRed),
+                style: sans(14, w: FontWeight.w700, c: muted), // vermilion is the seal's alone
               ),
             ),
         ],
