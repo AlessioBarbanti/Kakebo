@@ -8,12 +8,14 @@ Servono Flutter 3.47 (canale stable) e l'Android SDK.
 
 ```sh
 flutter run                       # telefono collegato o emulatore
-flutter build apk --release       # APK in build/app/outputs/flutter-apk/app-release.apk
+flutter build apk --release --split-per-abi --target-platform android-arm64   # per il telefono: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
 flutter build appbundle --release # per Google Play, in build/app/outputs/bundle/release/app-release.aab
 flutter test
 ```
 
 Le build di release sono firmate con la chiave di caricamento per Google Play se `android/key.properties` esiste (vedi [Rilascio](#rilascio)), altrimenti con la chiave di debug: vanno bene per provare sul telefono, ma il Play Store non le accetta.
+
+Gli APK si compilano per tipo di processore (`--split-per-abi`): circa 20 MB invece dei 55 di un APK universale, che contiene tre copie del motore di Flutter. Android numera le loro versioni 1000 (armv7) o 2000 (arm64) più in alto: per aggiornare un telefono che ne ha uno installato serve di nuovo un APK separato, perché uno universale risulterebbe più vecchio e verrebbe rifiutato.
 
 Dati di esempio, con data fissa (utile per provare tutte le schermate):
 
@@ -83,7 +85,7 @@ Le frasi non ancora tradotte finiscono in `build/untranslated-messages.json`.
 1. Aggiorna `version` in `pubspec.yaml`: il nome (`1.2.0`) per le persone, il numero dopo `+` per Android e Google Play, che deve crescere a ogni caricamento. Il nome segue il versionamento semantico: correzioni → `1.1.1`, novità → `1.2.0`.
 2. Aggiungi in cima a `CHANGELOG.md` la sezione `## [1.2.0] - data`, scritta per chi usa l'app (Novità, Modifiche, Correzioni), e il suo link in fondo al file. Diventa il testo della release: senza, la Action si ferma.
 3. Fai commit su `main`, poi crea e invia il tag con lo stesso nome: `git tag v1.2.0 && git push origin v1.2.0`.
-4. La GitHub Action *Release* (`.github/workflows/release.yml`) esegue analisi e test, compila APK e app bundle firmati e pubblica la release su GitHub con i due file. L'APK si installa direttamente; il file `-play.aab` va caricato nella Play Console. Avviata a mano da GitHub (Actions → Release → Run workflow) compila soltanto, senza pubblicare.
+4. La GitHub Action *Release* (`.github/workflows/release.yml`) esegue analisi e test, compila gli APK (`-arm64`, `-armv7`) e l'app bundle firmati e pubblica la release su GitHub con i tre file. Gli APK si installano direttamente; il file `-play.aab` va caricato nella Play Console. In fondo alle note la Action aggiunge da sé il paragrafo "Quale file scaricare". Avviata a mano da GitHub (Actions → Release → Run workflow) compila soltanto, senza pubblicare.
 
 La chiave di caricamento (upload key) di Google Play non è nel repository:
 

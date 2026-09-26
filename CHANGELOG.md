@@ -2,6 +2,12 @@
 
 Tutte le modifiche di Kakebo che si notano usando l'app, dalla più recente. I numeri di versione seguono il [versionamento semantico](https://semver.org/lang/it/).
 
+## [1.1.3] - 2026-09-26
+
+### Modifiche
+
+- **Download più leggeri.** Su GitHub ci sono ora due APK, uno per tipo di processore, da circa 20 MB invece di un unico file da 55: `-arm64` per quasi tutti i telefoni, `-armv7` per quelli più vecchi. Le note di ogni versione spiegano quale scegliere. Da Google Play ogni telefono riceve già solo la parte che gli serve.
+
 ## [1.1.2] - 2026-09-26
 
 ### Modifiche
@@ -52,6 +58,7 @@ La prima versione.
 - **I dati restano sul telefono:** nessun account e nessun permesso Internet; backup in un file ed esportazione in CSV.
 - **In italiano e in inglese.**
 
+[1.1.3]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.3
 [1.1.2]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.2
 [1.1.1]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.1
 [1.1.0]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.0

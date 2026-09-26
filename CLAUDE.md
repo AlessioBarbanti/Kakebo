@@ -14,7 +14,7 @@ flutter analyze
 flutter test
 flutter test test/features/navigation_test.dart --plain-name "swiping left"   # a single test
 dart format -l 160 <files>  # the code is formatted at width 160; the default 80 would reflow everything
-flutter build apk --release # Play upload key if android/key.properties exists, else debug keys (CONTRIBUTING.md "Rilascio")
+flutter build apk --release --split-per-abi --target-platform android-arm64 # the phone's APK: app-arm64-v8a-release.apk; Play upload key if android/key.properties exists, else debug keys (CONTRIBUTING.md "Rilascio")
 flutter run --dart-define=DEMO=true --dart-define=TODAY=2026-09-24T21:30   # demo data, fixed clock
 flutter test tool/screenshots_test.dart   # every screen, top and bottom, into screenshots/<screen>/ (not in the normal suite)
 ```

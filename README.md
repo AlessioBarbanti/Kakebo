@@ -72,7 +72,12 @@ Kakebo non ha account, pubblicità né statistiche d'uso, e non chiede nemmeno i
 
 ## Installa
 
-Scarica `kakebo-vX.Y.Z.apk` dall'[ultima release](https://github.com/AlessioBarbanti/Kakebo/releases/latest) e aprilo sul telefono: serve Android 7.0 o successivo, e la prima volta Android chiede di consentire l'installazione da quella fonte.
+Dall'[ultima release](https://github.com/AlessioBarbanti/Kakebo/releases/latest) scarica il file adatto al tuo telefono e aprilo: serve Android 7.0 o successivo, e la prima volta Android chiede di consentire l'installazione da quella fonte.
+
+- **`kakebo-vX.Y.Z-arm64.apk`**: quello giusto per quasi tutti i telefoni Android usciti dal 2017 in poi. Se non sai quale scegliere, parti da questo.
+- **`kakebo-vX.Y.Z-armv7.apk`**: per i telefoni più vecchi o molto economici.
+
+Se scegli il file sbagliato non succede niente: Android dice che l'app non è compatibile, e basta scaricare l'altro. Il file `-play.aab` non va installato: serve per la pubblicazione su Google Play.
 
 Su Google Play arriverà presto.
 

@@ -1,5 +1,6 @@
 # Builds the signed app. A tag like v1.0.0 (it must match the version in pubspec.yaml) also publishes a GitHub release
-# with the APK to install and the app bundle for Google Play. Run by hand (Actions > Release > Run workflow) it only
+# with one APK per processor to install (arm64 for almost every phone, armv7 for old ones) and the app bundle for Google
+# Play, which carries them all and gives each phone its own. Run by hand (Actions > Release > Run workflow) it only
 # builds, and the files wait in the run's artifacts.
 #
 # Signing uses the Play upload key from the repository secrets ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD and
@@ -60,6 +61,14 @@ jobs:
             echo "::error::CHANGELOG.md has no section for $GITHUB_REF_NAME"
             exit 1
           fi
+          cat >> "$RUNNER_TEMP/notes.md" <<'NOTES'
+
+          ### Quale file scaricare
+
+          - **`-arm64.apk`**: per quasi tutti i telefoni Android usciti dal 2017 in poi. Se non sai quale scegliere, parti da questo.
+          - **`-armv7.apk`**: per i telefoni più vecchi o molto economici. Se hai scelto il file sbagliato non succede niente: Android dice che l'app non è compatibile, e basta scaricare l'altro.
+          - **`-play.aab`**: non si installa sul telefono, è il file per la pubblicazione su Google Play.
+          NOTES
           cat "$RUNNER_TEMP/notes.md"
 
       - run: flutter pub get
@@ -76,14 +85,16 @@ jobs:
           fi
           printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload.jks"
 
-      - name: Build APK and app bundle
+      - name: Build APKs and app bundle
         env:
           ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/upload.jks
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: upload
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        # One APK per processor instead of a universal one (about 20 MB instead of 55). x86_64 only runs emulators and
+        # Chromebooks: those get it from the bundle. Split APKs number their versions 1000 (armv7) or 2000 (arm64) higher.
         run: |
-          flutter build apk --release
+          flutter build apk --release --split-per-abi --target-platform android-arm,android-arm64
           flutter build appbundle --release
 
       - name: Remove the key
@@ -95,9 +106,11 @@ jobs:
       - name: Signed with the Play key
         run: |
           apksigner=$(ls -d "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
-          "$apksigner" verify --print-certs build/app/outputs/flutter-apk/app-release.apk | grep "certificate DN" | tee "$RUNNER_TEMP/signers.txt"
+          for apk in arm64-v8a armeabi-v7a; do
+            "$apksigner" verify --print-certs "build/app/outputs/flutter-apk/app-$apk-release.apk" | grep "certificate DN" | tee -a "$RUNNER_TEMP/signers.txt"
+          done
           keytool -printcert -jarfile build/app/outputs/bundle/release/app-release.aab | grep "^Owner:" | tee -a "$RUNNER_TEMP/signers.txt"
-          if [ "$(wc -l < "$RUNNER_TEMP/signers.txt")" -lt 2 ]; then
+          if [ "$(wc -l < "$RUNNER_TEMP/signers.txt")" -lt 3 ]; then
             echo "::error::Could not read the signatures"
             exit 1
           fi
@@ -109,7 +122,8 @@ jobs:
       - name: Name the files
         run: |
           mkdir dist
-          cp build/app/outputs/flutter-apk/app-release.apk "dist/kakebo-$GITHUB_REF_NAME.apk"
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "dist/kakebo-$GITHUB_REF_NAME-arm64.apk"
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk "dist/kakebo-$GITHUB_REF_NAME-armv7.apk"
           cp build/app/outputs/bundle/release/app-release.aab "dist/kakebo-$GITHUB_REF_NAME-play.aab"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
