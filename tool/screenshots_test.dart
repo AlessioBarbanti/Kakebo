@@ -49,15 +49,6 @@ final List<(String, String, String, Act?)> _shots = [
         }
       },
     ),
-  (
-    'onboarding',
-    '4_fixed_open',
-    'onboarding',
-    (t, _) async {
-      await _tap(t, find.text(tr.skip));
-      await _tap(t, find.text(tr.fixedTitle));
-    },
-  ),
   ('home', 'evening', 'home', null),
   ('home', 'saying_open', 'home', (t, _) => _tap(t, find.byType(DailyPhrase))),
   ('add_expense', 'new', 'home', (t, _) => _tap(t, find.text(tr.addExpense))),

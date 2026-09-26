@@ -160,15 +160,19 @@ class _JournalState extends State<Journal> {
           ok(.955, .02, 295),
           'thought',
         ),
-        diary(
-          tr.theMonth,
-          tr.questionsFrom(dayMonth(app.period.last)),
-          app.isSealed ? tr.sealed : tr.open,
-          ok(.48, .15, 28),
-          app.isSealed ? tr.monthSealed(monthTitle(app.label)) : tr.questionsHint,
-          ok(.95, .025, 28),
-          'review',
-        ),
+        // The month just over while it waits for its seal (until this one ends), otherwise this one, still running.
+        if (app.canSeal)
+          diary(
+            tr.theMonth,
+            tr.closeBy(dayMonth(app.period.last)),
+            tr.toClose,
+            ok(.48, .15, 28),
+            tr.monthOver(monthTitle(app.labelOf(app.previous))),
+            ok(.95, .025, 28),
+            'review',
+          )
+        else
+          diary(tr.theMonth, tr.questionsFrom(dayMonth(app.period.last)), tr.open, ok(.48, .15, 28), tr.questionsHint, ok(.95, .025, 28), 'review'),
         Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Column(

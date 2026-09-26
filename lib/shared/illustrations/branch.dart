@@ -9,18 +9,19 @@ import 'package:kakebo/shared/theme/seasons.dart';
 
 /// The month's pace: ten buds on an ink branch, open while spending keeps up with the days gone by.
 class Branch extends StatelessWidget {
-  const Branch({super.key, this.height = 100});
+  const Branch({super.key, this.height = 100, this.bloomed});
   final double height;
+  final int? bloomed; // a past month's; this month's by default
 
   @override
   Widget build(BuildContext context) {
-    final app = AppScope.watch(context);
+    final app = AppScope.watch(context), b = bloomed ?? app.bloomed;
     return Semantics(
-      label: tr.flowers(app.bloomed),
+      label: tr.flowers(b),
       child: SizedBox(
         height: height,
         width: double.infinity,
-        child: CustomPaint(painter: _BranchPainter(app.bloomed, app.season)),
+        child: CustomPaint(painter: _BranchPainter(b, app.season)),
       ),
     );
   }

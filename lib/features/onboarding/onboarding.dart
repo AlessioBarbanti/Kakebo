@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:kakebo/app/app_scope.dart';
-import 'package:kakebo/features/month_setup/month_start.dart' show FixedList;
+import 'package:kakebo/features/month_setup/month_start.dart' show FixedList, goalNote;
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/model/pillar.dart';
@@ -85,10 +85,13 @@ class _OnboardingState extends State<Onboarding> {
                               duration: motion,
                               curve: Curves.easeInOut,
                               height: band,
-                              // Prints cross-fade in place: the new one over the old, which stays until it is covered.
+                              // Prints cross-fade in place, the old one fading out as the new one fades in. It cannot wait
+                              // at full strength underneath: the prints fade into the page, so it would show through the
+                              // new one's fade (and below a shorter band) and then vanish at once.
                               child: AnimatedSwitcher(
                                 duration: motion,
-                                switchOutCurve: const Threshold(0),
+                                switchInCurve: Curves.easeInOut,
+                                switchOutCurve: Curves.easeInOut,
                                 layoutBuilder: (current, previous) => Stack(fit: StackFit.expand, children: [...previous, ?current]),
                                 child: _print(_prints[step]),
                               ),
@@ -168,7 +171,7 @@ class _OnboardingState extends State<Onboarding> {
   );
 
   Widget _content(Kakebo app) {
-    final setup = step == _setup, pm = app.planMonth;
+    final setup = step == _setup, pm = app.label;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -210,9 +213,9 @@ class _OnboardingState extends State<Onboarding> {
     ],
   );
 
-  /// The first two questions answered: income (fixed costs folded under it) and the savings goal.
+  /// Three answers, all in view: income, the fixed costs (open, with a row to fill) and the savings goal.
   List<Widget> _answers(Kakebo app) {
-    Widget answer(String question, double value, ValueChanged<double> set, String hint, [Widget? more]) => Column(
+    Widget answer(String question, double value, ValueChanged<double> set, String hint, {bool note = false}) => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 8,
       children: [
@@ -228,41 +231,29 @@ class _OnboardingState extends State<Onboarding> {
             Text(currency, style: serif(20)),
           ],
         ),
-        Text(hint, style: sans(12, h: 1.4, c: muted)),
-        ?more,
+        Text(
+          hint,
+          style: note ? sans(12, h: 1.4, w: FontWeight.w700, c: ink) : sans(12, h: 1.4, c: muted),
+        ),
       ],
     );
     return [
       _rows([
+        (_number(0), answer(tr.fourQuestions[0], app.income, (v) => app.update(() => app.income = v), tr.incomeHint)),
         (
-          _number(0),
-          answer(
-            tr.fourQuestions[0],
-            app.income,
-            (v) => app.update(() => app.income = v),
-            tr.incomeHint,
-            ExpansionTile(
-              tilePadding: EdgeInsets.zero,
-              childrenPadding: const EdgeInsets.only(bottom: 8),
-              shape: const Border(),
-              collapsedShape: const Border(),
-              iconColor: muted,
-              collapsedIconColor: muted,
-              title: Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 8,
-                children: [
-                  Text(tr.fixedTitle, style: sans(14, c: muted)),
-                  Text(fmt(app.fixedTotal), style: serif(16, w: FontWeight.w700)),
-                ],
-              ),
-              children: const [FixedList()],
-            ),
+          _number(1),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 8,
+            children: [
+              Text(tr.fixedQuestion, style: sans(15, h: 1.4)),
+              Text(tr.fixedHint, style: sans(12, h: 1.4, c: muted)),
+              const FixedList(),
+            ],
           ),
         ),
         (
-          _number(1),
+          _number(2),
           answer(
             tr.fourQuestions[1],
             app.save,
@@ -270,7 +261,8 @@ class _OnboardingState extends State<Onboarding> {
               app.save = v;
               app.rule = false;
             }),
-            tr.savingHint,
+            goalNote(app) ?? tr.savingHint,
+            note: goalNote(app) != null,
           ),
         ),
       ]),
@@ -356,7 +348,7 @@ class _OnboardingState extends State<Onboarding> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
                     child: Text(
-                      step == _setup ? tr.startMonth(monthName(app.planMonth)) : tr.next,
+                      step == _setup ? tr.startMonth(monthName(app.label)) : tr.next,
                       textAlign: TextAlign.center,
                       style: sans(15, w: FontWeight.w700, c: onGreen),
                     ),

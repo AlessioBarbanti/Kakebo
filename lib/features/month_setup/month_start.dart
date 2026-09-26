@@ -11,6 +11,15 @@ import 'package:kakebo/shared/theme/pillars.dart';
 import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/shared/widgets/controls.dart';
 import 'package:kakebo/shared/widgets/inputs.dart';
+import 'package:kakebo/state/kakebo.dart';
+
+/// A word under the savings goal when it takes more than income leaves after fixed costs: allowed, not blocked, but then
+/// nothing is left to spend. Null while the goal fits.
+String? goalNote(Kakebo app) {
+  final margin = app.income - app.fixedTotal;
+  if (app.save <= margin) return null;
+  return margin <= 0 ? tr.fixedOverIncome : tr.goalOverMargin(fmt(margin));
+}
 
 class MonthStart extends StatelessWidget {
   const MonthStart({super.key});
@@ -18,9 +27,9 @@ class MonthStart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = AppScope.watch(context);
-    final pm = app.planMonth, fixed = app.fixedTotal, income = app.income, avail = app.available;
+    final pm = app.label, fixed = app.fixedTotal, income = app.income, avail = app.available;
     final sub = ok(.42, .03, 160);
-    Widget field(String label, String hint, double value, ValueChanged<double> set, Color color) => Container(
+    Widget field(String label, String hint, double value, ValueChanged<double> set, Color color, {bool note = false}) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(20)),
       child: Column(
@@ -39,7 +48,10 @@ class MonthStart extends StatelessWidget {
               Text(currency, style: serif(24)),
             ],
           ),
-          Text(hint, style: sans(12, h: 1.4, c: sub)),
+          Text(
+            hint,
+            style: note ? sans(12, h: 1.4, w: FontWeight.w700, c: ink) : sans(12, h: 1.4, c: sub),
+          ),
         ],
       ),
     );
@@ -105,13 +117,14 @@ class MonthStart extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 12),
                     child: field(
                       tr.savingGoal,
-                      tr.savingHint,
+                      goalNote(app) ?? tr.savingHint,
                       app.save,
                       (v) => app.update(() {
                         app.save = v;
                         app.rule = false;
                       }),
                       ok(.94, .035, 10),
+                      note: goalNote(app) != null,
                     ),
                   ),
                   Padding(padding: const EdgeInsets.only(top: 12), child: _Rule(sub)),

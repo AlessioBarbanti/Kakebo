@@ -51,6 +51,17 @@ jobs:
             exit 1
           fi
 
+      # The release notes are the version's section of CHANGELOG.md, up to the next version or the link list at the end.
+      - name: Release notes from CHANGELOG.md
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          awk -v v="${GITHUB_REF_NAME#v}" '/^## \[/ { on = index($0, "[" v "]") > 0; next } /^\[[^]]+\]: / { on = 0 } on' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          if ! grep -q '[^[:space:]]' "$RUNNER_TEMP/notes.md"; then
+            echo "::error::CHANGELOG.md has no section for $GITHUB_REF_NAME"
+            exit 1
+          fi
+          cat "$RUNNER_TEMP/notes.md"
+
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
@@ -111,4 +122,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "Kakebo $GITHUB_REF_NAME" --generate-notes --verify-tag
+        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "Kakebo $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md" --verify-tag

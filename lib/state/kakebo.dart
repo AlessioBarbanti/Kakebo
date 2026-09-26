@@ -22,9 +22,8 @@ class Kakebo extends ChangeNotifier {
   // Persisted.
   bool onboarded = false, rule = false;
   double income = 2800, save = 300;
-  List<Fixed> fixed = [
-    for (final (i, amt) in const [850.0, 120.0, 30.0, 25.0, 125.0].indexed) Fixed(i + 1, tr.defaultFixed[i], amt),
-  ];
+  // A new ledger starts with one blank fixed cost, as if "add" had just been pressed: a row to fill, nothing to delete.
+  List<Fixed> fixed = [Fixed(1, tr.newItem, 0)];
   List<Entry> entries = [];
   Map<String, String> thoughts = {}; // yyyy-mm-dd → text
   Map<String, String> improve = {}; // yyyy-mm → answer to question 4
@@ -48,6 +47,7 @@ class Kakebo extends ChangeNotifier {
     if (data != null) k.read(data);
     k._storage = store;
     k.screen = k.onboarded ? 'home' : 'onboarding';
+    if (k.closeForgotten()) k.notifyListeners(); // months left open since the last launch
     return k;
   }
 
@@ -103,8 +103,8 @@ class Kakebo extends ChangeNotifier {
 
   void go(String s) => update(() => screen = s);
 
-  /// Redraw for a new hour/day (greeting, evening notice, "today") without saving.
-  void refresh() => super.notifyListeners();
+  /// Redraw for a new hour/day (greeting, evening notice, "today"); saves only if a forgotten month has just sealed itself.
+  void refresh() => closeForgotten() ? notifyListeners() : super.notifyListeners();
 
   // The current budgeting month ("period"): the calendar month unless it starts on another day.
   Period periodAt(DateTime d) {
@@ -132,11 +132,17 @@ class Kakebo extends ChangeNotifier {
   double get spent => sum(month);
   double get left => math.max(0, available - spent);
   double get onTrack => math.max(0, income - fixedTotal - spent);
+  double spentIn(Period p) => sum(inPeriod(p));
+  double leftIn(Period p) => math.max(0, available - spentIn(p));
+  double onTrackIn(Period p) => math.max(0, income - fixedTotal - spentIn(p));
   int get spentPct => math.min(100, (spent / _nz(available) * 100).round());
 
   /// Flowers on the savings branch: one per tenth of the goal, blooming while spending keeps the month's pace.
-  int get bloomed {
-    final elapsed = day / dim, pace = spent / _nz(available) / elapsed;
+  int get bloomed => bloomedIn(period);
+
+  /// The same for any month; one that is over counts all its days.
+  int bloomedIn(Period p) {
+    final elapsed = p.start == period.start ? day / dim : 1.0, pace = spentIn(p) / _nz(available) / elapsed;
     return (10 * elapsed * (pace <= 1 ? 1 : math.max(0, 2 - pace))).round();
   }
 
@@ -152,24 +158,81 @@ class Kakebo extends ChangeNotifier {
   void setBudget(String k, double v) => update(() => budgets = {for (final p in pillars.keys) p: p == k ? v : budget(p)});
   void autoBudgets() => update(() => budgets = null);
   String? get thoughtToday => thoughts[dateKey(now)];
-  bool get isSealed => sealed.containsKey(monthKey(label));
-  DateTime get nextMonth => DateTime(label.year, label.month + 1);
   String get currentIntention => improve[monthKey(DateTime(label.year, label.month - 1))]?.trim() ?? '';
 
-  /// The month the setup screen plans: next one once this one is sealed.
-  DateTime get planMonth => isSealed ? nextMonth : label;
+  // Closing a month. It is sealed once it is over, during all of the month after it; still open when that one ends too, it
+  // seals itself. At most one month waits, and dates (not month strings) carry it across the new year.
+
+  /// The budgeting month before this one.
+  Period get previous {
+    final s = period.start;
+    return periodAt(DateTime(s.year, s.month, s.day - 1));
+  }
+
+  /// Anything written for that month: an expense, a reflection or an intention.
+  bool _used(Period p) {
+    final mk = monthKey(labelOf(p));
+    return entries.any((e) => p.has(e.date)) || reflections.containsKey(mk) || improve.containsKey(mk);
+  }
+
+  /// The month the review is about: the one just over while it waits for its seal, otherwise this one, still running.
+  Period get reviewPeriod => _used(previous) && !sealed.containsKey(monthKey(labelOf(previous))) ? previous : period;
+
+  /// Whether the month under review can be sealed now: only once it is over.
+  bool get canSeal => reviewPeriod.start != period.start;
+
+  /// Seals the month under review with what it saved.
+  void seal() {
+    if (!canSeal) return;
+    final p = reviewPeriod;
+    update(() => sealed[monthKey(labelOf(p))] = onTrackIn(p));
+  }
+
+  /// Seals, with their figures and no reflections, the months still open although the month after them is over too.
+  /// True if any was sealed (the caller saves).
+  bool closeForgotten() {
+    final before = previous.start, open = <String, Period>{};
+    for (final e in entries) {
+      final p = periodAt(e.date);
+      if (p.start.isBefore(before)) open.putIfAbsent(monthKey(labelOf(p)), () => p);
+    }
+    for (final mk in {...reflections.keys, ...improve.keys}) {
+      final p = periodFor(DateTime.parse('$mk-01'));
+      if (p.start.isBefore(before)) open.putIfAbsent(mk, () => p);
+    }
+    open.removeWhere((mk, _) => sealed.containsKey(mk));
+    for (final MapEntry(key: mk, value: p) in open.entries) {
+      sealed[mk] = onTrackIn(p);
+    }
+    return open.isNotEmpty;
+  }
 
   void toggleRule() => update(() {
     rule = !rule;
     if (rule) save = (income * .2).roundToDouble();
   });
 
-  void addEntry(double amt, String note, String p) =>
-      update(() => entries.insert(0, Entry(DateTime(now.year, now.month, now.day), note.isEmpty ? tr.pillars[p]!.name : note, amt, p)));
+  /// A new expense, today unless [on] says another day (one written down late).
+  void addEntry(double amt, String note, String p, {DateTime? on}) =>
+      update(() => _insertByDate(Entry(_day(on ?? now), note.isEmpty ? tr.pillars[p]!.name : note, amt, p)));
 
-  void editEntry(Entry old, double amt, String note, String p, {String? reflection}) => update(
-    () => entries[entries.indexOf(old)] = Entry(old.date, note.isEmpty ? tr.pillars[p]!.name : note, amt, p, reflection: reflection ?? old.reflection),
-  );
+  void editEntry(Entry old, double amt, String note, String p, {String? reflection, DateTime? on}) => update(() {
+    final e = Entry(on == null ? old.date : _day(on), note.isEmpty ? tr.pillars[p]!.name : note, amt, p, reflection: reflection ?? old.reflection);
+    if (e.date == old.date) {
+      entries[entries.indexOf(old)] = e;
+    } else {
+      entries.remove(old);
+      _insertByDate(e);
+    }
+  });
+
+  static DateTime _day(DateTime d) => DateTime(d.year, d.month, d.day);
+
+  /// The ledger stays newest first: an expense dated back goes first among its own day's, above the older ones.
+  void _insertByDate(Entry e) {
+    final i = entries.indexWhere((x) => !x.date.isAfter(e.date));
+    entries.insert(i < 0 ? entries.length : i, e);
+  }
 
   /// Removes an expense and returns where it was, for undo.
   int removeEntry(Entry e) {
@@ -191,6 +254,7 @@ class Kakebo extends ChangeNotifier {
       Kakebo().read(j); // validate on a scratch copy first
       update(() {
         read(j);
+        closeForgotten();
         screen = onboarded ? 'home' : 'onboarding';
       });
       return true;
@@ -205,14 +269,15 @@ class Kakebo extends ChangeNotifier {
     screen = 'onboarding';
   });
 
-  void seal() => update(() => sealed[monthKey(label)] = onTrack);
-
   /// Spreadsheet-ready for the phone's region: "1,5" with ";" where the comma is decimal, else "1.5" with ",".
   /// Starts with a BOM so Excel reads the accents.
   String csv() => Backup.csv(entries, headers: tr.csvHeader, decimalSep: decimalSep, pillarName: (key) => tr.pillars[key]!.name);
 
   /// Demo data, placed in the current month (`--dart-define=DEMO=true`).
   void seedDemo() {
+    fixed = [
+      for (final (i, amt) in const [850.0, 120.0, 30.0, 25.0, 125.0].indexed) Fixed(i + 1, tr.defaultFixed[i], amt),
+    ];
     const seed = [
       (24, 'Matcha e un libro da Hondana', 12.8, 'culture'),
       (24, 'Spesa: tofu, verdure, riso', 34.2, 'needs'),

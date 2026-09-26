@@ -55,6 +55,15 @@ class AppLocalizationsIt extends AppLocalizations {
   String get savingHint => 'Da mettere da parte subito, prima di spendere';
 
   @override
+  String goalOverMargin(String amount) {
+    return 'È più di quanto resta dopo le spese fisse ($amount): così non avanza nulla da spendere.';
+  }
+
+  @override
+  String get fixedOverIncome =>
+      'Le spese fisse superano le entrate: non resta nulla da mettere da parte né da spendere.';
+
+  @override
   String get ruleTitle => 'Punto di partenza: 50 / 30 / 20';
 
   @override
@@ -92,6 +101,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get fixedHint => 'Si ripetono ogni mese, modificabili quando vuoi';
+
+  @override
+  String get fixedQuestion => 'Quali spese si ripetono ogni mese?';
 
   @override
   String get addFixed => '+ Aggiungi spesa fissa';
@@ -232,6 +244,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get today => 'Oggi';
 
   @override
+  String get yesterday => 'Ieri';
+
+  @override
   String get addExpense => 'Annota spesa';
 
   @override
@@ -263,6 +278,12 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get deleteExpense => 'Elimina spesa';
+
+  @override
+  String get changeDate => 'Cambia la data';
+
+  @override
+  String get expenseDate => 'Data della spesa';
 
   @override
   String get expenseDeleted => 'Spesa eliminata';
@@ -339,15 +360,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get sealed => 'Sigillato';
-
-  @override
   String get open => 'Aperto';
-
-  @override
-  String monthSealed(String month) {
-    return '$month è chiuso con il sigillo.';
-  }
 
   @override
   String get questionsHint =>
@@ -453,6 +466,29 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String sealMonth(String month) {
     return 'Chiudi $month con il sigillo';
+  }
+
+  @override
+  String sealsFrom(String month, String date) {
+    return 'Potrai chiudere $month con il sigillo dal $date, quando sarà finito.';
+  }
+
+  @override
+  String sealsItself(String date) {
+    return 'Se non lo chiudi, il $date si chiuderà da solo con le sue cifre.';
+  }
+
+  @override
+  String closeBy(String date) {
+    return 'Da chiudere entro il $date';
+  }
+
+  @override
+  String get toClose => 'Da chiudere';
+
+  @override
+  String monthOver(String month) {
+    return '$month è finito: rivedilo e chiudilo con il sigillo.';
   }
 
   @override
@@ -944,7 +980,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get setupFirst =>
-      'Rispondi alle prime due domande: ciò che resta è da spendere con consapevolezza.';
+      'Tre risposte e il mese è pronto: ciò che resta è da spendere con consapevolezza.';
 
   @override
   String introProgress(int current, int total) {

@@ -21,6 +21,9 @@
   "incomeHint": "Stipendio e altre entrate",
   "savingGoal": "Obiettivo di risparmio",
   "savingHint": "Da mettere da parte subito, prima di spendere",
+  "goalOverMargin": "È più di quanto resta dopo le spese fisse ({amount}): così non avanza nulla da spendere.",
+  "@goalOverMargin": {"placeholders": {"amount": {"type": "String"}}},
+  "fixedOverIncome": "Le spese fisse superano le entrate: non resta nulla da mettere da parte né da spendere.",
   "ruleTitle": "Punto di partenza: 50 / 30 / 20",
   "ruleBody": "Metà ai bisogni, un terzo al resto, un quinto al risparmio. Poi il kakebo ti chiede di guardare ogni voce.",
   "apply": "Applica",
@@ -40,6 +43,7 @@
   "becomesGoal": "Diventa il tuo obiettivo del mese",
   "fixedTitle": "Spese fisse ricorrenti",
   "fixedHint": "Si ripetono ogni mese, modificabili quando vuoi",
+  "fixedQuestion": "Quali spese si ripetono ogni mese?",
   "addFixed": "+ Aggiungi spesa fissa",
   "remove": "Rimuovi {name}",
   "@remove": {
@@ -128,6 +132,7 @@
   "weekReflectionPrompt": "C’è una scelta di questa settimana che vorresti ripetere?",
   "branchRule": "Un fiore sboccia per ogni decimo di mese trascorso, se la spesa resta nel ritmo del disponibile. Misura il passo, non i soldi messi da parte.",
   "today": "Oggi",
+  "yesterday": "Ieri",
   "addExpense": "Annota spesa",
   "emptyLedger": "Il registro è ancora vuoto. Annota la prima spesa del mese: basta un importo e un pilastro.",
   "quietToday": "Nessuna spesa oggi. Una giornata leggera.",
@@ -145,6 +150,8 @@
   },
   "save": "Salva",
   "deleteExpense": "Elimina spesa",
+  "changeDate": "Cambia la data",
+  "expenseDate": "Data della spesa",
   "expenseDeleted": "Spesa eliminata",
   "undo": "Annulla",
   "erase": "Cancella",
@@ -204,16 +211,7 @@
       }
     }
   },
-  "sealed": "Sigillato",
   "open": "Aperto",
-  "monthSealed": "{month} è chiuso con il sigillo.",
-  "@monthSealed": {
-    "placeholders": {
-      "month": {
-        "type": "String"
-      }
-    }
-  },
   "questionsHint": "Ciò che ti ha fatto stare bene, ciò che cambieresti, una piccola intenzione per il futuro.",
   "timeline": "Cronologia",
   "week": "La settimana · {span}",
@@ -306,6 +304,15 @@
     }
   },
   "sealMonth": "Chiudi {month} con il sigillo",
+  "sealsFrom": "Potrai chiudere {month} con il sigillo dal {date}, quando sarà finito.",
+  "@sealsFrom": {"placeholders": {"month": {"type": "String"}, "date": {"type": "String"}}},
+  "sealsItself": "Se non lo chiudi, il {date} si chiuderà da solo con le sue cifre.",
+  "@sealsItself": {"placeholders": {"date": {"type": "String"}}},
+  "closeBy": "Da chiudere entro il {date}",
+  "@closeBy": {"placeholders": {"date": {"type": "String"}}},
+  "toClose": "Da chiudere",
+  "monthOver": "{month} è finito: rivedilo e chiudilo con il sigillo.",
+  "@monthOver": {"placeholders": {"month": {"type": "String"}}},
   "@sealMonth": {
     "placeholders": {
       "month": {
@@ -488,7 +495,7 @@
   "step3Title": "Quattro domande",
   "step3Body": "A inizio e fine mese rispondi sempre alle stesse quattro.",
   "next": "Avanti",
-  "setupFirst": "Rispondi alle prime due domande: ciò che resta è da spendere con consapevolezza.",
+  "setupFirst": "Tre risposte e il mese è pronto: ciò che resta è da spendere con consapevolezza.",
   "introProgress": "Passaggio {current} di {total}",
   "@introProgress": {"placeholders": {"current": {"type": "int"}, "total": {"type": "int"}}},
   "fourQuestion1": "Quanto denaro hai?",

@@ -80,9 +80,10 @@ Le frasi non ancora tradotte finiscono in `build/untranslated-messages.json`.
 
 ## Rilascio
 
-1. Aggiorna `version` in `pubspec.yaml`: il nome (`1.0.1`) per le persone, il numero dopo `+` per Android e Google Play, che deve crescere a ogni caricamento.
-2. Fai commit su `main`, poi crea e invia il tag con lo stesso nome: `git tag v1.0.1 && git push origin v1.0.1`.
-3. La GitHub Action *Release* (`.github/workflows/release.yml`) esegue analisi e test, compila APK e app bundle firmati e pubblica la release su GitHub con i due file. L'APK si installa direttamente; il file `-play.aab` va caricato nella Play Console. Avviata a mano da GitHub (Actions → Release → Run workflow) compila soltanto, senza pubblicare.
+1. Aggiorna `version` in `pubspec.yaml`: il nome (`1.2.0`) per le persone, il numero dopo `+` per Android e Google Play, che deve crescere a ogni caricamento. Il nome segue il versionamento semantico: correzioni → `1.1.1`, novità → `1.2.0`.
+2. Aggiungi in cima a `CHANGELOG.md` la sezione `## [1.2.0] - data`, scritta per chi usa l'app (Novità, Modifiche, Correzioni), e il suo link in fondo al file. Diventa il testo della release: senza, la Action si ferma.
+3. Fai commit su `main`, poi crea e invia il tag con lo stesso nome: `git tag v1.2.0 && git push origin v1.2.0`.
+4. La GitHub Action *Release* (`.github/workflows/release.yml`) esegue analisi e test, compila APK e app bundle firmati e pubblica la release su GitHub con i due file. L'APK si installa direttamente; il file `-play.aab` va caricato nella Play Console. Avviata a mano da GitHub (Actions → Release → Run workflow) compila soltanto, senza pubblicare.
 
 La chiave di caricamento (upload key) di Google Play non è nel repository:
 

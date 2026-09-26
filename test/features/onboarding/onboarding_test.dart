@@ -44,10 +44,16 @@ void main() {
     final grid = [t.getRect(logo), t.getRect(find.text('家計簿')), t.getRect(find.text(tr.step1Title)), t.getRect(find.text('Salta')), t.getRect(next)];
 
     await t.tap(next);
-    await t.pump(const Duration(milliseconds: 350));
+    await t.pump(); // starts the switch
+    await t.pump(const Duration(milliseconds: 350)); // halfway through
     final prints = find.byType(Image);
-    expect(prints, findsNWidgets(2)); // plum and iris together, one over the other
+    expect(prints, findsNWidgets(2)); // Suruga-chō and the plum together, one over the other
     expect({for (var i = 0; i < 2; i++) t.getRect(prints.at(i))}, hasLength(1)); // same place, no slide
+    // Halfway, the old print is already half gone: it fades out, it does not wait at full strength and vanish at the end.
+    final fades = [for (var i = 0; i < 2; i++) t.widget<FadeTransition>(find.ancestor(of: prints.at(i), matching: find.byType(FadeTransition)).first)];
+    for (final f in fades) {
+      expect(f.opacity.value, inExclusiveRange(.2, .8));
+    }
     await t.pumpAndSettle();
 
     final backAt = t.getRect(back);
@@ -88,7 +94,7 @@ void main() {
     }
   });
 
-  testWidgets('Skip opens the setup; its answers save, fixed costs are folded, a swipe never starts the month', (t) async {
+  testWidgets('Skip opens the setup; its three answers save, a blank fixed cost waits open, a swipe never starts the month', (t) async {
     final app = await mount(t);
     await t.tap(find.text('Salta'));
     await t.pumpAndSettle();
@@ -105,16 +111,27 @@ void main() {
     await t.tap(next);
     await t.pumpAndSettle();
 
-    await t.enterText(find.byType(TextField).first, '3000');
+    // Fields in order: income, the blank fixed cost waiting open (name, amount), the savings goal.
+    final fields = find.byType(TextField);
+    expect(fields, findsNWidgets(4));
+    expect(find.text(tr.newItem), findsOneWidget);
+    await t.enterText(fields.first, '3000');
     expect(app.income, 3000);
-    await t.enterText(find.byType(TextField).at(1), '500');
+    await t.enterText(fields.at(1), 'Affitto');
+    await t.enterText(fields.at(2), '900');
+    expect((app.fixed.single.name, app.fixed.single.amt), ('Affitto', 900));
+    await t.enterText(fields.last, '500');
     expect(app.save, 500);
+    await t.ensureVisible(find.text(tr.addFixed));
+    await t.tap(find.text(tr.addFixed));
+    await t.pump();
+    expect(app.fixed, hasLength(2));
 
-    final rent = find.text(app.fixed.first.name);
-    expect(rent, findsNothing);
-    await t.ensureVisible(find.text(tr.fixedTitle));
-    await t.tap(find.text(tr.fixedTitle));
-    await t.pumpAndSettle();
-    expect(rent, findsOneWidget);
+    // A goal beyond what is left after fixed costs is allowed, but said.
+    await t.enterText(find.byType(TextField).first, '1000');
+    await t.enterText(find.byType(TextField).last, '3000');
+    await t.pump();
+    expect(find.text(tr.goalOverMargin(fmt(100))), findsOneWidget);
+    expect(app.available, 0);
   });
 }

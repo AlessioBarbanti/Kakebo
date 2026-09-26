@@ -63,12 +63,50 @@ void main() {
     Kakebo.clock = () => DateTime(2026, 9, 24, 21);
     final a = Kakebo()..seedDemo();
     a.addEntry(3.5, 'Caffè', 'wants');
-    a.seal();
     final b = Kakebo()..read(jsonDecode(jsonEncode(a.toJson())));
     expect(b.entries.length, a.entries.length);
     expect(b.entries.first.note, 'Caffè');
     expect(b.spent, a.spent);
-    expect(b.isSealed, isTrue);
+    expect(b.sealed, a.sealed);
     expect(b.thoughts, a.thoughts);
+  });
+
+  test('a month seals from the first day of the next, and by itself when that one ends too, across the new year', () {
+    final k = Kakebo()
+      ..income = 1000
+      ..save = 100
+      ..entries = [Entry(DateTime(2026, 9, 10), 'Spesa', 300, 'needs')];
+    Kakebo.clock = () => DateTime(2026, 9, 26);
+    expect((k.reviewPeriod.start, k.canSeal), (DateTime(2026, 9), false)); // September is still running
+    k.seal();
+    expect(k.sealed, isEmpty);
+
+    Kakebo.clock = () => DateTime(2026, 10, 1);
+    expect((k.reviewPeriod.start, k.canSeal), (DateTime(2026, 9), true)); // all of October to seal it
+    expect(k.closeForgotten(), isFalse);
+
+    Kakebo.clock = () => DateTime(2026, 11, 1);
+    expect(k.closeForgotten(), isTrue); // forgotten through October: it seals itself, with its figures
+    expect(k.sealed, {'2026-09': 700}); // 1000 income − 0 fixed − 300 spent
+    expect((k.reviewPeriod.start, k.canSeal), (DateTime(2026, 11), false)); // nothing written in October
+
+    // December waits through January; November, still open, seals itself on 1 January.
+    k.entries = [Entry(DateTime(2026, 11, 5), 'a', 50, 'wants'), Entry(DateTime(2026, 12, 5), 'b', 80, 'wants')];
+    Kakebo.clock = () => DateTime(2027, 1, 1);
+    expect(k.closeForgotten(), isTrue);
+    expect(k.sealed['2026-11'], 950);
+    expect((k.reviewPeriod.start, k.canSeal), (DateTime(2026, 12), true));
+    k.seal();
+    expect(k.sealed['2026-12'], 920);
+    expect((k.reviewPeriod.start, k.canSeal), (DateTime(2027, 1), false)); // January is next, sealed from 1 February
+
+    // With the month starting on payday (the 27th), "September" runs 27 Aug – 26 Sep and seals from 27 September.
+    final p = Kakebo()
+      ..monthStart = 27
+      ..entries = [Entry(DateTime(2026, 9, 20), 'c', 10, 'needs')];
+    Kakebo.clock = () => DateTime(2026, 9, 26);
+    expect(p.canSeal, isFalse);
+    Kakebo.clock = () => DateTime(2026, 9, 27);
+    expect((p.labelOf(p.reviewPeriod), p.canSeal), (DateTime(2026, 9), true));
   });
 }

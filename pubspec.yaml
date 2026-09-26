@@ -2,7 +2,7 @@ name: kakebo
 description: "Kakebo, il registro di casa giapponese"
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ^3.13.4

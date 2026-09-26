@@ -20,6 +20,7 @@
 <p align="center">
   <a href="https://github.com/AlessioBarbanti/Kakebo/releases/latest"><strong>Scarica l'APK</strong></a> ·
   <a href="#come-funziona">Come funziona</a> ·
+  <a href="CHANGELOG.md">Novità</a> ·
   <a href="#compilare-dal-codice">Compilare</a> ·
   <a href="CONTRIBUTING.md">Contribuire</a>
 </p>

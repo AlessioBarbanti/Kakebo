@@ -182,6 +182,18 @@ abstract class AppLocalizations {
   /// **'Da mettere da parte subito, prima di spendere'**
   String get savingHint;
 
+  /// No description provided for @goalOverMargin.
+  ///
+  /// In it, this message translates to:
+  /// **'È più di quanto resta dopo le spese fisse ({amount}): così non avanza nulla da spendere.'**
+  String goalOverMargin(String amount);
+
+  /// No description provided for @fixedOverIncome.
+  ///
+  /// In it, this message translates to:
+  /// **'Le spese fisse superano le entrate: non resta nulla da mettere da parte né da spendere.'**
+  String get fixedOverIncome;
+
   /// No description provided for @ruleTitle.
   ///
   /// In it, this message translates to:
@@ -253,6 +265,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Si ripetono ogni mese, modificabili quando vuoi'**
   String get fixedHint;
+
+  /// No description provided for @fixedQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Quali spese si ripetono ogni mese?'**
+  String get fixedQuestion;
 
   /// No description provided for @addFixed.
   ///
@@ -488,6 +506,12 @@ abstract class AppLocalizations {
   /// **'Oggi'**
   String get today;
 
+  /// No description provided for @yesterday.
+  ///
+  /// In it, this message translates to:
+  /// **'Ieri'**
+  String get yesterday;
+
   /// No description provided for @addExpense.
   ///
   /// In it, this message translates to:
@@ -547,6 +571,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Elimina spesa'**
   String get deleteExpense;
+
+  /// No description provided for @changeDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambia la data'**
+  String get changeDate;
+
+  /// No description provided for @expenseDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Data della spesa'**
+  String get expenseDate;
 
   /// No description provided for @expenseDeleted.
   ///
@@ -674,23 +710,11 @@ abstract class AppLocalizations {
   /// **'Rivedi il mese · termina il {date}'**
   String questionsFrom(String date);
 
-  /// No description provided for @sealed.
-  ///
-  /// In it, this message translates to:
-  /// **'Sigillato'**
-  String get sealed;
-
   /// No description provided for @open.
   ///
   /// In it, this message translates to:
   /// **'Aperto'**
   String get open;
-
-  /// No description provided for @monthSealed.
-  ///
-  /// In it, this message translates to:
-  /// **'{month} è chiuso con il sigillo.'**
-  String monthSealed(String month);
 
   /// No description provided for @questionsHint.
   ///
@@ -853,6 +877,36 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Chiudi {month} con il sigillo'**
   String sealMonth(String month);
+
+  /// No description provided for @sealsFrom.
+  ///
+  /// In it, this message translates to:
+  /// **'Potrai chiudere {month} con il sigillo dal {date}, quando sarà finito.'**
+  String sealsFrom(String month, String date);
+
+  /// No description provided for @sealsItself.
+  ///
+  /// In it, this message translates to:
+  /// **'Se non lo chiudi, il {date} si chiuderà da solo con le sue cifre.'**
+  String sealsItself(String date);
+
+  /// No description provided for @closeBy.
+  ///
+  /// In it, this message translates to:
+  /// **'Da chiudere entro il {date}'**
+  String closeBy(String date);
+
+  /// No description provided for @toClose.
+  ///
+  /// In it, this message translates to:
+  /// **'Da chiudere'**
+  String get toClose;
+
+  /// No description provided for @monthOver.
+  ///
+  /// In it, this message translates to:
+  /// **'{month} è finito: rivedilo e chiudilo con il sigillo.'**
+  String monthOver(String month);
 
   /// No description provided for @calendarKicker.
   ///
@@ -1781,7 +1835,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupFirst.
   ///
   /// In it, this message translates to:
-  /// **'Rispondi alle prime due domande: ciò che resta è da spendere con consapevolezza.'**
+  /// **'Tre risposte e il mese è pronto: ciò che resta è da spendere con consapevolezza.'**
   String get setupFirst;
 
   /// No description provided for @introProgress.

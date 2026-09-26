@@ -65,6 +65,32 @@ void main() {
     expect(app.entries.single.p, 'culture');
   });
 
+  testWidgets('an expense forgotten yesterday is dated back and takes its place in the ledger', (t) async {
+    app.addEntry(5, 'Pane', 'needs'); // today, Thursday 24 September
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: MaterialApp(
+          home: Builder(
+            builder: (c) => TextButton(onPressed: () => openAdd(c), child: const Text('apri')),
+          ),
+        ),
+      ),
+    );
+    await t.tap(find.text('apri'));
+    await t.pumpAndSettle();
+    await t.tap(find.text('9'));
+    await t.tap(find.text('Cultura'));
+    await t.tap(find.text('Oggi'));
+    await t.pumpAndSettle();
+    await t.tap(find.text('23'));
+    await t.tap(find.text('OK'));
+    await t.pumpAndSettle();
+    expect(find.text('Ieri'), findsOneWidget);
+    await t.tap(find.text('Salva'));
+    expect([for (final e in app.entries) (e.note, e.date)], [('Pane', DateTime(2026, 9, 24)), ('Cultura', DateTime(2026, 9, 23))]);
+  });
+
   testWidgets('tapping an expense edits it; deleting it can be undone', (t) async {
     Kakebo.clock = () => DateTime(2026, 9, 24, 21);
     app.onboarded = true;

@@ -13,17 +13,28 @@ import 'package:kakebo/shared/theme/seasons.dart';
 import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/shared/widgets/controls.dart';
 
-class Review extends StatelessWidget {
+/// The review of a month: the one just over while it waits for its seal, otherwise the one still running (sealed only once
+/// it is over, see Kakebo.reviewPeriod).
+class Review extends StatefulWidget {
   const Review({super.key});
+
+  @override
+  State<Review> createState() => _ReviewState();
+}
+
+class _ReviewState extends State<Review> {
+  // Fixed when the review opens: once sealed, the month stays on screen with its seal before the next one takes over.
+  late final Period p = AppScope.read(context).reviewPeriod;
 
   @override
   Widget build(BuildContext context) {
     final app = AppScope.watch(context);
-    final s = app.season, mk = monthKey(app.label), month = monthName(app.label), next = monthName(app.nextMonth), sealed = app.isSealed;
+    final ml = app.labelOf(p), s = app.season, mk = monthKey(ml), month = monthName(ml), next = monthName(DateTime(ml.year, ml.month + 1));
+    final sealed = app.sealed.containsKey(mk), over = p.start != app.period.start, bloomed = app.bloomedIn(p);
     final questions = [
       (tr.fourQuestions[0], fmt(app.income - app.fixedTotal), tr.incomeMinusFixed),
       (tr.fourQuestions[1], fmt(app.save), tr.goalFor(month)),
-      (tr.fourQuestions[2], fmt(app.spent), tr.acrossPillars),
+      (tr.fourQuestions[2], fmt(app.spentIn(p)), tr.acrossPillars),
     ];
     final dim = ok(.34, .04, 160);
 
@@ -45,11 +56,11 @@ class Review extends StatelessWidget {
                 spacing: 6,
                 children: [
                   Text(tr.residualNow.toUpperCase(), style: sans(12, ls: 1.68, c: ok(.38, .04, 160))), // the calendar's label too
-                  Text(fmt(app.onTrack), style: serif(36, w: FontWeight.w700)),
-                  Text(tr.residualNote(fmt(app.save), fmt(app.left)), style: sans(13, h: 1.5, c: dim)),
+                  Text(fmt(app.onTrackIn(p)), style: serif(36, w: FontWeight.w700)),
+                  Text(tr.residualNote(fmt(app.save), fmt(app.leftIn(p))), style: sans(13, h: 1.5, c: dim)),
                 ],
               ),
-              for (final (label, value) in [(tr.goal, fmt(app.save)), (tr.branchTitle, tr.flowers(app.bloomed))])
+              for (final (label, value) in [(tr.goal, fmt(app.save)), (tr.branchTitle, tr.flowers(bloomed))])
                 Container(
                   padding: const EdgeInsets.only(top: 10),
                   decoration: BoxDecoration(
@@ -66,7 +77,7 @@ class Review extends StatelessWidget {
                     ],
                   ),
                 ),
-              const Branch(height: 64),
+              Branch(height: 64, bloomed: bloomed),
               ExpansionTile(
                 tilePadding: EdgeInsets.zero,
                 childrenPadding: const EdgeInsets.only(bottom: 8),
@@ -75,7 +86,7 @@ class Review extends StatelessWidget {
                 title: Text(tr.paceExplanation, style: sans(13, c: dim)),
                 children: [Text(tr.branchRule, style: sans(13, h: 1.5, c: dim))],
               ),
-              if (sealed) Align(alignment: Alignment.centerRight, child: Hanko(app.label)),
+              if (sealed) Align(alignment: Alignment.centerRight, child: Hanko(ml)),
             ],
           ),
         ),
@@ -147,12 +158,27 @@ class Review extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: Btn(
-            sealed ? tr.plan(next) : tr.sealMonth(month),
-            sealed ? () => app.go('monthStart') : app.seal,
-            color: sealed ? green : sealRed,
-            pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 15),
-          ),
+          child: sealed
+              ? Btn(tr.plan(next), () => app.go('monthStart'), color: green, pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 15))
+              : over
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  spacing: 8,
+                  children: [
+                    Btn(tr.sealMonth(month), app.seal, color: sealRed, pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 15)),
+                    Text(
+                      tr.sealsItself(dayMonth(app.period.end)),
+                      textAlign: TextAlign.end,
+                      style: sans(12, h: 1.4, c: muted),
+                    ),
+                  ],
+                )
+              // Still running: the seal waits for the month to be over.
+              : Text(
+                  tr.sealsFrom(month, dayMonth(p.end)),
+                  textAlign: TextAlign.end,
+                  style: sans(13, h: 1.5, c: muted),
+                ),
         ),
       ],
     );

@@ -4,6 +4,7 @@ import 'package:kakebo/app/app_scope.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/model/entry.dart';
+import 'package:kakebo/model/period.dart';
 import 'package:kakebo/model/pillar.dart';
 import 'package:kakebo/model/pillar_suggestion.dart';
 import 'package:kakebo/shared/theme/color.dart';
@@ -41,6 +42,7 @@ class _AddSheetState extends State<AddSheet> {
   late String? pillar = e?.p; // a new expense starts with none: the note may suggest one, the user picks
   late String reflection = e?.reflection ?? '';
   late bool touched = e != null; // an edited expense keeps its pillar
+  late DateTime day = e?.date ?? DateTime(app.now.year, app.now.month, app.now.day);
 
   double get value => double.tryParse(amt) ?? 0;
   bool get ready => value > 0 && pillar != null;
@@ -59,8 +61,23 @@ class _AddSheetState extends State<AddSheet> {
 
   void save() {
     if (!ready) return;
-    e == null ? app.addEntry(value, note.trim(), pillar!) : app.editEntry(e!, value, note.trim(), pillar!, reflection: reflection.trim());
+    e == null ? app.addEntry(value, note.trim(), pillar!, on: day) : app.editEntry(e!, value, note.trim(), pillar!, reflection: reflection.trim(), on: day);
     Navigator.pop(context);
+  }
+
+  /// For an expense written down late: any day of a month still open, so the previous one too until it is sealed (a month
+  /// sealed keeps the figures it was sealed with); never a day still to come.
+  Future<void> pickDay() async {
+    final today = DateTime(app.now.year, app.now.month, app.now.day), previous = app.previous;
+    final earliest = app.sealed.containsKey(monthKey(app.labelOf(previous))) ? app.period.start : previous.start;
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: day,
+      firstDate: day.isBefore(earliest) ? day : earliest,
+      lastDate: day.isAfter(today) ? day : today,
+      helpText: tr.expenseDate,
+    );
+    if (picked != null && mounted) setState(() => day = picked);
   }
 
   void delete() {
@@ -81,7 +98,7 @@ class _AddSheetState extends State<AddSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final app = AppScope.watch(context);
+    final app = AppScope.watch(context), today = DateTime(app.now.year, app.now.month, app.now.day);
     final guess = touched ? null : suggest(note);
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(18, 10, 18, 30 + MediaQuery.viewInsetsOf(context).bottom + MediaQuery.paddingOf(context).bottom),
@@ -97,9 +114,38 @@ class _AddSheetState extends State<AddSheet> {
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(e == null ? tr.newExpense : tr.editExpense, style: serif(20)),
+              Expanded(child: Text(e == null ? tr.newExpense : tr.editExpense, style: serif(20))),
+              // Quiet on purpose, in the header's own 48 dp: most expenses are today's, a tap dates one back when forgotten.
+              Semantics(
+                button: true,
+                hint: tr.changeDate,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: pickDay,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 48),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 6,
+                        children: [
+                          Icon(Icons.edit_calendar_outlined, size: 16, color: muted),
+                          Text(
+                            day == today
+                                ? tr.today
+                                : day == DateTime(today.year, today.month, today.day - 1)
+                                ? tr.yesterday
+                                : shortDay(day),
+                            style: sans(14, c: muted),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               TapText(tr.cancel, () => Navigator.pop(context), style: sans(14, c: muted)),
             ],
           ),
@@ -110,7 +156,6 @@ class _AddSheetState extends State<AddSheet> {
                 money(amt.isEmpty ? '0' : amt),
                 style: serif(46, w: FontWeight.w700, h: 1.1, c: value > 0 ? ink : ok(.7, .02, 160)),
               ),
-              Text(dayLabel(e?.date ?? app.now), style: sans(12, c: ok(.42, .03, 160))),
             ],
           ),
           TextFormField(

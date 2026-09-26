@@ -55,6 +55,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingHint => 'Put it aside right away, before spending';
 
   @override
+  String goalOverMargin(String amount) {
+    return 'That is more than is left after fixed costs ($amount): nothing would be left to spend.';
+  }
+
+  @override
+  String get fixedOverIncome =>
+      'Fixed costs are more than your income: nothing is left to save or spend.';
+
+  @override
   String get ruleTitle => 'Starting point: 50 / 30 / 20';
 
   @override
@@ -93,6 +102,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get fixedHint =>
       'They repeat every month; change them whenever you like';
+
+  @override
+  String get fixedQuestion => 'What do you pay every month?';
 
   @override
   String get addFixed => '+ Add a fixed cost';
@@ -232,6 +244,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get today => 'Today';
 
   @override
+  String get yesterday => 'Yesterday';
+
+  @override
   String get addExpense => 'Add expense';
 
   @override
@@ -263,6 +278,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteExpense => 'Delete expense';
+
+  @override
+  String get changeDate => 'Change the date';
+
+  @override
+  String get expenseDate => 'Date of the expense';
 
   @override
   String get expenseDeleted => 'Expense deleted';
@@ -339,15 +360,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get sealed => 'Sealed';
-
-  @override
   String get open => 'Open';
-
-  @override
-  String monthSealed(String month) {
-    return '$month is closed with the seal.';
-  }
 
   @override
   String get questionsHint =>
@@ -453,6 +466,29 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String sealMonth(String month) {
     return 'Close $month with the seal';
+  }
+
+  @override
+  String sealsFrom(String month, String date) {
+    return 'You can seal $month from $date, once it is over.';
+  }
+
+  @override
+  String sealsItself(String date) {
+    return 'If you don\'t, it seals itself on $date, with its figures.';
+  }
+
+  @override
+  String closeBy(String date) {
+    return 'To close by $date';
+  }
+
+  @override
+  String get toClose => 'To close';
+
+  @override
+  String monthOver(String month) {
+    return '$month is over: look back on it and seal it.';
   }
 
   @override
@@ -940,7 +976,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get setupFirst =>
-      'Answer the first two questions: what is left is yours to spend mindfully.';
+      'Three answers and the month is ready: what is left is yours to spend mindfully.';
 
   @override
   String introProgress(int current, int total) {
