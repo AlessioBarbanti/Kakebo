@@ -468,12 +468,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get quietDay => 'Una giornata tranquilla. Nessuna spesa annotata.';
 
   @override
-  String get dayWithSpending => 'Con spese';
-
-  @override
-  String dayOver(String amount) {
-    return 'Oltre $amount';
-  }
+  String get dayShade => 'Più colore, più Desideri, Cultura e Imprevisti';
 
   @override
   String get spentInPillars => 'Speso nei pilastri';
@@ -630,6 +625,12 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get activate => 'Attiva ›';
+
+  @override
+  String get meditation => 'Meditazione prima del pensiero';
+
+  @override
+  String get meditationHint => 'Tre respiri guidati prima di scrivere';
 
   @override
   String get writeToday => 'Scrivi il pensiero di oggi';

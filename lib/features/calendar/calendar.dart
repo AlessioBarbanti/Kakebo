@@ -17,6 +17,15 @@ import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/shared/widgets/controls.dart';
 import 'package:kakebo/state/kakebo.dart';
 
+/// How deep a day's shade is, 0 to 1: what went on wants, culture and the unexpected against their daily share of the month
+/// (twice the share or more is the deepest). Needs stay out, so the weekly shop is not a heavy day; with no share left,
+/// any such spending shows in full.
+double dayShade(Iterable<Entry> day, double share) {
+  final free = sum(day.where((e) => e.p != 'needs'));
+  if (free == 0) return 0;
+  return share <= 0 ? 1 : math.min(1, free / share / 2);
+}
+
 class Calendar extends StatefulWidget {
   const Calendar({super.key});
 
@@ -59,8 +68,10 @@ class _CalendarState extends State<Calendar> {
       byDay.putIfAbsent(dateKey(e.date), () => []).add(e);
     }
     final sel = byDay[dateKey(selDay)] ?? [];
-    // A day's mark says how much, never whether it was good: no red, and the legend below says where the step is.
-    final light = ok(.7, .07, 150), deep = ok(.45, .08, 155);
+    // A day says how it went against the rhythm, never whether it was good: a green shade for the free pillars
+    // against their daily share (dayShade), no red and no figures. What was spent is in the day's card, a tap away.
+    final share = pillars.keys.where((k) => k != 'needs').fold(0.0, (a, k) => a + app.budget(k)) / app.dim;
+    final shade = ok(.6, .09, 155);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -102,7 +113,7 @@ class _CalendarState extends State<Calendar> {
                       const SizedBox()
                     else
                       () {
-                        final d = DateTime(first.year, first.month, first.day + i - offset), t = sum(byDay[dateKey(d)] ?? []), isSel = d == selDay;
+                        final d = DateTime(first.year, first.month, first.day + i - offset), day = byDay[dateKey(d)] ?? [], t = sum(day), isSel = d == selDay;
                         return Semantics(
                           button: true,
                           selected: isSel,
@@ -114,37 +125,21 @@ class _CalendarState extends State<Calendar> {
                             child: Container(
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: isSel ? green : Colors.transparent,
+                                color: isSel ? green : shade.withValues(alpha: .45 * dayShade(day, share)),
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(color: d == today && !isSel ? ok(.62, .1, 10) : Colors.transparent, width: 1.5),
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                spacing: 5,
-                                children: [
-                                  Text(
-                                    '${d.day}',
-                                    textAlign: TextAlign.center,
-                                    style: sans(
-                                      16,
-                                      c: isSel
-                                          ? onGreen
-                                          : d.isAfter(today)
-                                          ? ok(.55, .02, 160)
-                                          : ink,
-                                    ),
-                                  ),
-                                  dot(
-                                    t > 50 ? 8 : 6,
-                                    t == 0
-                                        ? Colors.transparent
-                                        : isSel
-                                        ? onGreen.withValues(alpha: t > 50 ? 1 : .6)
-                                        : t > 50
-                                        ? deep
-                                        : light,
-                                  ),
-                                ],
+                              child: Text(
+                                '${d.day}',
+                                textAlign: TextAlign.center,
+                                style: sans(
+                                  16,
+                                  c: isSel
+                                      ? onGreen
+                                      : d.isAfter(today)
+                                      ? ok(.55, .02, 160)
+                                      : ink,
+                                ),
                               ),
                             ),
                           ),
@@ -153,21 +148,22 @@ class _CalendarState extends State<Calendar> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 18,
-                  runSpacing: 6,
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 6,
                   children: [
-                    for (final (size, color, label) in [(6.0, light, tr.dayWithSpending), (8.0, deep, tr.dayOver(fmt(50)))])
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        spacing: 6,
-                        children: [
-                          dot(size, color),
-                          Text(label, style: sans(12, c: muted)),
-                        ],
+                    Container(
+                      width: 22,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        gradient: LinearGradient(colors: [shade.withValues(alpha: .08), shade.withValues(alpha: .45)]),
                       ),
+                    ),
+                    Flexible(
+                      child: Text(tr.dayShade, style: sans(12, c: muted)),
+                    ),
                   ],
                 ),
               ),

@@ -59,7 +59,8 @@ flutter_launcher_icons:
   android: true
   ios: false
   image_path: assets/icon/icon.png
-  adaptive_icon_background: "#f2f6ed"
+  adaptive_icon_background: "#2d5742" # Kakebo green: the ensō is painted in negative (tool/icon.dart)
   adaptive_icon_foreground: assets/icon/foreground.png
+  adaptive_icon_foreground_inset: 0 # tool/icon.dart already sizes the art for the 108 dp layer; the default 16 shrank it twice
   adaptive_icon_monochrome: assets/icon/monochrome.png
   min_sdk_android: 21

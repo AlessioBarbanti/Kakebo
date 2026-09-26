@@ -7,6 +7,7 @@ import 'package:kakebo/app/shell.dart';
 import 'package:kakebo/features/expenses/add_sheet.dart';
 import 'package:kakebo/features/journal/journal.dart';
 import 'package:kakebo/features/journal/review.dart';
+import 'package:kakebo/features/journal/thought.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/model/entry.dart';
@@ -176,6 +177,20 @@ void main() {
     expect(find.text(tr.weekLess(fmt(58), 'Necessità')), findsOneWidget);
     expect(find.text(tr.resolutionFor('agosto', 'Meno cene fuori')), findsOneWidget);
     expect(find.text(tr.sealedSaved(fmt(200))), findsOneWidget); // August, sealed with nothing written: no stock line under it
+  });
+
+  testWidgets('the evening thought opens straight on writing while the meditation is off, as by default', (t) async {
+    final app = Kakebo();
+    expect(app.flags['breathe'], isFalse);
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: const MaterialApp(home: Scaffold(body: Thought())),
+      ),
+    );
+    await t.pump(const Duration(seconds: 1));
+    expect(find.text(tr.happyQuestion), findsOneWidget);
+    expect(find.text(tr.breathFirst), findsNothing);
   });
 
   testWidgets('unfinished monthly reflections remain in the diary and older memories can be reached', (t) async {

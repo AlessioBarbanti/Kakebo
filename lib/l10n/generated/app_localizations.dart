@@ -878,17 +878,11 @@ abstract class AppLocalizations {
   /// **'Una giornata tranquilla. Nessuna spesa annotata.'**
   String get quietDay;
 
-  /// No description provided for @dayWithSpending.
+  /// No description provided for @dayShade.
   ///
   /// In it, this message translates to:
-  /// **'Con spese'**
-  String get dayWithSpending;
-
-  /// No description provided for @dayOver.
-  ///
-  /// In it, this message translates to:
-  /// **'Oltre {amount}'**
-  String dayOver(String amount);
+  /// **'Più colore, più Desideri, Cultura e Imprevisti'**
+  String get dayShade;
 
   /// No description provided for @spentInPillars.
   ///
@@ -1177,6 +1171,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Attiva ›'**
   String get activate;
+
+  /// No description provided for @meditation.
+  ///
+  /// In it, this message translates to:
+  /// **'Meditazione prima del pensiero'**
+  String get meditation;
+
+  /// No description provided for @meditationHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Tre respiri guidati prima di scrivere'**
+  String get meditationHint;
 
   /// No description provided for @writeToday.
   ///

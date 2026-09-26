@@ -23,7 +23,8 @@ class Thought extends StatefulWidget {
 
 class _ThoughtState extends State<Thought> {
   Kakebo get app => AppScope.read(context);
-  bool breathed = false, editing = false;
+  late bool breathed = !app.flags['breathe']!; // with the meditation off, straight to writing
+  bool editing = false;
   late String text = app.thoughtToday ?? '';
 
   @override

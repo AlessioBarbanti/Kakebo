@@ -317,15 +317,7 @@
   "month": "Mese",
   "year": "Anno",
   "quietDay": "Una giornata tranquilla. Nessuna spesa annotata.",
-  "dayWithSpending": "Con spese",
-  "dayOver": "Oltre {amount}",
-  "@dayOver": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
+  "dayShade": "Più colore, più Desideri, Cultura e Imprevisti",
   "spentInPillars": "Speso nei pilastri",
   "savedLabel": "Risparmiato",
   "goal": "Obiettivo",
@@ -395,6 +387,8 @@
   "preciseOff": "Senza, Android può ritardarle fino a un'ora",
   "active": "Attivo",
   "activate": "Attiva ›",
+  "meditation": "Meditazione prima del pensiero",
+  "meditationHint": "Tre respiri guidati prima di scrivere",
   "writeToday": "Scrivi il pensiero di oggi",
   "writeTodayHint": "Una schermata senza distrazioni",
   "data": "DATI",

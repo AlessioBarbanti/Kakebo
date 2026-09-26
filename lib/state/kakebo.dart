@@ -31,7 +31,8 @@ class Kakebo extends ChangeNotifier {
   Map<String, Map<String, String>> reflections = {}; // budgeting month → good/change
   Map<String, String> weeklyReflections = {}; // Sunday yyyy-mm-dd → reflection
   Map<String, double> sealed = {}; // yyyy-mm → saved when sealed
-  Map<String, bool> flags = {'weekly': true, 'phraseOn': true, 'thoughtOn': true, 'sound': true}; // thoughtOn: the one evening reminder
+  // thoughtOn: the one evening reminder; breathe: guided breaths before writing the thought (off unless chosen).
+  Map<String, bool> flags = {'weekly': true, 'phraseOn': true, 'thoughtOn': true, 'breathe': false, 'sound': true};
   String thoughtTime = '21:00';
   int monthStart = 1; // day the budgeting month begins (1–28), e.g. payday
   Map<String, double>? budgets; // null → split what is available like the design

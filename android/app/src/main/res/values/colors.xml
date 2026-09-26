@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#f2f6ed</color>
+    <color name="ic_launcher_background">#2d5742</color>
     <!-- Washi paper: launch screen and window behind Flutter, light even in dark mode. -->
     <color name="paper">#f2f6ed</color>
 </resources>

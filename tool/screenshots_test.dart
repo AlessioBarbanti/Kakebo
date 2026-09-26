@@ -72,8 +72,17 @@ final List<(String, String, String, Act?)> _shots = [
   ('settings', 'settings', 'settings', null),
   ('month_start', 'month_start', 'monthStart', null),
   ('month_start', 'rule_open', 'monthStart', (t, _) => _tap(t, find.text(tr.ruleTitle))),
-  ('thought', 'breathe', 'thought', null),
-  ('thought', 'write', 'thought', (t, _) => _tap(t, find.text(tr.ready))),
+  (
+    'thought',
+    'breathe',
+    'home',
+    (t, app) async {
+      app.update(() => app.flags['breathe'] = true); // the meditation is off unless chosen in Settings
+      app.go('thought');
+      await _settle(t);
+    },
+  ),
+  ('thought', 'write', 'thought', null),
   (
     'thought',
     'saved',

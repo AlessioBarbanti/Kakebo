@@ -101,6 +101,7 @@ class Settings extends StatelessWidget {
           ),
           if (Reminders.instance?.exact case final exact?)
             row(tr.precise, exact ? tr.preciseOn : tr.preciseOff, value: exact ? tr.active : tr.activate, tap: exact ? null : Reminders.instance!.askExact),
+          row(tr.meditation, tr.meditationHint, flag: 'breathe'),
           row(tr.writeToday, tr.writeTodayHint, value: '›', tap: () => app.go('thought')),
         ]),
         group(tr.data, [
