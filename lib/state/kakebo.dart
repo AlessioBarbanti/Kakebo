@@ -35,7 +35,7 @@ class Kakebo extends ChangeNotifier {
   Map<String, bool> flags = {'weekly': true, 'phraseOn': true, 'thoughtOn': true, 'breathe': false, 'sound': true};
   String thoughtTime = '21:00';
   int monthStart = 1; // day the budgeting month begins (1–28), e.g. payday
-  Map<String, double>? budgets; // null → split what is available like the design
+  Map<String, double>? budgets; // null → what is available, split by the pillars' shares
 
   // Transient.
   String screen = 'onboarding';
@@ -146,7 +146,7 @@ class Kakebo extends ChangeNotifier {
     return now.hour * 60 + now.minute >= h * 60 + m || now.hour < 5;
   }
 
-  /// Monthly budget of a pillar: yours once set, otherwise the design's split of what is available.
+  /// Monthly budget of a pillar: yours once set, otherwise its share of what is available.
   double budget(String k) => budgets?[k] ?? (available * pillars[k]!.share).roundToDouble();
   double get budgeted => pillars.keys.fold(0.0, (a, k) => a + budget(k));
   void setBudget(String k, double v) => update(() => budgets = {for (final p in pillars.keys) p: p == k ? v : budget(p)});
@@ -211,7 +211,7 @@ class Kakebo extends ChangeNotifier {
   /// Starts with a BOM so Excel reads the accents.
   String csv() => Backup.csv(entries, headers: tr.csvHeader, decimalSep: decimalSep, pillarName: (key) => tr.pillars[key]!.name);
 
-  /// Demo data from the design, placed in the current month (`--dart-define=DEMO=true`).
+  /// Demo data, placed in the current month (`--dart-define=DEMO=true`).
   void seedDemo() {
     const seed = [
       (24, 'Matcha e un libro da Hondana', 12.8, 'culture'),
@@ -241,7 +241,7 @@ class Kakebo extends ChangeNotifier {
       [490, 310, 260, 120, 310],
       [470, 380, 240, 80, 330],
     ];
-    final shift = day - 24; // keep "today" on the design's busiest day
+    final shift = day - 24; // keep "today" on the demo's busiest day
     entries = [
       for (final (d, n, a, p) in seed)
         if (d + shift >= 1) Entry(DateTime(now.year, now.month, d + shift), n, a, p),

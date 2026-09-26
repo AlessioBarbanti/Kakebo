@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Kakebo is a Japanese household ledger app for Android, written in Flutter. `README.md` (in Italian) is the reference for structure, localization and asset tools; this file covers what you need beyond it.
+Kakebo is a Japanese household ledger app for Android, written in Flutter. `README.md` (in Italian) presents the project on GitHub; `CONTRIBUTING.md` (in Italian) is the reference for structure, localization, asset tools and releasing. This file covers what you need beyond them.
 
 ## Commands
 
@@ -14,8 +14,8 @@ flutter analyze
 flutter test
 flutter test test/features/navigation_test.dart --plain-name "swiping left"   # a single test
 dart format -l 160 <files>  # the code is formatted at width 160; the default 80 would reflow everything
-flutter build apk --release # Play upload key if android/key.properties exists, else debug keys (README "Rilascio")
-flutter run --dart-define=DEMO=true --dart-define=TODAY=2026-09-24T21:30   # design demo data, fixed clock
+flutter build apk --release # Play upload key if android/key.properties exists, else debug keys (CONTRIBUTING.md "Rilascio")
+flutter run --dart-define=DEMO=true --dart-define=TODAY=2026-09-24T21:30   # demo data, fixed clock
 flutter test tool/screenshots_test.dart   # every screen, top and bottom, into screenshots/<screen>/ (not in the normal suite)
 ```
 
@@ -40,7 +40,7 @@ To check a UI change visually, run the screenshot tool and look at the PNGs. It 
   - Android back is mapped in `Root._back`.
 - **Scope.** Widgets read state with `AppScope.watch` in build and `AppScope.read` in callbacks. Modal sheets are wrapped in a new `AppScope` (see `openAdd`).
 - **Layers.** Models (`lib/model/`) import no UI and no translations. Pillar colours, art and names are presentation extensions in `lib/shared/theme/`.
-- **Styling.** Colours are written as OKLCH through `ok(l, c, h)` (`shared/theme/color.dart`), matching the CSS design tokens. Text uses `serif()` (Shippori Mincho) and `sans()` (Zen Kaku Gothic New) from `tokens.dart`, not Material text themes.
+- **Styling.** Colours are written as OKLCH through `ok(l, c, h)` (`shared/theme/color.dart`), the same values CSS `oklch()` takes. Text uses `serif()` (Shippori Mincho) and `sans()` (Zen Kaku Gothic New) from `tokens.dart`, not Material text themes.
 - **Localization.** Use the global `tr` (`lib/l10n/localization.dart`). The ARB files are flat, so numbered keys are regrouped into lists by the `Lists` extension (pillars, steps, `phraseMeanings`, ...). Italian (`app_it.arb`) is the template.
 - **Daily sayings.** The original and romaji are in `phrases` (`shared/theme/seasons.dart`); meaning and source (only for quotations) are `phraseN` / `phraseNSource` in the ARBs. Add a new saying in all three places. A test checks that the lengths match.
 

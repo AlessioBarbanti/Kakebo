@@ -19,7 +19,7 @@ void setFormatLocale(Locale device, String language) {
   _money2 = NumberFormat.simpleCurrency(locale: money, decimalDigits: 2);
 }
 
-/// Money like the design: whole amounts without decimals ("850 €"), otherwise two ("12,80 €").
+/// Money: whole amounts without decimals ("850 €"), otherwise two ("12,80 €").
 String fmt(num n) => (n % 1 != 0 ? _money2 : _money0).format((n * 100).round() / 100);
 
 /// An amount being typed ("12," while entering 12,50), with the currency where the region puts it.

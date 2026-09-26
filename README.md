@@ -1,89 +1,99 @@
-# Kakebo
+<p align="center">
+  <img src="assets/icon/playstore.png" width="112" alt="L'icona di Kakebo: un ensō color carta con un fiore di susino, su fondo verde">
+</p>
 
-Il registro di casa giapponese, per Android (Flutter). Implementa il design *Kakebo Mobile v3*.
+<h1 align="center">Kakebo</h1>
 
-## Avvio
+<p align="center">
+  <strong>家計簿 · il registro di casa giapponese, per Android</strong><br>
+  Annota ogni spesa, fermati un momento, osserva dove vanno i soldi.
+</p>
+
+<p align="center">
+  <a href="https://github.com/AlessioBarbanti/Kakebo/releases/latest"><img src="https://img.shields.io/github/v/release/AlessioBarbanti/Kakebo?label=versione&color=2d5742" alt="Ultima versione"></a>
+  <a href="https://github.com/AlessioBarbanti/Kakebo/actions/workflows/release.yml"><img src="https://github.com/AlessioBarbanti/Kakebo/actions/workflows/release.yml/badge.svg" alt="Build di release"></a>
+  <img src="https://img.shields.io/badge/Android-7.0%2B-2d5742?logo=android&logoColor=white" alt="Android 7.0 o successivo">
+  <img src="https://img.shields.io/badge/Flutter-3.47-2d5742?logo=flutter&logoColor=white" alt="Flutter 3.47">
+  <img src="https://img.shields.io/badge/lingue-italiano%20%C2%B7%20english-2d5742" alt="Italiano e inglese">
+</p>
+
+<p align="center">
+  <a href="https://github.com/AlessioBarbanti/Kakebo/releases/latest"><strong>Scarica l'APK</strong></a> ·
+  <a href="#come-funziona">Come funziona</a> ·
+  <a href="#compilare-dal-codice">Compilare</a> ·
+  <a href="CONTRIBUTING.md">Contribuire</a>
+</p>
+
+<p align="center">
+  <img src="docs/readme/schermate.webp" width="100%" alt="Cinque schermate di Kakebo: l'introduzione con una stampa di Hiroshige del monte Fuji, Oggi con quanto resta del mese e il ramo di susino, il Registro diviso per pilastri, il Calendario con i giorni sfumati di verde e il Diario">
+</p>
+
+## Perché Kakebo
+
+Il kakebo è un quaderno per le spese di casa nato in Giappone nel 1904, ideato dalla giornalista Hani Motoko. Non chiede fogli di calcolo né categorie infinite: ogni giorno si annota a mano, ogni mese ci si fa quattro domande. Scrivere rallenta, e rallentare fa vedere le proprie abitudini.
+
+Kakebo porta quel quaderno sul telefono e ne conserva il ritmo. Prepari il mese una volta, annoti ogni giorno le spese nei quattro pilastri, e l'app ti mostra quanto ti resta, a che passo stai spendendo e dove vanno i soldi, giorno per giorno e mese per mese. A fine mese le quattro domande e un sigillo chiudono i conti, e ogni sera c'è spazio per un pensiero. Al posto di semafori rossi e notifiche allarmate ci sono carta, inchiostro e le stampe di Hiroshige: un'app che osserva con te, senza giudicare.
+
+## Come funziona
+
+Ogni spesa va in uno dei quattro pilastri. Ognuno ha la sua pianta, dai *quattro gentiluomini* della pittura cinese e giapponese.
+
+|     | Pilastro   | La pianta                                  |
+| --- | ---------- | ------------------------------------------ |
+| 竹  | Necessità  | Il bambù: si piega ma non si spezza        |
+| 梅  | Desideri   | Il susino: fiorisce quando serve gioia     |
+| 蘭  | Cultura    | L'orchidea: nutre la mente in silenzio     |
+| 菊  | Imprevisti | Il crisantemo: resiste al freddo inatteso  |
+
+All'inizio e alla fine di ogni mese si risponde alle stesse quattro domande:
+
+1. **Quanto denaro hai?** Entrate del mese, meno le spese fisse.
+2. **Quanto vorresti risparmiare?** L'obiettivo, messo da parte prima di spendere.
+3. **Quanto stai spendendo?** Tutto quello che annoti, pilastro per pilastro.
+4. **Come puoi migliorare?** Un'intenzione per il mese che viene.
+
+## Funzioni
+
+- **Prepara il mese.** Entrate, spese fisse e obiettivo di risparmio: Kakebo calcola quanto resta da spendere con consapevolezza e lo divide tra i pilastri, anche con la regola 50/30/20. Il mese può cominciare il giorno dello stipendio.
+- **Annota in pochi tocchi.** Importo, una nota, il pilastro. La nota suggerisce il pilastro: "cena fuori" va nei Desideri.
+- **Oggi.** Quanto ti resta, circa quanto al giorno e il ramo del mese, che misura il ritmo e non il denaro.
+- **Registro.** La settimana o il mese per pilastro, con quanto resta di ogni budget.
+- **Calendario.** I giorni si colorano con le spese libere (Desideri, Cultura, Imprevisti) rispetto alla loro quota giornaliera, così la spesa settimanale non sembra un eccesso. La vista annuale mette ogni mese accanto al suo disponibile.
+- **Diario.** Il pensiero della sera ("Cosa ti ha reso felice oggi?"), con qualche respiro guidato se lo desideri; il riepilogo della domenica; le quattro domande di fine mese e il sigillo che chiude il mese.
+- **Una frase al giorno.** Trenta detti e citazioni giapponesi, con l'originale, il romaji e la fonte.
+- **Un promemoria serale** all'ora che scegli.
+- **In italiano e in inglese.** Valuta, date e orari seguono le impostazioni del telefono.
+- **Accessibile.** Pensata per TalkBack e per il testo grande, con aree di tocco da 48 dp.
+
+## I tuoi dati restano tuoi
+
+Kakebo non ha account, pubblicità né statistiche d'uso, e non chiede nemmeno il permesso di accedere a Internet: tutto quello che scrivi resta sul telefono. Dalle impostazioni puoi salvare un backup completo in un file, ripristinarlo su un altro telefono ed esportare il registro in CSV per un foglio di calcolo.
+
+## Installa
+
+Scarica `kakebo-vX.Y.Z.apk` dall'[ultima release](https://github.com/AlessioBarbanti/Kakebo/releases/latest) e aprilo sul telefono: serve Android 7.0 o successivo, e la prima volta Android chiede di consentire l'installazione da quella fonte.
+
+Su Google Play arriverà presto.
+
+## Compilare dal codice
+
+Servono [Flutter](https://docs.flutter.dev/get-started/install) 3.47 (canale stable) e l'Android SDK.
 
 ```sh
-flutter run                      # telefono collegato o emulatore
-flutter build apk --release      # APK in build/app/outputs/flutter-apk/app-release.apk
-flutter build appbundle --release # per Google Play, in build/app/outputs/bundle/release/app-release.aab
+git clone https://github.com/AlessioBarbanti/Kakebo.git
+cd Kakebo
+flutter run          # sul telefono collegato o sull'emulatore
 flutter test
-```
 
-Le build di release sono firmate con la chiave di caricamento per Google Play se `android/key.properties` esiste (vedi *Rilascio*), altrimenti con la chiave di debug: vanno bene per provare sul telefono, ma il Play Store non le accetta.
-
-Dati di esempio del design, con data fissa (utile per provare tutte le schermate):
-
-```sh
+# Con i dati di esempio e l'orologio fermo a una sera di settembre
 flutter run --dart-define=DEMO=true --dart-define=TODAY=2026-09-24T21:30
 ```
 
-Screenshot di tutte le schermate, parte superiore e (se scorre) inferiore, in `screenshots/<schermata>/` (formato Pixel 9, dati di esempio, italiano; la cartella viene svuotata a ogni esecuzione e non è in git):
+La struttura del codice, le traduzioni, gli strumenti per font e immagini e la procedura di rilascio sono in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-```sh
-flutter test tool/screenshots_test.dart
-```
+## Crediti
 
-Per aggiungere una schermata o uno stato, aggiungi una riga alla lista `_shots` in cima al file.
-
-## Rilascio
-
-1. Aggiorna `version` in `pubspec.yaml`: il nome (`1.0.1`) per le persone, il numero dopo `+` per Android e Google Play, che deve crescere a ogni caricamento.
-2. Fai commit su `main`, poi crea e invia il tag con lo stesso nome: `git tag v1.0.1 && git push origin v1.0.1`.
-3. La GitHub Action *Release* (`.github/workflows/release.yml`) esegue analisi e test, compila APK e app bundle firmati e pubblica la release su GitHub con i due file. L'APK si installa direttamente; il file `-play.aab` va caricato nella Play Console. Avviata a mano da GitHub (Actions → Release → Run workflow) compila soltanto, senza pubblicare.
-
-La chiave di caricamento (upload key) di Google Play non è nel repository:
-
-- in locale il file `.jks` sta fuori dal repository; il suo percorso, la password e l'alias sono in `android/key.properties`, ignorato da git;
-- per la Action sta nei secret del repository `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD` e `ANDROID_KEY_PASSWORD` (l'alias, `upload`, non è segreto ed è scritto nel workflow).
-
-Conserva una copia del file `.jks` e della password fuori da questo computer, per esempio in un gestore di password. Con la firma delle app di Google Play una chiave di caricamento persa si può sostituire, ma serve una richiesta dalla Play Console.
-
-Un'app firmata con un'altra chiave non si aggiorna sopra quella installata: passando dalle build di debug a quelle firmate va reinstallata, quindi prima salva un backup dall'app (Impostazioni → Salva un backup).
-
-L'icona per la scheda del Play Store (512 px) è `assets/icon/playstore.png`, generata da `dart run tool/icon.dart` insieme alle altre.
-
-## Lingue
-
-L'app segue la lingua del telefono: italiano, altrimenti inglese. Valuta, numeri e date seguono il paese del telefono (it_IT → "1.650 €", en_GB → "£1,650"), l'orario le sue 24 ore o AM/PM.
-
-I testi sono in `lib/l10n/app_it.arb` (il riferimento) e `lib/l10n/app_en.arb`: file JSON con un identificativo per ogni frase, per esempio `"leftFor": "Ti restano per {month}"`. A ogni build Flutter genera i file in `lib/l10n/generated/` (a mano: `flutter gen-l10n`), e nel codice si scrive `tr.leftFor(mese)`. I file generati non si modificano a mano.
-
-Per aggiungere una lingua, per esempio il francese:
-
-1. copia `app_it.arb` in `app_fr.arb`, metti `"@@locale": "fr"` e traduci i valori (non le chiavi e non i `{segnaposto}`);
-2. aggiungi `fr` alla scelta della lingua in `setLocale` (`lib/l10n/localization.dart`) e alla configurazione delle lingue in `lib/app/kakebo_app.dart` (`supportedLocales` e `localeResolutionCallback`);
-3. rigenera i font con `python tool/fonts.py <cartella dei font completi>`, se la lingua usa caratteri nuovi.
-
-Le frasi non ancora tradotte finiscono in `build/untranslated-messages.json`.
-
-## Struttura
-
-- `lib/main.dart`: punto d'ingresso; delega l'avvio a `app/bootstrap.dart`
-- `lib/app/`: inizializzazione, `MaterialApp`, navigazione, sfondo e `AppScope`
-- `lib/model/`: spese, spese fisse, periodi e pilastri; codice Dart senza dipendenze da Flutter o traduzioni
-- `lib/state/kakebo.dart`: stato `ChangeNotifier`, calcoli dei budget e operazioni dell'app
-- `lib/services/`: persistenza con shared_preferences, formati backup/CSV, dialoghi per i file e notifiche
-- `lib/features/`: schermate raggruppate in `home`, `expenses`, `journal`, `calendar`, `onboarding`, `month_setup` e `settings`; aggiunta/modifica spesa vive in `expenses/add_sheet.dart`
-- `lib/shared/`: `theme` per colori, tipografia e presentazione dei pilastri; `widgets` per i controlli comuni; `illustrations` per ramo, sigillo ed ensō; `animations` per transizioni e respiro
-- `lib/l10n/`: sorgenti ARB, `generated/` per l'output Flutter, `localization.dart` per lingua e testi, `formatters.dart` per date e importi
-- `test/`: test suddivisi per modelli, stato, servizi, funzionalità, localizzazione e componenti condivisi
-- `assets/art/`: generata da `python tool/art.py`. Stampe dell'introduzione (`print_*.webp`: Hiroshige, *Cento vedute di Edo*, pubblico dominio da Wikimedia Commons) ritagliate e portate alla stessa saturazione dai master in `assets/src/prints/`; rametti dei pilastri (`sprig_*.webp`) e fondo a inchiostro (`paper.webp`) dai master in `assets/src/botanical/` (prompt in `PROMPTS.md`)
-- `assets/sounds/`: campane tibetane sintetizzate da `dart run tool/bowl.dart` (note, volume e durata sono in cima al file)
-- `assets/fonts/`: Shippori Mincho e Zen Kaku Gothic New (OFL), ridotti ai soli caratteri usati nel codice e nelle traduzioni. Se aggiungi testo giapponese o una lingua nuova, rigenerali con `python tool/fonts.py <cartella dei font completi>`
-- `assets/icon/`: icona dipinta (`source.png`); `dart run tool/icon.dart && dart run flutter_launcher_icons` crea le icone Android e quella delle notifiche
-
-Le schermate leggono lo stato con `AppScope.watch(context)` durante il build e con `AppScope.read(context)` nei callback. Non esiste uno stato globale `app`. Le finestre modali ricevono lo scope della schermata che le apre. I modelli non importano la UI: colori e nomi tradotti dei pilastri sono estensioni di presentazione in `shared/theme/`.
-
-`Kakebo.load(storage: ...)` accetta un `KakeboStorage` sostituibile nei test; nell'app usa `PreferencesStorage`. La chiave di salvataggio `kakebo`, lo schema JSON e il formato dei backup restano compatibili con i dati esistenti.
-
-Verifica delle modifiche:
-
-```sh
-flutter gen-l10n
-flutter analyze
-flutter test
-```
-
-Per misurare la fluidità su un telefono: `flutter run --release --dart-define=FRAMES=true`, poi `adb logcat -s flutter` mostra i tempi di ogni fotogramma (build, raster, totale in µs).
+- **Stampe dell'introduzione:** Utagawa Hiroshige, *Cento vedute famose di Edo* (1856–1859), pubblico dominio, da Wikimedia Commons.
+- **Caratteri:** [Shippori Mincho](https://fonts.google.com/specimen/Shippori+Mincho) e [Zen Kaku Gothic New](https://fonts.google.com/specimen/Zen+Kaku+Gothic+New), sotto SIL Open Font License (testi in [`assets/fonts/`](assets/fonts/)).
+- **Rametti dei pilastri e carta a inchiostro:** generati con ImageGen per Kakebo; i prompt sono in [`assets/src/botanical/PROMPTS.md`](assets/src/botanical/PROMPTS.md).
+- **Campane della meditazione:** sintetizzate da [`tool/bowl.dart`](tool/bowl.dart).

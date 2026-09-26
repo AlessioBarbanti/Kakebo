@@ -4,7 +4,7 @@ import 'package:flutter/painting.dart';
 
 double _gamma(double x) => x <= 0.0031308 ? 12.92 * x : 1.055 * math.pow(x, 1 / 2.4) - 0.055;
 
-/// CSS `oklch(l c h / a)` → sRGB, so the design tokens carry over unchanged.
+/// CSS `oklch(l c h / a)` → sRGB, so colours are written with the same values as in CSS.
 Color ok(double l, double c, double h, [double alpha = 1]) {
   final r = h * math.pi / 180, a = c * math.cos(r), b = c * math.sin(r);
   double cube(double v) => v * v * v;

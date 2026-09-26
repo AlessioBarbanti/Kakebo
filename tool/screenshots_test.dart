@@ -1,6 +1,6 @@
 // Screenshots of every screen, its top and (when it scrolls) its bottom, into screenshots/<screen>/:
 //   flutter test tool/screenshots_test.dart
-// Pixel 9 size (1080 × 2424), Italian, the design's demo data on 24 September 2026 at 21:30.
+// Pixel 9 size (1080 × 2424), Italian, the demo data on 24 September 2026 at 21:30.
 // Drawn by the test engine with the app's fonts and art; no status bar, navigation bar or keyboard.
 // The screenshots folder is emptied first, so it always matches the current app.
 import 'dart:io';

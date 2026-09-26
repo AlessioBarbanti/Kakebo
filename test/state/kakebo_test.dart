@@ -17,7 +17,7 @@ void main() {
     Kakebo.clock = () => DateTime(2026, 9, 24, 21);
   });
   tearDown(() => Kakebo.clock = DateTime.now);
-  test('budget and savings branch follow the design', () {
+  test('demo month: budgets split by pillar shares, savings branch at the pace of the month', () {
     Kakebo.clock = () => DateTime(2026, 9, 24, 21);
     final k = Kakebo()..seedDemo();
     expect(k.fixedTotal, 1150);
@@ -28,7 +28,7 @@ void main() {
     expect(k.week.length, 5); // Mon 21 → Thu 24
     expect(suggest('Cena da Mario'), 'wants');
     expect(k.dim, 30);
-    expect([for (final p in pillars.keys) k.budget(p)], [600, 300, 200, 250]); // the design's split of 1350
+    expect([for (final p in pillars.keys) k.budget(p)], [600, 300, 200, 250]); // the pillars' shares of 1350
     k.income = 3000; // 200 more available → budgets follow
     expect(k.budget('needs'), 689);
     k.setBudget('wants', 400); // from now on they are the user's
