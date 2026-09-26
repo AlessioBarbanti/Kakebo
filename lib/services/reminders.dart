@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -9,14 +8,13 @@ import 'package:kakebo/model/time.dart';
 import 'package:kakebo/state/kakebo.dart';
 
 /// Evening system notifications, kept in sync with the settings and today's diary.
-/// Android only: the web build (used for screenshots) has no alarms.
 class Reminders {
   Reminders(this.k);
   final Kakebo k;
   final _p = FlutterLocalNotificationsPlugin();
   bool _asked = false, _wanted = false;
 
-  /// The running instance on Android; null on the web and in tests.
+  /// The running instance; null in tests, which never call [init].
   static Reminders? instance;
 
   /// Whether Android lets us ring at the exact minute ("Sveglie e promemoria"); null until known.
@@ -26,7 +24,6 @@ class Reminders {
   NotificationDetails get _details => NotificationDetails(android: AndroidNotificationDetails('sera', tr.channel, channelDescription: tr.channelInfo));
 
   Future<void> init() async {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
     instance = this;
     await _p.initialize(
       settings: const InitializationSettings(android: AndroidInitializationSettings('@drawable/ic_stat_kakebo')),

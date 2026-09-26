@@ -73,6 +73,4 @@ extension Lists on AppLocalizations {
   ];
   List<String> get fourQuestions => [fourQuestion1, fourQuestion2, fourQuestion3, fourQuestion4];
   List<String> get tabs => [tabToday, tabLedger, tabJournal, tabCalendar];
-  String weekText(bool onPace, String pillar, int quietDays) =>
-      '${weekPace('$onPace')}. ${weekFullest(pillar)}${quietDays >= 2 ? ' ${weekQuiet(quietDays)}' : ''}';
 }

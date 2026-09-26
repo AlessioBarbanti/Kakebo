@@ -46,5 +46,3 @@ class Hanko extends StatelessWidget {
     ),
   );
 }
-
-/// Ink circle drawn in with one brush turn.

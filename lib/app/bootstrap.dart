@@ -18,18 +18,14 @@ Future<void> bootstrap() async {
   // Texts in the phone's language (Italian or English), money and dates in its region; followed if it changes.
   await initL10n();
   setLocale(PlatformDispatcher.instance.locale);
-  // Demo/screenshot helpers: --dart-define=DEMO=true --dart-define=TODAY=2026-09-24T21:30 (web also ?today=…&screen=…)
-  const demo = bool.fromEnvironment('DEMO');
-  final today = (demo ? Uri.base.queryParameters['today'] : null) ?? const String.fromEnvironment('TODAY');
+  // Demo/screenshot helpers: --dart-define=DEMO=true --dart-define=TODAY=2026-09-24T21:30
+  const demo = bool.fromEnvironment('DEMO'), today = String.fromEnvironment('TODAY');
   if (today.isNotEmpty) Kakebo.clock = () => DateTime.parse(today);
   // Decode every artwork while the launch screen is still up, so no screen waits for an image.
   final (loaded, _) = await (Kakebo.load(), _precache()).wait;
   final app = loaded;
   WidgetsBinding.instance.addObserver(_LocaleWatcher(app));
-  if (demo) {
-    if (app.entries.isEmpty) app.seedDemo();
-    app.screen = Uri.base.queryParameters['screen'] ?? app.screen;
-  }
+  if (demo && app.entries.isEmpty) app.seedDemo();
   await Reminders(app).init();
   // Frame-time log for tuning animations on a real phone: --dart-define=FRAMES=true, then `adb logcat -s flutter`.
   if (const bool.fromEnvironment('FRAMES')) {

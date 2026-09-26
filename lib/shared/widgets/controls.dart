@@ -165,5 +165,3 @@ class Bar extends StatelessWidget {
     },
   );
 }
-
-/// Staggered fade-up of each child when a screen opens (the design's `data-reveal`).

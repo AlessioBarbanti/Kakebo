@@ -794,12 +794,6 @@ abstract class AppLocalizations {
   /// **'Nei quattro pilastri'**
   String get acrossPillars;
 
-  /// No description provided for @smallResolution.
-  ///
-  /// In it, this message translates to:
-  /// **'Un piccolo proposito per {month}'**
-  String smallResolution(String month);
-
   /// No description provided for @plan.
   ///
   /// In it, this message translates to:
@@ -1015,12 +1009,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Annota le spese di oggi: basta un importo e un pilastro.'**
   String get noteBody;
-
-  /// No description provided for @settingsKicker.
-  ///
-  /// In it, this message translates to:
-  /// **'IMPOSTAZIONI'**
-  String get settingsKicker;
 
   /// No description provided for @ledgerGroup.
   ///
@@ -1850,23 +1838,11 @@ abstract class AppLocalizations {
   /// **'{n, plural, =1{1 fiore su 10} other{{n} fiori su 10}}'**
   String flowers(int n);
 
-  /// No description provided for @weekPace.
-  ///
-  /// In it, this message translates to:
-  /// **'{onPace, select, true{Nel ritmo del mese} other{Sopra il ritmo del mese}}'**
-  String weekPace(String onPace);
-
   /// No description provided for @weekFullest.
   ///
   /// In it, this message translates to:
   /// **'Il pilastro più pieno: {pillar}.'**
   String weekFullest(String pillar);
-
-  /// No description provided for @weekQuiet.
-  ///
-  /// In it, this message translates to:
-  /// **'{days} giorni senza spese.'**
-  String weekQuiet(int days);
 }
 
 class _AppLocalizationsDelegate

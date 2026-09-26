@@ -416,11 +416,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get acrossPillars => 'Across the four pillars';
 
   @override
-  String smallResolution(String month) {
-    return 'A small resolution for $month';
-  }
-
-  @override
   String plan(String month) {
     return 'Plan $month →';
   }
@@ -538,9 +533,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noteBody =>
       'Write down today\'s expenses: an amount and a pillar are enough.';
-
-  @override
-  String get settingsKicker => 'SETTINGS';
 
   @override
   String get ledgerGroup => 'LEDGER';
@@ -983,21 +975,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String weekPace(String onPace) {
-    String _temp0 = intl.Intl.selectLogic(onPace, {
-      'true': 'On the month\'s pace',
-      'other': 'Above the month\'s pace',
-    });
-    return '$_temp0';
-  }
-
-  @override
   String weekFullest(String pillar) {
     return 'Fullest pillar: $pillar.';
-  }
-
-  @override
-  String weekQuiet(int days) {
-    return '$days days without spending.';
   }
 }

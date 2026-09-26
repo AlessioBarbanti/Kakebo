@@ -416,11 +416,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get acrossPillars => 'Nei quattro pilastri';
 
   @override
-  String smallResolution(String month) {
-    return 'Un piccolo proposito per $month';
-  }
-
-  @override
   String plan(String month) {
     return 'Pianifica $month →';
   }
@@ -539,9 +534,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get noteBody =>
       'Annota le spese di oggi: basta un importo e un pilastro.';
-
-  @override
-  String get settingsKicker => 'IMPOSTAZIONI';
 
   @override
   String get ledgerGroup => 'REGISTRO';
@@ -993,21 +985,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String weekPace(String onPace) {
-    String _temp0 = intl.Intl.selectLogic(onPace, {
-      'true': 'Nel ritmo del mese',
-      'other': 'Sopra il ritmo del mese',
-    });
-    return '$_temp0';
-  }
-
-  @override
   String weekFullest(String pillar) {
     return 'Il pilastro più pieno: $pillar.';
-  }
-
-  @override
-  String weekQuiet(int days) {
-    return '$days giorni senza spese.';
   }
 }

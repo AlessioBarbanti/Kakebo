@@ -50,5 +50,3 @@ class _EnsoPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter old) => false;
 }
-
-/// Breathing circle: 4s in, 4s out.

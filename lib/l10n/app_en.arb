@@ -116,7 +116,6 @@
   "incomeMinusFixed": "Income minus fixed costs",
   "goalFor": "Your goal for {month}",
   "acrossPillars": "Across the four pillars",
-  "smallResolution": "A small resolution for {month}",
   "plan": "Plan {month} →",
   "sealMonth": "Close {month} with the seal",
   "calendarKicker": "CALENDAR",
@@ -153,7 +152,6 @@
   "channelInfo": "The evening thought and the expense note",
   "noteTitle": "The evening note",
   "noteBody": "Write down today's expenses: an amount and a pillar are enough.",
-  "settingsKicker": "SETTINGS",
   "ledgerGroup": "LEDGER",
   "monthStartLabel": "Start of the month",
   "monthStartHint": "For example, your payday",
@@ -292,7 +290,5 @@
   "tabCalendar": "Calendar",
   "perDay": "{days, plural, =1{about {amount} a day for tomorrow} other{about {amount} a day for the next {days} days}}",
   "flowers": "{n} of 10 flowers",
-  "weekPace": "{onPace, select, true{On the month's pace} other{Above the month's pace}}",
-  "weekFullest": "Fullest pillar: {pillar}.",
-  "weekQuiet": "{days} days without spending."
+  "weekFullest": "Fullest pillar: {pillar}."
 }

@@ -286,14 +286,6 @@
     }
   },
   "acrossPillars": "Nei quattro pilastri",
-  "smallResolution": "Un piccolo proposito per {month}",
-  "@smallResolution": {
-    "placeholders": {
-      "month": {
-        "type": "String"
-      }
-    }
-  },
   "plan": "Pianifica {month} →",
   "@plan": {
     "placeholders": {
@@ -358,7 +350,6 @@
   "channelInfo": "Il pensiero della sera e la nota delle spese",
   "noteTitle": "La nota della sera",
   "noteBody": "Annota le spese di oggi: basta un importo e un pilastro.",
-  "settingsKicker": "IMPOSTAZIONI",
   "ledgerGroup": "REGISTRO",
   "monthStartLabel": "Inizio del mese",
   "monthStartHint": "Per esempio il giorno dello stipendio",
@@ -528,27 +519,11 @@
       }
     }
   },
-  "weekPace": "{onPace, select, true{Nel ritmo del mese} other{Sopra il ritmo del mese}}",
-  "@weekPace": {
-    "placeholders": {
-      "onPace": {
-        "type": "String"
-      }
-    }
-  },
   "weekFullest": "Il pilastro più pieno: {pillar}.",
   "@weekFullest": {
     "placeholders": {
       "pillar": {
         "type": "String"
-      }
-    }
-  },
-  "weekQuiet": "{days} giorni senza spese.",
-  "@weekQuiet": {
-    "placeholders": {
-      "days": {
-        "type": "int"
       }
     }
   }
