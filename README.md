@@ -36,7 +36,7 @@ Per aggiungere una schermata o uno stato, aggiungi una riga alla lista `_shots` 
 La chiave di caricamento (upload key) di Google Play non è nel repository:
 
 - in locale il file `.jks` sta fuori dal repository; il suo percorso, la password e l'alias sono in `android/key.properties`, ignorato da git;
-- per la Action sta nei secret del repository `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` e `ANDROID_KEY_PASSWORD`.
+- per la Action sta nei secret del repository `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD` e `ANDROID_KEY_PASSWORD` (l'alias, `upload`, non è segreto ed è scritto nel workflow).
 
 Conserva una copia del file `.jks` e della password fuori da questo computer, per esempio in un gestore di password. Con la firma delle app di Google Play una chiave di caricamento persa si può sostituire, ma serve una richiesta dalla Play Console.
 

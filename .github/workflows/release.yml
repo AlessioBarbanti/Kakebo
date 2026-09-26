@@ -2,9 +2,10 @@
 # with the APK to install and the app bundle for Google Play. Run by hand (Actions > Release > Run workflow) it only
 # builds, and the files wait in the run's artifacts.
 #
-# Signing uses the Play upload key from the repository secrets ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
-# ANDROID_KEY_ALIAS and ANDROID_KEY_PASSWORD. They reach only the steps that need them and are never printed; the job
-# runs only on tags and by hand, never for pull requests, so forks cannot reach them.
+# Signing uses the Play upload key from the repository secrets ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD and
+# ANDROID_KEY_PASSWORD. They reach only the steps that need them and are never printed; the job runs only on tags and by
+# hand, never for pull requests, so forks cannot reach them. The key's alias is not a secret (as one, GitHub would mask
+# the word everywhere in the logs).
 name: Release
 
 on:
@@ -68,7 +69,7 @@ jobs:
         env:
           ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/upload.jks
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_ALIAS: upload
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           flutter build apk --release
@@ -78,13 +79,19 @@ jobs:
         if: always()
         run: rm -f "$RUNNER_TEMP/upload.jks"
 
-      # Without the secrets Gradle would fall back to the debug key: never ship that.
-      - name: Signed with the upload key
+      # Without the secrets Gradle would fall back to the debug key: never ship that. The APK carries only v2+ signatures
+      # (minSdk 24), which keytool cannot read, so apksigner checks it; the bundle is JAR-signed.
+      - name: Signed with the Play key
         run: |
-          keytool -printcert -jarfile build/app/outputs/flutter-apk/app-release.apk > "$RUNNER_TEMP/cert.txt"
-          grep -E "^(Owner|SHA256):" "$RUNNER_TEMP/cert.txt"
-          if grep -q "CN=Android Debug" "$RUNNER_TEMP/cert.txt"; then
-            echo "::error::The APK is signed with the debug key"
+          apksigner=$(ls -d "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          "$apksigner" verify --print-certs build/app/outputs/flutter-apk/app-release.apk | grep "certificate DN" | tee "$RUNNER_TEMP/signers.txt"
+          keytool -printcert -jarfile build/app/outputs/bundle/release/app-release.aab | grep "^Owner:" | tee -a "$RUNNER_TEMP/signers.txt"
+          if [ "$(wc -l < "$RUNNER_TEMP/signers.txt")" -lt 2 ]; then
+            echo "::error::Could not read the signatures"
+            exit 1
+          fi
+          if grep -q "CN=Android Debug" "$RUNNER_TEMP/signers.txt"; then
+            echo "::error::Signed with the debug key"
             exit 1
           fi
 
