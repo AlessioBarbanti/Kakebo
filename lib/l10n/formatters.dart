@@ -28,9 +28,12 @@ String get currency => _money0.currencySymbol;
 String get decimalSep => _money0.symbols.DECIMAL_SEP;
 
 String cap(String s) => s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
-String dayLabel(DateTime d) => cap(DateFormat.MMMMEEEEd(_dates).format(d)); // Giovedì 24 settembre
+String dayLabel(DateTime d) => cap(_first(DateFormat.MMMMEEEEd(_dates).format(d), d)); // Giovedì 24 settembre
 String shortDay(DateTime d) => cap(DateFormat.MMMEd(_dates).format(d)); // Gio 24 set
-String dayMonth(DateTime d) => DateFormat.MMMd(_dates).format(d); // 24 set
+String dayMonth(DateTime d) => _first(DateFormat.MMMd(_dates).format(d), d); // 24 set, 1° ott
+
+/// Italian writes the first of the month as an ordinal: "1° ottobre".
+String _first(String s, DateTime d) => d.day == 1 && _dates.startsWith('it') ? s.replaceFirst(RegExp(r'\b1\b'), '1°') : s;
 String monthName(DateTime d) => DateFormat.MMMM(_dates).format(d); // settembre / September
 String monthTitle(DateTime d) => cap(monthName(d)); // Settembre
 String monthYearCaps(DateTime d) => DateFormat.yMMMM(_dates).format(d).toUpperCase(); // SETTEMBRE 2026

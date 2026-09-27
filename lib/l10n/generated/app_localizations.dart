@@ -134,11 +134,11 @@ abstract class AppLocalizations {
   /// **'Indietro'**
   String get back;
 
-  /// No description provided for @backToLedger.
+  /// No description provided for @backArrow.
   ///
   /// In it, this message translates to:
-  /// **'← Torna al registro'**
-  String get backToLedger;
+  /// **'← Indietro'**
+  String get backArrow;
 
   /// No description provided for @backHome.
   ///
@@ -794,6 +794,12 @@ abstract class AppLocalizations {
   /// **'FINE MESE'**
   String get reviewKicker;
 
+  /// No description provided for @reviewKickerOpen.
+  ///
+  /// In it, this message translates to:
+  /// **'IL MESE'**
+  String get reviewKickerOpen;
+
   /// No description provided for @reviewTitle.
   ///
   /// In it, this message translates to:
@@ -935,13 +941,13 @@ abstract class AppLocalizations {
   /// No description provided for @monthNow.
   ///
   /// In it, this message translates to:
-  /// **'Mese in corso: il sigillo arriva con la revisione di fine mese.'**
+  /// **'Mese in corso: potrai chiuderlo con il sigillo quando sarà finito.'**
   String get monthNow;
 
   /// No description provided for @monthReached.
   ///
   /// In it, this message translates to:
-  /// **'Obiettivo raggiunto: il ramo è fiorito e il mese porta il sigillo.'**
+  /// **'Obiettivo raggiunto: il mese porta il sigillo.'**
   String get monthReached;
 
   /// No description provided for @missedBy.

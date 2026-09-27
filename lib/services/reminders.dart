@@ -72,10 +72,10 @@ class Reminders {
     final now = k.now;
     final (h, m) = hm(k.thoughtTime);
     // One evening reminder, today's expenses and then the thought; it opens Today, where both wait at the top.
-    // None tonight once the thought is written.
+    // None for an evening whose thought is already written.
     for (var d = 0; d < 14; d++) {
       final at = DateTime(now.year, now.month, now.day + d, h, m);
-      if (on && at.isAfter(now) && !(d == 0 && k.thoughtToday != null)) {
+      if (on && at.isAfter(now) && k.thoughts[Kakebo.eveningOf(at)] == null) {
         await _at(100 + d, at, tr.noteTitle, tr.noteBody, 'home');
       }
     }

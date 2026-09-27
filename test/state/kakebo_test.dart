@@ -131,4 +131,30 @@ void main() {
     Kakebo.clock = () => DateTime(2026, 9, 27);
     expect((p.labelOf(p.reviewPeriod), p.canSeal), (DateTime(2026, 9), true));
   });
+
+  test('the evening thought opens at its time and closes at 4; after midnight it is still the evening before', () {
+    final k = Kakebo();
+    bool at(DateTime t) {
+      Kakebo.clock = () => t;
+      return k.evening;
+    }
+
+    expect(at(DateTime(2026, 9, 24, 20, 59)), isFalse);
+    expect(at(DateTime(2026, 9, 24, 21)), isTrue);
+    expect(k.eveningKey, '2026-09-24');
+    k.thoughts['2026-09-24'] = 'Il tramonto';
+    expect(at(DateTime(2026, 9, 25, 3, 59)), isTrue);
+    expect((k.eveningKey, k.thoughtToday), ('2026-09-24', 'Il tramonto')); // written at 22, still tonight's at 3:59
+    expect(at(DateTime(2026, 9, 25, 4)), isFalse);
+    expect((k.eveningKey, k.thoughtToday), ('2026-09-25', null));
+    expect(at(DateTime(2027, 1, 1, 1)), isTrue);
+    expect(k.eveningKey, '2026-12-31'); // across the new year
+    k.thoughtTime = '02:00'; // a thought time after midnight: open only until 4
+    expect(
+      [
+        for (final h in [1, 2, 3, 4, 23]) at(DateTime(2026, 9, 25, h)),
+      ],
+      [false, true, true, false, false],
+    );
+  });
 }

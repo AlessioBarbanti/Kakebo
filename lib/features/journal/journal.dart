@@ -13,10 +13,9 @@ import 'package:kakebo/state/kakebo.dart';
 /// Diary history, newest first: evening thoughts and past months.
 List<(String, String, String, Color)> _timeline(Kakebo app) {
   final items = <(DateTime, String, String, String, Color)>[];
-  final now = app.now;
   app.thoughts.forEach((k, v) {
     final d = DateTime.parse(k);
-    items.add((d, tr.eveningThought, k == dateKey(now) ? tr.today : shortDay(d), v, ok(.72, .06, 295)));
+    items.add((d, tr.eveningThought, k == app.eveningKey ? tr.today : shortDay(d), v, ok(.72, .06, 295)));
   });
   for (final mk in {...app.sealed.keys, ...app.reflections.keys, ...app.improve.keys}) {
     final saved = app.sealed[mk];
@@ -53,8 +52,8 @@ class _JournalState extends State<Journal> {
     final app = AppScope.watch(context);
     final memories = _timeline(app);
     final t = app.thoughtToday, at = clock(context, app.thoughtTime);
-    Widget diary(String title, String when, String status, Color statusFg, String preview, Color color, String to) => GestureDetector(
-      onTap: () => app.go(to),
+    Widget diary(String title, String when, String status, Color statusFg, String preview, Color color, String? to) => GestureDetector(
+      onTap: to == null ? null : () => app.go(to),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(24)),
@@ -124,7 +123,7 @@ class _JournalState extends State<Journal> {
               ? tr.eveningNow
               : tr.opensAt(at),
           ok(.955, .02, 295),
-          'thought',
+          t != null || app.evening ? 'thought' : null, // opens from its time until 4 in the morning
         ),
         // The month just over while it waits for its seal (until this one ends), otherwise this one, still running.
         if (app.canSeal)

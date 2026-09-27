@@ -28,7 +28,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get back => 'Indietro';
 
   @override
-  String get backToLedger => '← Torna al registro';
+  String get backArrow => '← Indietro';
 
   @override
   String get backHome => '← Oggi';
@@ -412,6 +412,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get reviewKicker => 'FINE MESE';
 
   @override
+  String get reviewKickerOpen => 'IL MESE';
+
+  @override
   String get reviewTitle => 'Uno sguardo al mese';
 
   @override
@@ -500,11 +503,10 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get monthNow =>
-      'Mese in corso: il sigillo arriva con la revisione di fine mese.';
+      'Mese in corso: potrai chiuderlo con il sigillo quando sarà finito.';
 
   @override
-  String get monthReached =>
-      'Obiettivo raggiunto: il ramo è fiorito e il mese porta il sigillo.';
+  String get monthReached => 'Obiettivo raggiunto: il mese porta il sigillo.';
 
   @override
   String missedBy(String amount) {

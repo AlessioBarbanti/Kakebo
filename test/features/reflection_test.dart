@@ -158,6 +158,50 @@ void main() {
     expect(find.text(tr.sealedSaved(fmt(200))), findsOneWidget); // August, sealed with nothing written: no stock line under it
   });
 
+  testWidgets('outside the evening the thought is closed, and the Diary button annotates an expense', (t) async {
+    Kakebo.clock = () => DateTime(2026, 9, 25, 10);
+    final app = Kakebo()..go('journal');
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: const MaterialApp(home: Scaffold(body: Thought())),
+      ),
+    );
+    await t.pump(const Duration(seconds: 1));
+    expect(find.byType(TextFormField), findsNothing);
+    expect(find.text(tr.backToToday), findsOneWidget);
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: const MaterialApp(home: Scaffold(body: Shell())),
+      ),
+    );
+    await t.pumpAndSettle();
+    expect(find.text(tr.writeThought), findsNothing);
+    expect(find.text(tr.addExpense), findsOneWidget);
+  });
+
+  testWidgets('words begun before 4 in the morning are kept for the evening before', (t) async {
+    Kakebo.clock = () => DateTime(2026, 9, 25, 3, 58);
+    final app = Kakebo();
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: const MaterialApp(home: Scaffold(body: Thought())),
+      ),
+    );
+    await t.pump(const Duration(seconds: 1));
+    expect(find.text('Giovedì 24 settembre'), findsOneWidget);
+    await t.enterText(find.byType(TextFormField), 'La luna sul tetto');
+    Kakebo.clock = () => DateTime(2026, 9, 25, 4, 1);
+    app.refresh();
+    await t.pump();
+    await t.ensureVisible(find.text(tr.keepThought));
+    await t.tap(find.text(tr.keepThought));
+    await t.pump(const Duration(seconds: 1));
+    expect(app.thoughts, {'2026-09-24': 'La luna sul tetto'});
+  });
+
   testWidgets('the evening thought opens straight on writing while the meditation is off, as by default', (t) async {
     final app = Kakebo();
     expect(app.flags['breathe'], isFalse);

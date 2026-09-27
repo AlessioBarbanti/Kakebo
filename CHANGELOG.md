@@ -7,6 +7,14 @@ Tutte le modifiche di Kakebo che si notano usando l'app, dalla più recente. I n
 ### Modifiche
 
 - **Un diario con due momenti.** Il diario resta com'è presentato: il pensiero della sera e il mese. Spariscono il riepilogo della domenica nella cronologia, la domanda sulla settimana nascosta sotto di esso e la sua voce nelle impostazioni. Le parole già scritte per una settimana restano nei dati e nei backup, anche se non si vedono più.
+- **Il pensiero della sera, solo la sera.** Si scrive dall'orario scelto (21:00 se non lo cambi) fino alle 4 del mattino; fuori da quelle ore la card, il pulsante del Diario e le Impostazioni dicono quando si apre, e il pulsante del Diario annota una spesa. Dopo mezzanotte è ancora la sera prima: un pensiero scritto all'una va nel giorno precedente, e le parole iniziate prima delle 4 restano alla loro sera anche se le salvi dopo.
+- **Quattro domande, come promesso.** Nella revisione le parole del mese rispondono ora alla "Domanda 4 · Come puoi migliorare?", come nell'introduzione. Finché il mese è in corso la revisione si chiama "Il mese", non "Fine mese".
+
+### Correzioni
+
+- **Obiettivo e ramo restano separati.** Nella vista Anno, un mese che raggiunge l'obiettivo non dice più che "il ramo è fiorito": il ramo misura il ritmo della spesa, non il risparmio.
+- **Indietro porta dove eri.** "Entrate e spese fisse" torna alle Impostazioni o alla revisione da cui l'hai aperta (prima diceva "Torna al registro" e portava a Oggi); lo stesso fa il tasto indietro di Android.
+- **Il primo del mese.** In italiano le date scrivono "1° ott" invece di "1 ott".
 
 ## [1.1.3] - 2026-09-26
 

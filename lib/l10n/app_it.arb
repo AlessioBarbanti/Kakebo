@@ -6,7 +6,7 @@
   "evening": "Buonasera",
   "skip": "Salta",
   "back": "Indietro",
-  "backToLedger": "← Torna al registro",
+  "backArrow": "← Indietro",
   "backHome": "← Oggi",
   "setupTitle": "Prepara {month}",
   "@setupTitle": {
@@ -251,6 +251,7 @@
   },
   "backToJournal": "← Diario",
   "reviewKicker": "FINE MESE",
+  "reviewKickerOpen": "IL MESE",
   "reviewTitle": "Uno sguardo al mese",
   "residualNow": "Residuo attuale",
   "residualNote": "Entrate meno spese fisse e spese annotate. Tolto l'obiettivo di {goal}, restano {left} da spendere.",
@@ -316,8 +317,8 @@
   "goal": "Obiettivo",
   "monthAhead": "Mese ancora da vivere.",
   "monthEmpty": "Nessuna spesa annotata in questo mese.",
-  "monthNow": "Mese in corso: il sigillo arriva con la revisione di fine mese.",
-  "monthReached": "Obiettivo raggiunto: il ramo è fiorito e il mese porta il sigillo.",
+  "monthNow": "Mese in corso: potrai chiuderlo con il sigillo quando sarà finito.",
+  "monthReached": "Obiettivo raggiunto: il mese porta il sigillo.",
   "missedBy": "Obiettivo mancato di {amount}.",
   "@missedBy": {
     "placeholders": {

@@ -6,12 +6,14 @@ import 'package:kakebo/app/shell.dart';
 import 'package:kakebo/features/journal/thought.dart';
 import 'package:kakebo/features/month_setup/month_start.dart';
 import 'package:kakebo/features/onboarding/onboarding.dart';
+import 'package:kakebo/state/kakebo.dart';
 
 class Root extends StatelessWidget {
   const Root({super.key});
 
-  static String _back(String s) => switch (s) {
+  static String _back(Kakebo app) => switch (app.screen) {
     'review' => 'journal',
+    'monthStart' => app.from,
     _ => 'home',
   };
 
@@ -22,7 +24,7 @@ class Root extends StatelessWidget {
     return PopScope(
       canPop: s == 'home' || (s == 'onboarding' && !app.onboarded),
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) app.go(_back(s));
+        if (!didPop) app.go(_back(app));
       },
       child: Scaffold(
         body: Stack(

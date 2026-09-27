@@ -28,7 +28,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get back => 'Back';
 
   @override
-  String get backToLedger => '← Back to the ledger';
+  String get backArrow => '← Back';
 
   @override
   String get backHome => '← Today';
@@ -412,6 +412,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewKicker => 'END OF MONTH';
 
   @override
+  String get reviewKickerOpen => 'THE MONTH';
+
+  @override
   String get reviewTitle => 'Looking back on the month';
 
   @override
@@ -500,11 +503,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monthNow =>
-      'Month in progress: the seal comes with the end-of-month review.';
+      'Month in progress: you can close it with the seal once it is over.';
 
   @override
-  String get monthReached =>
-      'Goal reached: the branch has bloomed and the month bears the seal.';
+  String get monthReached => 'Goal reached: the month bears the seal.';
 
   @override
   String missedBy(String amount) {

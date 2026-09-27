@@ -116,7 +116,13 @@ class Kakebo extends ChangeNotifier {
     notifyListeners();
   }
 
-  void go(String s) => update(() => screen = s);
+  /// The screen before the current one, for a way back from screens reached from several places (monthStart).
+  String from = 'home';
+
+  void go(String s) => update(() {
+    if (s != screen) from = screen;
+    screen = s;
+  });
 
   /// Redraw for a new hour/day (greeting, evening notice, "today"); saves only if a forgotten month has just sealed itself.
   void refresh() => closeForgotten() ? notifyListeners() : super.notifyListeners();
@@ -177,18 +183,26 @@ class Kakebo extends ChangeNotifier {
     return (10 * elapsed * (pace <= 1 ? 1 : math.max(0, 2 - pace))).round();
   }
 
-  /// From the evening thought's time until 5 in the morning.
+  /// The evening ends at 4 in the morning: until then it is still the evening before.
+  static const nightEnd = 4;
+
+  /// When the evening thought can be written: from its time until 4 in the morning.
   bool get evening {
     final (h, m) = hm(thoughtTime);
-    return now.hour * 60 + now.minute >= h * 60 + m || now.hour < 5;
+    final t = now.hour * 60 + now.minute, start = h * 60 + m, end = nightEnd * 60;
+    return start >= end ? t >= start || t < end : t >= start && t < end;
   }
+
+  /// The day an evening belongs to: a thought written at 1 in the night is the previous day's.
+  static String eveningOf(DateTime t) => dateKey(t.hour < nightEnd ? DateTime(t.year, t.month, t.day - 1) : t);
+  String get eveningKey => eveningOf(now);
 
   /// Monthly budget of a pillar: yours once set, otherwise its share of what is available.
   double budget(String k) => budgets?[k] ?? (available * pillars[k]!.share).roundToDouble();
   double get budgeted => pillars.keys.fold(0.0, (a, k) => a + budget(k));
   void setBudget(String k, double v) => update(() => budgets = {for (final p in pillars.keys) p: p == k ? v : budget(p)});
   void autoBudgets() => update(() => budgets = null);
-  String? get thoughtToday => thoughts[dateKey(now)];
+  String? get thoughtToday => thoughts[eveningKey];
   String get currentIntention => improve[monthKey(DateTime(label.year, label.month - 1))]?.trim() ?? '';
 
   // Closing a month. It is sealed once it is over, during all of the month after it; still open when that one ends too, it

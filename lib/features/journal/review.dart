@@ -43,7 +43,7 @@ class _ReviewState extends State<Review> {
       spacing: 16,
       children: [
         Align(alignment: Alignment.centerLeft, child: TapText(tr.backToJournal, () => app.go('journal'))),
-        heading(tr.reviewKicker, tr.reviewTitle),
+        heading(over ? tr.reviewKicker : tr.reviewKickerOpen, tr.reviewTitle), // "end of month" only once it is over
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(color: s.soft, borderRadius: BorderRadius.circular(28)),
@@ -137,6 +137,12 @@ class _ReviewState extends State<Review> {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
             children: [
+              // The fourth of the four questions, answered in words; the first three are the month's numbers above.
+              Text(
+                tr.question(4),
+                style: sans(12, w: FontWeight.w700, c: ok(.4, .04, 160)),
+              ),
+              Text(tr.fourQuestions[3], style: serif(19, h: 1.35)),
               Text(tr.reflectionInvitation, style: sans(14, h: 1.5, c: muted)),
               for (final (field, title) in [('good', tr.monthGood), ('change', tr.monthChange), ('intention', tr.monthIntention)]) ...[
                 const SizedBox(height: 12),

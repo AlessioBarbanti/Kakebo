@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kakebo/app/app_scope.dart';
 import 'package:kakebo/app/shell.dart';
 import 'package:kakebo/features/home/home.dart';
+import 'package:kakebo/features/month_setup/month_start.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/shared/theme/seasons.dart';
@@ -77,6 +78,20 @@ void main() {
     app.addEntry(4.5, 'Tè al parco', 'wants');
     await t.pumpAndSettle();
     expect(find.text('Tè al parco'), findsOneWidget); // Oggi shows it right away
+  });
+
+  testWidgets('income and fixed costs lead back where they were opened from', (t) async {
+    app.go('settings');
+    app.go('monthStart');
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: const MaterialApp(home: Scaffold(body: MonthStart())),
+      ),
+    );
+    await t.pumpAndSettle();
+    await t.tap(find.text(tr.backArrow));
+    expect(app.screen, 'settings');
   });
 
   testWidgets('adding an expense takes one tap without scrolling, on narrow and common phones', (t) async {

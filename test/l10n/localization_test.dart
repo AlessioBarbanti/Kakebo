@@ -29,6 +29,7 @@ void main() {
     expect(fmt(1650), '£1,650');
     expect(tr.leftFor('September'), 'Left for September');
     expect(dayLabel(DateTime(2026, 9, 24)), 'Thursday 24 September');
+    expect(dayMonth(DateTime(2026, 10)), '1 Oct');
     expect(pillars['wants']!.name, 'Wants');
     setLocale(const Locale('fr', 'FR')); // not translated yet: English words, French money
     expect(tr.today, 'Today');
@@ -36,6 +37,9 @@ void main() {
     setLocale(const Locale('it', 'IT'));
     expect(fmt(1650), '1.650 €');
     expect(tr.flowers(1), '1 fiore su 10');
+    expect(dayMonth(DateTime(2026, 10)), '1° ott'); // the first of the month as an ordinal, in Italian only
+    expect(dayLabel(DateTime(2026, 10)), 'Giovedì 1° ottobre');
+    expect(dayMonth(DateTime(2026, 10, 11)), '11 ott');
   });
 
   test('a new saying every day, running on across months, with a meaning in each language', () {

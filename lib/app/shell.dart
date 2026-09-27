@@ -88,6 +88,8 @@ class _ShellState extends State<Shell> {
   @override
   Widget build(BuildContext context) {
     final app = AppScope.watch(context);
+    // On the Diary the button writes the evening thought, while it is open (from its time until 4); otherwise an expense.
+    final writes = app.screen == 'journal' && (app.evening || app.thoughtToday != null);
     final idx = _tabs.indexOf(navScreen), out = op == 0;
     final content = switch (app.screen) {
       'ledger' => const Ledger(),
@@ -173,7 +175,7 @@ class _ShellState extends State<Shell> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: FilledButton.icon(
-                      onPressed: () => app.screen == 'journal' ? app.go('thought') : openAdd(context),
+                      onPressed: () => writes ? app.go('thought') : openAdd(context),
                       style: FilledButton.styleFrom(
                         backgroundColor: green,
                         foregroundColor: onGreen,
@@ -181,9 +183,9 @@ class _ShellState extends State<Shell> {
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
-                      icon: Icon(app.screen == 'journal' ? Icons.edit_outlined : Icons.add),
+                      icon: Icon(writes ? Icons.edit_outlined : Icons.add),
                       label: Text(
-                        app.screen == 'journal' ? tr.writeThought : tr.addExpense,
+                        writes ? tr.writeThought : tr.addExpense,
                         style: sans(15, w: FontWeight.w700, c: onGreen),
                       ),
                     ),

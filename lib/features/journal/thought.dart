@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:kakebo/app/app_scope.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
-import 'package:kakebo/model/period.dart';
 import 'package:kakebo/shared/animations/breath.dart';
 import 'package:kakebo/shared/animations/reveal.dart';
 import 'package:kakebo/shared/illustrations/enso.dart';
@@ -13,7 +12,7 @@ import 'package:kakebo/shared/widgets/controls.dart';
 import 'package:kakebo/shared/widgets/inputs.dart';
 import 'package:kakebo/state/kakebo.dart';
 
-/// "Cosa ti ha reso felice oggi?" — breathe, write, keep.
+/// "Cosa ti ha reso felice oggi?" — breathe, write, keep. Open in the evening only, from its time until 4 in the morning.
 class Thought extends StatefulWidget {
   const Thought({super.key});
 
@@ -25,13 +24,18 @@ class _ThoughtState extends State<Thought> {
   Kakebo get app => AppScope.read(context);
   late bool breathed = !app.flags['breathe']!; // with the meditation off, straight to writing
   bool editing = false;
-  late String text = app.thoughtToday ?? '';
+  // The evening being written: it follows the clock only while nothing is typed, so words begun before 4 in the morning
+  // still land on their evening.
+  late String key = app.eveningKey;
+  late String text = app.thoughts[key] ?? '';
 
   @override
   Widget build(BuildContext context) {
     final app = AppScope.watch(context);
     final pad = MediaQuery.paddingOf(context), violet = ok(.4, .03, 280);
-    final saved = app.thoughtToday != null && !editing;
+    if (text.trim().isEmpty && !editing) key = app.eveningKey;
+    final thought = app.thoughts[key], saved = thought != null && !editing;
+    final closed = !saved && !app.evening && text.trim().isEmpty;
     void home() => app.go('home');
 
     return Container(
@@ -59,16 +63,24 @@ class _ThoughtState extends State<Thought> {
                 spacing: 18,
                 children: [
                   Text(
-                    dayLabel(app.now),
+                    dayLabel(DateTime.parse(key)),
                     textAlign: TextAlign.center,
                     style: sans(13, ls: 2.34, c: ok(.45, .05, 290)),
                   ),
-                  if (saved) ...[
+                  if (closed) ...[
+                    Text(tr.eveningThought, textAlign: TextAlign.center, style: serif(26, h: 1.3)),
+                    Text(
+                      tr.opensAt(clock(context, app.thoughtTime)),
+                      textAlign: TextAlign.center,
+                      style: sans(15, h: 1.6, c: ok(.42, .03, 280)),
+                    ),
+                    Center(child: Btn(tr.backToToday, home, pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 14))),
+                  ] else if (saved) ...[
                     const Center(
                       child: SizedBox.square(dimension: 130, child: Center(child: Enso())),
                     ),
                     Text(
-                      '“${app.thoughtToday}”',
+                      '“$thought”',
                       textAlign: TextAlign.center,
                       style: serif(24, w: FontWeight.w500, h: 1.6),
                     ),
@@ -135,7 +147,7 @@ class _ThoughtState extends State<Thought> {
                           tr.keepThought,
                           () {
                             if (text.trim().isEmpty) return;
-                            app.update(() => app.thoughts[dateKey(app.now)] = text.trim());
+                            app.update(() => app.thoughts[key] = text.trim());
                             setState(() => editing = false);
                           },
                           color: text.trim().isEmpty ? ok(.72, .03, 160) : green,
@@ -148,7 +160,7 @@ class _ThoughtState extends State<Thought> {
               ),
             ),
           ),
-          if (!saved && !breathed)
+          if (!closed && !saved && !breathed)
             Positioned(
               top: pad.top + 8,
               left: 8,
