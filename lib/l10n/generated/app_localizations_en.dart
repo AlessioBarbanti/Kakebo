@@ -1049,7 +1049,42 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String perDayBrief(String amount) {
+    return 'about $amount a day';
+  }
+
+  @override
+  String monthCloses(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'the month closes in $days days',
+      one: 'the month closes tomorrow',
+      zero: 'the month closes today',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String flowers(int n) {
     return '$n of 10 flowers';
+  }
+
+  @override
+  String widgetSealTitle(String month) {
+    return '$month is ready for its seal';
+  }
+
+  @override
+  String widgetClose(String month) {
+    return 'Close $month';
+  }
+
+  @override
+  String get widgetReview => 'Review the month';
+
+  @override
+  String widgetSaved(String saved, String goal) {
+    return 'Saved $saved · goal $goal';
   }
 }

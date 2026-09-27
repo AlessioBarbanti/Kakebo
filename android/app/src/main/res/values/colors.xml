@@ -3,4 +3,18 @@
     <color name="ic_launcher_background">#2d5742</color>
     <!-- Washi paper: launch screen and window behind Flutter, light even in dark mode. -->
     <color name="paper">#f2f6ed</color>
+    <!-- The home screen widget, as in its design: paper, ink, a lighter ink for labels, the month's line (track, notch,
+         kanji), the vermilion of the seal and the pillars' soft colours (shared/theme/pillars.dart). Night: values-night. -->
+    <color name="widget_bg">#F3F9F2</color>
+    <color name="widget_ink">#25382E</color>
+    <color name="widget_label">#475B50</color>
+    <color name="widget_track">#CBD8CD</color>
+    <color name="widget_tick">#63776C</color>
+    <color name="widget_stamp">#55695D</color>
+    <color name="widget_on_ink">#F2F7F0</color>
+    <color name="widget_seal">#C13D34</color>
+    <color name="widget_needs">#D4F0DC</color>
+    <color name="widget_wants">#FFE2E6</color>
+    <color name="widget_culture">#ECE8FE</color>
+    <color name="widget_unexpected">#FAEECD</color>
 </resources>

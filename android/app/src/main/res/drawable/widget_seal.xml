@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The seal's frame round 済, in vermilion: the only red on the widget. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <stroke android:width="2dp" android:color="@color/widget_seal" />
+    <corners android:radius="10dp" />
+</shape>

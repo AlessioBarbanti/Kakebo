@@ -7,8 +7,12 @@ import 'package:kakebo/shared/theme/tokens.dart';
 class KakeboApp extends StatelessWidget {
   const KakeboApp({super.key});
 
+  /// For what opens from outside the app, like the home screen widget's add sheet.
+  static final navigator = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) => MaterialApp(
+    navigatorKey: navigator,
     title: 'Kakebo',
     debugShowCheckedModeBanner: false,
     supportedLocales: const [Locale('it'), Locale('en')],

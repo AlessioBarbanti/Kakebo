@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The home screen widget's own texts; everything else on it comes from the app, in the app's language (lib/l10n). -->
+<resources>
+    <string name="widget_name">What is left</string>
+    <string name="widget_description">What is left this month, the evening question and the month to close, one at a time.</string>
+    <string name="widget_open">Tap to open</string>
+</resources>

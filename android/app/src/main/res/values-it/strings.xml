@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Quanto ti resta</string>
+    <string name="widget_description">Quanto ti resta nel mese, la domanda della sera e il mese da chiudere, uno alla volta.</string>
+    <string name="widget_open">Tocca per aprire</string>
+</resources>

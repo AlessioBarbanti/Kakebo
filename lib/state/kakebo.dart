@@ -178,8 +178,13 @@ class Kakebo extends ChangeNotifier {
   int get bloomed => bloomedIn(period);
 
   /// The same for any month; one that is over counts all its days.
-  int bloomedIn(Period p) {
-    final elapsed = p.start == period.start ? day / dim : 1.0, pace = spentIn(p) / _nz(availableIn(p)) / elapsed;
+  int bloomedIn(Period p) => _bloom(p.start == period.start ? day / dim : 1.0, spentIn(p) / _nz(availableIn(p)));
+
+  /// This month's on its day [d] if nothing more is spent: the home screen widget's flowers for the days ahead.
+  int bloomedOn(int d) => _bloom(d / dim, spentIn(period) / _nz(availableIn(period)));
+
+  static int _bloom(double elapsed, double used) {
+    final pace = used / elapsed;
     return (10 * elapsed * (pace <= 1 ? 1 : math.max(0, 2 - pace))).round();
   }
 
@@ -187,10 +192,11 @@ class Kakebo extends ChangeNotifier {
   static const nightEnd = 4;
 
   /// When the evening thought can be written: from its time until 4 in the morning.
-  bool get evening {
+  bool get evening => eveningAt(now);
+  bool eveningAt(DateTime t) {
     final (h, m) = hm(thoughtTime);
-    final t = now.hour * 60 + now.minute, start = h * 60 + m, end = nightEnd * 60;
-    return start >= end ? t >= start || t < end : t >= start && t < end;
+    final at = t.hour * 60 + t.minute, start = h * 60 + m, end = nightEnd * 60;
+    return start >= end ? at >= start || at < end : at >= start && at < end;
   }
 
   /// The day an evening belongs to: a thought written at 1 in the night is the previous day's.
@@ -215,13 +221,13 @@ class Kakebo extends ChangeNotifier {
   }
 
   /// Anything written for that month: an expense, a reflection or an intention.
-  bool _used(Period p) {
+  bool used(Period p) {
     final mk = monthKey(labelOf(p));
     return entries.any((e) => p.has(e.date)) || reflections.containsKey(mk) || improve.containsKey(mk);
   }
 
   /// The month the review is about: the one just over while it waits for its seal, otherwise this one, still running.
-  Period get reviewPeriod => _used(previous) && !sealed.containsKey(monthKey(labelOf(previous))) ? previous : period;
+  Period get reviewPeriod => used(previous) && !sealed.containsKey(monthKey(labelOf(previous))) ? previous : period;
 
   /// Whether the month under review can be sealed now: only once it is over.
   bool get canSeal => reviewPeriod.start != period.start;

@@ -1970,11 +1970,47 @@ abstract class AppLocalizations {
   /// **'{days, plural, =1{circa {amount} al giorno per domani} other{circa {amount} al giorno per i prossimi {days} giorni}}'**
   String perDay(String amount, int days);
 
+  /// No description provided for @perDayBrief.
+  ///
+  /// In it, this message translates to:
+  /// **'circa {amount} al giorno'**
+  String perDayBrief(String amount);
+
+  /// No description provided for @monthCloses.
+  ///
+  /// In it, this message translates to:
+  /// **'{days, plural, =0{il mese si chiude oggi} =1{il mese si chiude domani} other{il mese si chiude tra {days} giorni}}'**
+  String monthCloses(int days);
+
   /// No description provided for @flowers.
   ///
   /// In it, this message translates to:
   /// **'{n, plural, =1{1 fiore su 10} other{{n} fiori su 10}}'**
   String flowers(int n);
+
+  /// No description provided for @widgetSealTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'{month} è pronto per il sigillo'**
+  String widgetSealTitle(String month);
+
+  /// No description provided for @widgetClose.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudi {month}'**
+  String widgetClose(String month);
+
+  /// No description provided for @widgetReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Rivedi il mese'**
+  String get widgetReview;
+
+  /// No description provided for @widgetSaved.
+  ///
+  /// In it, this message translates to:
+  /// **'Risparmiato {saved} · obiettivo {goal}'**
+  String widgetSaved(String saved, String goal);
 }
 
 class _AppLocalizationsDelegate

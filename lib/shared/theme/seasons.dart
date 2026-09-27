@@ -65,11 +65,13 @@ const phrases = [
 
 const kanjiMesi = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
 
+/// One saying after another, a new one each day; the order runs on across months and years.
+int phraseOn(DateTime day) => daysBetween(DateTime(2026), day) % phrases.length;
+
 extension KakeboPresentation on Kakebo {
   Season get season => seasonOf(now.month - 1);
 
-  /// One saying after another, a new one each day; the order runs on across months and years.
-  int get phraseIndex => daysBetween(DateTime(2026), now) % phrases.length;
+  int get phraseIndex => phraseOn(now);
   String get greeting {
     final h = now.hour;
     return h >= 5 && h < 12

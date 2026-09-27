@@ -14,8 +14,9 @@ import 'package:kakebo/shared/widgets/controls.dart';
 import 'package:kakebo/shared/widgets/inputs.dart';
 import 'package:kakebo/state/kakebo.dart';
 
-/// New expense, or [edit] an existing one (tap on any expense row).
-void openAdd(BuildContext context, {Entry? edit}) => showModalBottomSheet(
+/// New expense, or [edit] an existing one (tap on any expense row); a new one may come with its [pillar] already chosen
+/// (the home screen widget's pillars).
+void openAdd(BuildContext context, {Entry? edit, String? pillar}) => showModalBottomSheet(
   context: context,
   isScrollControlled: true,
   backgroundColor: card,
@@ -23,13 +24,14 @@ void openAdd(BuildContext context, {Entry? edit}) => showModalBottomSheet(
   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
   builder: (_) => AppScope(
     notifier: AppScope.read(context),
-    child: AddSheet(edit: edit),
+    child: AddSheet(edit: edit, pillar: pillar),
   ),
 );
 
 class AddSheet extends StatefulWidget {
-  const AddSheet({super.key, this.edit});
+  const AddSheet({super.key, this.edit, this.pillar});
   final Entry? edit;
+  final String? pillar;
 
   @override
   State<AddSheet> createState() => _AddSheetState();
@@ -39,9 +41,9 @@ class _AddSheetState extends State<AddSheet> {
   Kakebo get app => AppScope.read(context);
   late final Entry? e = widget.edit;
   late String amt = e == null ? '' : (e!.amt % 1 == 0 ? e!.amt.toInt().toString() : e!.amt.toStringAsFixed(2)), note = e?.note ?? '';
-  late String? pillar = e?.p; // a new expense starts with none: the note may suggest one, the user picks
+  late String? pillar = e?.p ?? widget.pillar; // a new expense starts with none: the note may suggest one, the user picks
   late String reflection = e?.reflection ?? '';
-  late bool touched = e != null; // an edited expense keeps its pillar
+  late bool touched = e != null || widget.pillar != null; // an edited expense keeps its pillar, and so does one already picked
   late DateTime day = e?.date ?? DateTime(app.now.year, app.now.month, app.now.day);
 
   double get value => double.tryParse(amt) ?? 0;

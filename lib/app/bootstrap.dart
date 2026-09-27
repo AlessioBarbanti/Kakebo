@@ -9,6 +9,7 @@ import 'package:kakebo/app/app_scope.dart';
 import 'package:kakebo/app/kakebo_app.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
+import 'package:kakebo/services/home_screen_widget.dart';
 import 'package:kakebo/services/reminders.dart';
 import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/state/kakebo.dart';
@@ -27,6 +28,7 @@ Future<void> bootstrap() async {
   WidgetsBinding.instance.addObserver(_LocaleWatcher(app));
   if (demo && app.entries.isEmpty) app.seedDemo();
   await Reminders(app).init();
+  await HomeScreenWidget(app).init();
   // Frame-time log for tuning animations on a real phone: --dart-define=FRAMES=true, then `adb logcat -s flutter`.
   if (const bool.fromEnvironment('FRAMES')) {
     SchedulerBinding.instance.addTimingsCallback((ts) {

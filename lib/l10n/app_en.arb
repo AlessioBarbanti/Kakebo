@@ -320,5 +320,11 @@
   "tabJournal": "Journal",
   "tabCalendar": "Calendar",
   "perDay": "{days, plural, =1{about {amount} a day for tomorrow} other{about {amount} a day for the next {days} days}}",
-  "flowers": "{n} of 10 flowers"
+  "perDayBrief": "about {amount} a day",
+  "monthCloses": "{days, plural, =0{the month closes today} =1{the month closes tomorrow} other{the month closes in {days} days}}",
+  "flowers": "{n} of 10 flowers",
+  "widgetSealTitle": "{month} is ready for its seal",
+  "widgetClose": "Close {month}",
+  "widgetReview": "Review the month",
+  "widgetSaved": "Saved {saved} · goal {goal}"
 }

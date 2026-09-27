@@ -1052,6 +1052,23 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String perDayBrief(String amount) {
+    return 'circa $amount al giorno';
+  }
+
+  @override
+  String monthCloses(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'il mese si chiude tra $days giorni',
+      one: 'il mese si chiude domani',
+      zero: 'il mese si chiude oggi',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String flowers(int n) {
     String _temp0 = intl.Intl.pluralLogic(
       n,
@@ -1060,5 +1077,23 @@ class AppLocalizationsIt extends AppLocalizations {
       one: '1 fiore su 10',
     );
     return '$_temp0';
+  }
+
+  @override
+  String widgetSealTitle(String month) {
+    return '$month è pronto per il sigillo';
+  }
+
+  @override
+  String widgetClose(String month) {
+    return 'Chiudi $month';
+  }
+
+  @override
+  String get widgetReview => 'Rivedi il mese';
+
+  @override
+  String widgetSaved(String saved, String goal) {
+    return 'Risparmiato $saved · obiettivo $goal';
   }
 }

@@ -14,6 +14,16 @@ import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/shared/widgets/controls.dart';
 import 'package:kakebo/state/kakebo.dart';
 
+/// What is [left] spread over the [rest] days after today ("circa 63 € al giorno per i prossimi 3 giorni", or [brief]ly
+/// "circa 63 € al giorno" on the home screen widget); with nothing left, only when the month closes, never a negative sum a day.
+String perDayText(double left, int rest, {bool brief = false}) => left <= 0
+    ? tr.monthCloses(rest)
+    : rest < 1
+    ? tr.spendToday
+    : brief
+    ? tr.perDayBrief(fmt((left / rest).floor()))
+    : tr.perDay(fmt((left / rest).floor()), rest);
+
 class Home extends StatelessWidget {
   const Home({super.key});
 
@@ -21,7 +31,6 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = AppScope.watch(context);
     final s = app.season, by = Kakebo.spentBy(app.month), avail = app.available, today = app.today;
-    final rest = app.dim - app.day, perDay = (app.left / (rest < 1 ? 1 : rest)).floor();
     final notice = app.flags['thoughtOn']! && app.thoughtToday == null && app.evening;
 
     return Reveal(
@@ -75,7 +84,7 @@ class Home extends StatelessWidget {
             children: [
               Text(tr.leftFor(monthName(app.label)), style: sans(14, c: muted)),
               Text(fmt(app.left), style: serif(56, w: FontWeight.w700, h: 1.05)),
-              Text(rest < 1 ? tr.spendToday : tr.perDay(fmt(perDay), rest), style: sans(14, c: muted)),
+              Text(perDayText(app.left, app.dim - app.day), style: sans(14, c: muted)),
               const SizedBox(height: 8),
               Bar([for (final MapEntry(:key, value: p) in pillars.entries) (by[key]! / (avail == 0 ? 1 : avail), p.ink)], height: 6, gap: 2, track: line),
               Text(tr.spentShare(app.spentPct), style: sans(12, c: ok(.42, .03, 160))),

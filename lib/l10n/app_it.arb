@@ -521,11 +521,55 @@
       }
     }
   },
+  "perDayBrief": "circa {amount} al giorno",
+  "@perDayBrief": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "monthCloses": "{days, plural, =0{il mese si chiude oggi} =1{il mese si chiude domani} other{il mese si chiude tra {days} giorni}}",
+  "@monthCloses": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "flowers": "{n, plural, =1{1 fiore su 10} other{{n} fiori su 10}}",
   "@flowers": {
     "placeholders": {
       "n": {
         "type": "int"
+      }
+    }
+  },
+  "widgetSealTitle": "{month} è pronto per il sigillo",
+  "@widgetSealTitle": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetClose": "Chiudi {month}",
+  "@widgetClose": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetReview": "Rivedi il mese",
+  "widgetSaved": "Risparmiato {saved} · obiettivo {goal}",
+  "@widgetSaved": {
+    "placeholders": {
+      "saved": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
       }
     }
   }

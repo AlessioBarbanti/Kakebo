@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The home screen widget in the phone's dark theme: paper at night, light ink. The app itself stays light. -->
+    <color name="widget_bg">#19251E</color>
+    <color name="widget_ink">#E6EEE4</color>
+    <color name="widget_label">#A9B5AA</color>
+    <color name="widget_track">#3F4B44</color>
+    <color name="widget_tick">#96A298</color>
+    <color name="widget_stamp">#9CA89E</color>
+    <color name="widget_on_ink">#19251E</color>
+    <color name="widget_seal">#D5584D</color>
+    <color name="widget_needs">#243C2C</color>
+    <color name="widget_wants">#482D31</color>
+    <color name="widget_culture">#373148</color>
+    <color name="widget_unexpected">#40331D</color>
+</resources>
