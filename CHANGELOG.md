@@ -2,7 +2,7 @@
 
 Tutte le modifiche di Kakebo che si notano usando l'app, dalla più recente. I numeri di versione seguono il [versionamento semantico](https://semver.org/lang/it/).
 
-## [Non ancora rilasciato]
+## [1.2.0] - 2026-09-27
 
 ### Modifiche
 
@@ -72,6 +72,7 @@ La prima versione.
 - **I dati restano sul telefono:** nessun account e nessun permesso Internet; backup in un file ed esportazione in CSV.
 - **In italiano e in inglese.**
 
+[1.2.0]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.2.0
 [1.1.3]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.3
 [1.1.2]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.2
 [1.1.1]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.1
