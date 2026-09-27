@@ -915,6 +915,60 @@ class AppLocalizationsIt extends AppLocalizations {
   String get defaultFixed5 => 'Assicurazione';
 
   @override
+  String get demoMatcha => 'Matcha e un libro da Hondana';
+
+  @override
+  String get demoGroceries => 'Spesa: tofu, verdure, riso';
+
+  @override
+  String get demoTrain => 'Ricarica abbonamento treno';
+
+  @override
+  String get demoFlowers => 'Fiori per la tavola';
+
+  @override
+  String get demoBike => 'Riparazione gomma bici';
+
+  @override
+  String get demoConcert => 'Biglietti del concerto';
+
+  @override
+  String get demoDinner => 'Cena con Giulia';
+
+  @override
+  String get demoPharmacy => 'Farmacia';
+
+  @override
+  String get demoWeekly => 'Spesa settimanale';
+
+  @override
+  String get demoBowl => 'Ciotola in ceramica';
+
+  @override
+  String get demoMuseum => 'Tessera del museo';
+
+  @override
+  String get demoCoffee => 'Caffè in grani';
+
+  @override
+  String get demoDentist => 'Dentista';
+
+  @override
+  String get demoNotebook => 'Quaderno e penne';
+
+  @override
+  String get demoMonthTotal => 'Totale del mese';
+
+  @override
+  String get demoImprove => 'una sola cena fuori a settimana.';
+
+  @override
+  String get demoThought1 => 'La luce sul fiume tornando a casa in bici.';
+
+  @override
+  String get demoThought2 => 'I fiori sul tavolo di cucina.';
+
+  @override
   String get csvDate => 'data';
 
   @override

@@ -1,0 +1,26 @@
+Kakebo (家計簿) è il quaderno per le spese di casa nato in Giappone nel 1904. Niente fogli di calcolo né categorie infinite: annoti ogni spesa, ti fermi un momento e guardi dove vanno i soldi.
+
+<b>Prepara il mese</b>
+Entrate, spese fisse e obiettivo di risparmio: Kakebo calcola quanto puoi spendere con consapevolezza e lo divide tra i quattro pilastri, anche con la regola 50/30/20. Le spese fisse passano da un mese all'altro, e il mese può cominciare il giorno dello stipendio.
+
+<b>Quattro pilastri</b>
+• Necessità, il bambù: si piega ma non si spezza
+• Desideri, il susino: fiorisce quando serve gioia
+• Cultura, l'orchidea: nutre la mente in silenzio
+• Imprevisti, il crisantemo: resiste al freddo inatteso
+
+<b>Ogni giorno</b>
+• Annoti una spesa in pochi tocchi, e la nota suggerisce il pilastro.
+• Oggi mostra quanto ti resta, circa quanto al giorno e il ramo di susino, che misura il ritmo e non il denaro.
+• Il Registro divide la settimana o il mese per pilastro, con quanto resta di ogni budget.
+• Il Calendario colora i giorni in base alle spese libere; la vista annuale mette ogni mese accanto al suo disponibile.
+• La sera, un pensiero: "Cosa ti ha reso felice oggi?", con qualche respiro guidato se lo desideri.
+• Una frase giapponese al giorno, con l'originale, il romaji e la fonte.
+
+<b>A fine mese</b>
+Quattro domande e un sigillo chiudono i conti. Se te ne dimentichi, il mese si chiude da solo quando finisce il successivo.
+
+<b>I tuoi dati restano tuoi</b>
+Nessun account, nessuna pubblicità, nessuna statistica d'uso: Kakebo non chiede nemmeno il permesso di accedere a Internet. Puoi salvare un backup completo in un file ed esportare il registro in CSV.
+
+Carta, inchiostro e le stampe di Hiroshige: un'app che osserva con te, senza giudicare. In italiano e in inglese, pensata anche per TalkBack e per il testo grande.

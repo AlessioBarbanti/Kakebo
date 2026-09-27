@@ -325,23 +325,23 @@ class Kakebo extends ChangeNotifier {
     fixed = [
       for (final (i, amt) in const [850.0, 120.0, 30.0, 25.0, 125.0].indexed) Fixed(i + 1, tr.defaultFixed[i], amt),
     ];
-    const seed = [
-      (24, 'Matcha e un libro da Hondana', 12.8, 'culture'),
-      (24, 'Spesa: tofu, verdure, riso', 34.2, 'needs'),
-      (23, 'Ricarica abbonamento treno', 25.0, 'needs'),
-      (22, 'Fiori per la tavola', 9.5, 'wants'),
-      (21, 'Riparazione gomma bici', 18.0, 'unexpected'),
-      (20, 'Biglietti del concerto', 42.0, 'culture'),
-      (19, 'Cena con Giulia', 38.0, 'wants'),
-      (18, 'Farmacia', 14.6, 'needs'),
-      (15, 'Spesa settimanale', 68.4, 'needs'),
-      (12, 'Ciotola in ceramica', 26.0, 'wants'),
-      (10, 'Tessera del museo', 15.0, 'culture'),
-      (8, 'Spesa settimanale', 71.2, 'needs'),
-      (5, 'Caffè in grani', 16.0, 'wants'),
-      (3, 'Dentista', 60.0, 'unexpected'),
-      (2, 'Spesa settimanale', 64.9, 'needs'),
-      (1, 'Quaderno e penne', 11.0, 'culture'),
+    final seed = [
+      (24, tr.demoMatcha, 12.8, 'culture'),
+      (24, tr.demoGroceries, 34.2, 'needs'),
+      (23, tr.demoTrain, 25.0, 'needs'),
+      (22, tr.demoFlowers, 9.5, 'wants'),
+      (21, tr.demoBike, 18.0, 'unexpected'),
+      (20, tr.demoConcert, 42.0, 'culture'),
+      (19, tr.demoDinner, 38.0, 'wants'),
+      (18, tr.demoPharmacy, 14.6, 'needs'),
+      (15, tr.demoWeekly, 68.4, 'needs'),
+      (12, tr.demoBowl, 26.0, 'wants'),
+      (10, tr.demoMuseum, 15.0, 'culture'),
+      (8, tr.demoWeekly, 71.2, 'needs'),
+      (5, tr.demoCoffee, 16.0, 'wants'),
+      (3, tr.demoDentist, 60.0, 'unexpected'),
+      (2, tr.demoWeekly, 64.9, 'needs'),
+      (1, tr.demoNotebook, 11.0, 'culture'),
     ];
     const past = [
       [520, 260, 140, 120, 360],
@@ -361,13 +361,13 @@ class Kakebo extends ChangeNotifier {
     final keys = pillars.keys.toList();
     for (var m = now.month - 1, i = past.length - 1; m >= 1 && i >= 0; m--, i--) {
       for (var k = 0; k < 4; k++) {
-        entries.add(Entry(DateTime(now.year, m, 15), 'Totale del mese', past[i][k].toDouble(), keys[k]));
+        entries.add(Entry(DateTime(now.year, m, 15), tr.demoMonthTotal, past[i][k].toDouble(), keys[k]));
       }
       sealed[monthKey(DateTime(now.year, m))] = past[i][4].toDouble();
     }
-    improve[monthKey(DateTime(now.year, now.month - 1))] = 'una sola cena fuori a settimana.';
-    thoughts[dateKey(DateTime(now.year, now.month, day - 1))] = 'La luce sul fiume tornando a casa in bici.';
-    thoughts[dateKey(DateTime(now.year, now.month, day - 2))] = 'I fiori sul tavolo di cucina.';
+    improve[monthKey(DateTime(now.year, now.month - 1))] = tr.demoImprove;
+    thoughts[dateKey(DateTime(now.year, now.month, day - 1))] = tr.demoThought1;
+    thoughts[dateKey(DateTime(now.year, now.month, day - 2))] = tr.demoThought2;
     notifyListeners();
   }
 }

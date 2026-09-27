@@ -1724,6 +1724,114 @@ abstract class AppLocalizations {
   /// **'Assicurazione'**
   String get defaultFixed5;
 
+  /// No description provided for @demoMatcha.
+  ///
+  /// In it, this message translates to:
+  /// **'Matcha e un libro da Hondana'**
+  String get demoMatcha;
+
+  /// No description provided for @demoGroceries.
+  ///
+  /// In it, this message translates to:
+  /// **'Spesa: tofu, verdure, riso'**
+  String get demoGroceries;
+
+  /// No description provided for @demoTrain.
+  ///
+  /// In it, this message translates to:
+  /// **'Ricarica abbonamento treno'**
+  String get demoTrain;
+
+  /// No description provided for @demoFlowers.
+  ///
+  /// In it, this message translates to:
+  /// **'Fiori per la tavola'**
+  String get demoFlowers;
+
+  /// No description provided for @demoBike.
+  ///
+  /// In it, this message translates to:
+  /// **'Riparazione gomma bici'**
+  String get demoBike;
+
+  /// No description provided for @demoConcert.
+  ///
+  /// In it, this message translates to:
+  /// **'Biglietti del concerto'**
+  String get demoConcert;
+
+  /// No description provided for @demoDinner.
+  ///
+  /// In it, this message translates to:
+  /// **'Cena con Giulia'**
+  String get demoDinner;
+
+  /// No description provided for @demoPharmacy.
+  ///
+  /// In it, this message translates to:
+  /// **'Farmacia'**
+  String get demoPharmacy;
+
+  /// No description provided for @demoWeekly.
+  ///
+  /// In it, this message translates to:
+  /// **'Spesa settimanale'**
+  String get demoWeekly;
+
+  /// No description provided for @demoBowl.
+  ///
+  /// In it, this message translates to:
+  /// **'Ciotola in ceramica'**
+  String get demoBowl;
+
+  /// No description provided for @demoMuseum.
+  ///
+  /// In it, this message translates to:
+  /// **'Tessera del museo'**
+  String get demoMuseum;
+
+  /// No description provided for @demoCoffee.
+  ///
+  /// In it, this message translates to:
+  /// **'Caffè in grani'**
+  String get demoCoffee;
+
+  /// No description provided for @demoDentist.
+  ///
+  /// In it, this message translates to:
+  /// **'Dentista'**
+  String get demoDentist;
+
+  /// No description provided for @demoNotebook.
+  ///
+  /// In it, this message translates to:
+  /// **'Quaderno e penne'**
+  String get demoNotebook;
+
+  /// No description provided for @demoMonthTotal.
+  ///
+  /// In it, this message translates to:
+  /// **'Totale del mese'**
+  String get demoMonthTotal;
+
+  /// No description provided for @demoImprove.
+  ///
+  /// In it, this message translates to:
+  /// **'una sola cena fuori a settimana.'**
+  String get demoImprove;
+
+  /// No description provided for @demoThought1.
+  ///
+  /// In it, this message translates to:
+  /// **'La luce sul fiume tornando a casa in bici.'**
+  String get demoThought1;
+
+  /// No description provided for @demoThought2.
+  ///
+  /// In it, this message translates to:
+  /// **'I fiori sul tavolo di cucina.'**
+  String get demoThought2;
+
   /// No description provided for @csvDate.
   ///
   /// In it, this message translates to:

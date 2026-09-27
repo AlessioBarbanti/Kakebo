@@ -912,6 +912,60 @@ class AppLocalizationsEn extends AppLocalizations {
   String get defaultFixed5 => 'Insurance';
 
   @override
+  String get demoMatcha => 'Matcha and a book at Hondana';
+
+  @override
+  String get demoGroceries => 'Groceries: tofu, vegetables, rice';
+
+  @override
+  String get demoTrain => 'Train pass top-up';
+
+  @override
+  String get demoFlowers => 'Flowers for the table';
+
+  @override
+  String get demoBike => 'Bike puncture repair';
+
+  @override
+  String get demoConcert => 'Concert tickets';
+
+  @override
+  String get demoDinner => 'Dinner with Giulia';
+
+  @override
+  String get demoPharmacy => 'Pharmacy';
+
+  @override
+  String get demoWeekly => 'Weekly groceries';
+
+  @override
+  String get demoBowl => 'Ceramic bowl';
+
+  @override
+  String get demoMuseum => 'Museum membership';
+
+  @override
+  String get demoCoffee => 'Coffee beans';
+
+  @override
+  String get demoDentist => 'Dentist';
+
+  @override
+  String get demoNotebook => 'Notebook and pens';
+
+  @override
+  String get demoMonthTotal => 'Month total';
+
+  @override
+  String get demoImprove => 'just one dinner out a week.';
+
+  @override
+  String get demoThought1 => 'The light on the river, cycling home.';
+
+  @override
+  String get demoThought2 => 'The flowers on the kitchen table.';
+
+  @override
   String get csvDate => 'date';
 
   @override

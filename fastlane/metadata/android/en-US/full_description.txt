@@ -1,0 +1,26 @@
+Kakebo (家計簿) is the household ledger born in Japan in 1904. No spreadsheets, no endless categories: you write down each expense, pause for a moment, and see where the money goes.
+
+<b>Prepare the month</b>
+Income, fixed costs and a savings goal: Kakebo works out how much you can spend mindfully and splits it across the four pillars, with the 50/30/20 rule if you like. Fixed costs carry over from month to month, and the month can start on payday.
+
+<b>Four pillars</b>
+• Needs, the bamboo: it bends but does not break
+• Wants, the plum blossom: it flowers when joy is needed
+• Culture, the orchid: it feeds the mind in silence
+• Unexpected, the chrysanthemum: it stands up to sudden cold
+
+<b>Every day</b>
+• Add an expense in a few taps; the note suggests the pillar.
+• Today shows what is left, roughly how much per day, and the plum branch, which measures pace, not money.
+• The Ledger splits the week or the month by pillar, with what is left of each budget.
+• The Calendar shades each day by its free spending; the year view sets every month beside what it had available.
+• In the evening, a thought: "What made you happy today?", with a few guided breaths if you wish.
+• A Japanese saying every day, with the original, the romaji and its source.
+
+<b>At the end of the month</b>
+Four questions and a seal close the books. If you forget, the month closes itself when the next one ends.
+
+<b>Your data stays yours</b>
+No account, no ads, no usage statistics: Kakebo does not even ask for Internet access. You can save a full backup to a file and export the ledger as CSV.
+
+Paper, ink and Hiroshige's prints: an app that observes with you, without judging. In English and Italian, designed for TalkBack and large text too.

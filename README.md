@@ -68,7 +68,7 @@ All'inizio e alla fine di ogni mese si risponde alle stesse quattro domande:
 
 ## I tuoi dati restano tuoi
 
-Kakebo non ha account, pubblicità né statistiche d'uso, e non chiede nemmeno il permesso di accedere a Internet: tutto quello che scrivi resta sul telefono. Dalle impostazioni puoi salvare un backup completo in un file, ripristinarlo su un altro telefono ed esportare il registro in CSV per un foglio di calcolo.
+Kakebo non ha account, pubblicità né statistiche d'uso, e non chiede nemmeno il permesso di accedere a Internet: tutto quello che scrivi resta sul telefono. Dalle impostazioni puoi salvare un backup completo in un file, ripristinarlo su un altro telefono ed esportare il registro in CSV per un foglio di calcolo. I dettagli sono nell'[informativa sulla privacy](PRIVACY.md).
 
 ## Installa
 

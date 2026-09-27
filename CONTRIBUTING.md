@@ -31,6 +31,8 @@ flutter test tool/screenshots_test.dart
 
 Per aggiungere una schermata o uno stato, aggiungi una riga alla lista `_shots` in cima al file. La striscia di schermate del README (`docs/readme/schermate.webp`) è composta da cinque di questi screenshot: rifalla quando le schermate cambiano molto.
 
+Lo stesso file disegna anche le immagini per Google Play, in italiano e in inglese: otto screenshot a 1080 × 2160 (la lista `_play`) e l'immagine in evidenza da 1024 × 500. Finiscono in `fastlane/metadata/android/<lingua>/images/`, fuori da git, accanto ai testi della scheda (`title.txt`, `short_description.txt`, `full_description.txt`), che invece sono in git. Per rigenerare solo quelle: `flutter test tool/screenshots_test.dart --plain-name "Google Play"`. L'informativa sulla privacy da indicare nella Play Console è [PRIVACY.md](PRIVACY.md).
+
 Per misurare la fluidità su un telefono: `flutter run --release --dart-define=FRAMES=true`, poi `adb logcat -s flutter` mostra i tempi di ogni fotogramma (build, raster, totale in µs).
 
 ## Prima di un commit
