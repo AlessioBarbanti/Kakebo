@@ -103,3 +103,7 @@ La struttura del codice, le traduzioni, gli strumenti per font e immagini e la p
 - **Caratteri:** [Shippori Mincho](https://fonts.google.com/specimen/Shippori+Mincho) e [Zen Kaku Gothic New](https://fonts.google.com/specimen/Zen+Kaku+Gothic+New), sotto SIL Open Font License (testi in [`assets/fonts/`](assets/fonts/)).
 - **Rametti dei pilastri e carta a inchiostro:** generati con ImageGen per Kakebo; i prompt sono in [`assets/src/botanical/PROMPTS.md`](assets/src/botanical/PROMPTS.md).
 - **Campane della meditazione:** sintetizzate da [`tool/bowl.dart`](tool/bowl.dart).
+
+## Licenza
+
+Il codice è pubblico ma non open source: è distribuito sotto la [PolyForm Strict 1.0.0](LICENSE). Puoi leggerlo, compilarlo e usare l'app per te, per scopi non commerciali. Non puoi ridistribuirlo, modificarlo né usarlo in un prodotto commerciale. Per qualsiasi altro uso apri una issue. I caratteri restano sotto la loro licenza OFL.
