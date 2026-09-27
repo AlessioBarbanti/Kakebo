@@ -90,22 +90,6 @@ void main() {
     expect(find.text('Scegliere con calma'), findsOneWidget);
   });
 
-  testWidgets('weekly reflection can be written and read after month rollover', (t) async {
-    final app = Kakebo();
-    await mount(t, app, const Journal());
-    final invite = find.text(tr.weekReflection).first;
-    await t.ensureVisible(invite);
-    await t.tap(invite);
-    await t.pumpAndSettle();
-    await t.enterText(find.byType(TextFormField).first, 'Vorrei ripetere la passeggiata');
-    await t.pump();
-    expect(app.weeklyReflections['2026-09-20'], 'Vorrei ripetere la passeggiata');
-    await t.pumpWidget(const SizedBox());
-    Kakebo.clock = () => DateTime(2026, 10, 2);
-    await mount(t, app, const Journal());
-    expect(find.text('Vorrei ripetere la passeggiata'), findsOneWidget);
-  });
-
   testWidgets('expense reflection saves only on Save and can be cleared', (t) async {
     final app = Kakebo()..addEntry(10, 'Libro', 'culture');
     Future<void> open() async {
@@ -160,21 +144,16 @@ void main() {
     expect(app.screen, 'thought');
   });
 
-  testWidgets('each Sunday recap says what changed since the week before; sealed months show what was written', (t) async {
+  testWidgets('the diary keeps only the evening and the month; sealed months show what was written', (t) async {
     final app = Kakebo()
-      ..entries = [
-        Entry(DateTime(2026, 8, 26), 'Spesa', 40, 'needs'), // the week before the first recap
-        Entry(DateTime(2026, 9, 2), 'Spesa', 40, 'needs'), // 31 Aug – 6 Sep: the same
-        Entry(DateTime(2026, 9, 9), 'Spesa', 40, 'needs'), // 7 – 13 Sep: 30 more, all in wants
-        Entry(DateTime(2026, 9, 10), 'Cena', 30, 'wants'),
-        Entry(DateTime(2026, 9, 16), 'Libro', 12, 'culture'), // 14 – 20 Sep: 58 less, mostly needs
-      ]
+      ..entries = [Entry(DateTime(2026, 9, 9), 'Spesa', 40, 'needs')]
+      ..weeklyReflections['2026-09-13'] =
+          'La passeggiata' // written before the week left the diary
       ..sealed.addAll({'2026-07': 300, '2026-08': 200})
       ..improve['2026-07'] = 'Meno cene fuori';
     await mount(t, app, const Journal());
-    expect(find.text(tr.weekSame), findsOneWidget);
-    expect(find.text(tr.weekMore(fmt(30), 'Desideri')), findsOneWidget);
-    expect(find.text(tr.weekLess(fmt(58), 'Necessità')), findsOneWidget);
+    expect(find.textContaining('settimana'), findsNothing);
+    expect(find.text('La passeggiata'), findsNothing);
     expect(find.text(tr.resolutionFor('agosto', 'Meno cene fuori')), findsOneWidget);
     expect(find.text(tr.sealedSaved(fmt(200))), findsOneWidget); // August, sealed with nothing written: no stock line under it
   });

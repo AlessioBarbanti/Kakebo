@@ -129,10 +129,8 @@
   "monthIntention": "Quale piccola intenzione vuoi portare nel prossimo mese?",
   "intentionForThisMonth": "Un’intenzione da ritrovare",
   "intentionGentle": "L’hai scritta il mese scorso. Puoi tenerla con te, oppure scegliere una strada diversa.",
-  "weekReflection": "Un momento per riflettere",
   "reflectionMemory": "Parole del mese",
   "moreMemories": "Mostra altri ricordi",
-  "weekReflectionPrompt": "C’è una scelta di questa settimana che vorresti ripetere?",
   "branchRule": "Un fiore sboccia per ogni decimo di mese trascorso, se la spesa resta nel ritmo del disponibile. Misura il passo, non i soldi messi da parte.",
   "today": "Oggi",
   "yesterday": "Ieri",
@@ -185,7 +183,7 @@
   "noneInPillar": "Nessuna spesa in questo pilastro.",
   "journalKicker": "DIARIO",
   "journalTitle": "Due momenti",
-  "journalIntro": "Uno per la sera, uno per il mese. Ogni domenica il diario raccoglie da solo la settimana.",
+  "journalIntro": "Uno per la sera, uno per il mese. Qui sotto ritrovi ciò che hai già scritto.",
   "everyDayAt": "Ogni giorno alle {time}",
   "@everyDayAt": {
     "placeholders": {
@@ -217,23 +215,9 @@
   "open": "Aperto",
   "questionsHint": "Ciò che ti ha fatto stare bene, ciò che cambieresti, una piccola intenzione per il futuro.",
   "timeline": "Cronologia",
-  "week": "La settimana · {span}",
-  "@week": {
-    "placeholders": {
-      "span": {
-        "type": "String"
-      }
-    }
-  },
-  "weekNoSpending": "Una settimana senza spese.",
   "backToToday": "Torna a Oggi",
   "choosePillar": "Scegli un pilastro",
   "reminderHint": "Le spese di oggi e un pensiero felice",
-  "weekSame": "Come la settimana prima.",
-  "weekMore": "{amount} in più della settimana prima, soprattutto in {pillar}.",
-  "@weekMore": {"placeholders": {"amount": {"type": "String"}, "pillar": {"type": "String"}}},
-  "weekLess": "{amount} in meno della settimana prima, soprattutto in {pillar}.",
-  "@weekLess": {"placeholders": {"amount": {"type": "String"}, "pillar": {"type": "String"}}},
   "availableLabel": "Disponibile",
   "spentLabel": "Speso",
   "spentOf": "{month}: {spent} su {available}",
@@ -382,8 +366,6 @@
     }
   },
   "rhythm": "RITMO",
-  "weekly": "Riepilogo della domenica",
-  "weeklyHint": "La settimana raccolta nel diario, niente da scrivere",
   "proverb": "Frase del giorno",
   "proverbHint": "Un pensiero per oggi sotto il saluto, con originale e fonte al tocco",
   "tapToChange": "Tocca per cambiare",

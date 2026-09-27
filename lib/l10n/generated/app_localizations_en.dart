@@ -232,17 +232,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'You wrote this last month. You can carry it with you, or choose a different path.';
 
   @override
-  String get weekReflection => 'A moment to reflect';
-
-  @override
   String get reflectionMemory => 'Words from the month';
 
   @override
   String get moreMemories => 'Show earlier memories';
-
-  @override
-  String get weekReflectionPrompt =>
-      'Is there a choice from this week you would like to make again?';
 
   @override
   String get branchRule =>
@@ -338,7 +331,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get journalIntro =>
-      'One for the evening, one for the month. Every Sunday the journal gathers the week by itself.';
+      'One for the evening, one for the month. Below, what you have already written.';
 
   @override
   String everyDayAt(String time) {
@@ -378,14 +371,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeline => 'Timeline';
 
   @override
-  String week(String span) {
-    return 'The week · $span';
-  }
-
-  @override
-  String get weekNoSpending => 'A week without spending.';
-
-  @override
   String get backToToday => 'Back to Today';
 
   @override
@@ -393,19 +378,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderHint => 'Today\'s expenses and one happy thought';
-
-  @override
-  String get weekSame => 'Much like the week before.';
-
-  @override
-  String weekMore(String amount, String pillar) {
-    return '$amount more than the week before, mostly $pillar.';
-  }
-
-  @override
-  String weekLess(String amount, String pillar) {
-    return '$amount less than the week before, mostly $pillar.';
-  }
 
   @override
   String get availableLabel => 'Available';
@@ -621,12 +593,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rhythm => 'RHYTHM';
-
-  @override
-  String get weekly => 'Sunday summary';
-
-  @override
-  String get weeklyHint => 'The week gathered in the journal, nothing to write';
 
   @override
   String get proverb => 'Saying of the day';

@@ -60,7 +60,7 @@ All'inizio e alla fine di ogni mese si risponde alle stesse quattro domande:
 - **Oggi.** Quanto ti resta, circa quanto al giorno e il ramo del mese, che misura il ritmo e non il denaro.
 - **Registro.** La settimana o il mese per pilastro, con quanto resta di ogni budget.
 - **Calendario.** I giorni si colorano con le spese libere (Desideri, Cultura, Imprevisti) rispetto alla loro quota giornaliera, così la spesa settimanale non sembra un eccesso. La vista annuale mette ogni mese accanto al suo disponibile.
-- **Diario.** Il pensiero della sera ("Cosa ti ha reso felice oggi?"), con qualche respiro guidato se lo desideri; il riepilogo della domenica; le quattro domande di fine mese e il sigillo che chiude il mese.
+- **Diario.** Il pensiero della sera ("Cosa ti ha reso felice oggi?"), con qualche respiro guidato se lo desideri; le quattro domande di fine mese e il sigillo che chiude il mese.
 - **Una frase al giorno.** Trenta detti e citazioni giapponesi, con l'originale, il romaji e la fonte.
 - **Un promemoria serale** all'ora che scegli.
 - **In italiano e in inglese.** Valuta, date e orari seguono le impostazioni del telefono.

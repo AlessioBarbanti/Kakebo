@@ -482,12 +482,6 @@ abstract class AppLocalizations {
   /// **'L’hai scritta il mese scorso. Puoi tenerla con te, oppure scegliere una strada diversa.'**
   String get intentionGentle;
 
-  /// No description provided for @weekReflection.
-  ///
-  /// In it, this message translates to:
-  /// **'Un momento per riflettere'**
-  String get weekReflection;
-
   /// No description provided for @reflectionMemory.
   ///
   /// In it, this message translates to:
@@ -499,12 +493,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Mostra altri ricordi'**
   String get moreMemories;
-
-  /// No description provided for @weekReflectionPrompt.
-  ///
-  /// In it, this message translates to:
-  /// **'C’è una scelta di questa settimana che vorresti ripetere?'**
-  String get weekReflectionPrompt;
 
   /// No description provided for @branchRule.
   ///
@@ -677,7 +665,7 @@ abstract class AppLocalizations {
   /// No description provided for @journalIntro.
   ///
   /// In it, this message translates to:
-  /// **'Uno per la sera, uno per il mese. Ogni domenica il diario raccoglie da solo la settimana.'**
+  /// **'Uno per la sera, uno per il mese. Qui sotto ritrovi ciò che hai già scritto.'**
   String get journalIntro;
 
   /// No description provided for @everyDayAt.
@@ -740,18 +728,6 @@ abstract class AppLocalizations {
   /// **'Cronologia'**
   String get timeline;
 
-  /// No description provided for @week.
-  ///
-  /// In it, this message translates to:
-  /// **'La settimana · {span}'**
-  String week(String span);
-
-  /// No description provided for @weekNoSpending.
-  ///
-  /// In it, this message translates to:
-  /// **'Una settimana senza spese.'**
-  String get weekNoSpending;
-
   /// No description provided for @backToToday.
   ///
   /// In it, this message translates to:
@@ -769,24 +745,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Le spese di oggi e un pensiero felice'**
   String get reminderHint;
-
-  /// No description provided for @weekSame.
-  ///
-  /// In it, this message translates to:
-  /// **'Come la settimana prima.'**
-  String get weekSame;
-
-  /// No description provided for @weekMore.
-  ///
-  /// In it, this message translates to:
-  /// **'{amount} in più della settimana prima, soprattutto in {pillar}.'**
-  String weekMore(String amount, String pillar);
-
-  /// No description provided for @weekLess.
-  ///
-  /// In it, this message translates to:
-  /// **'{amount} in meno della settimana prima, soprattutto in {pillar}.'**
-  String weekLess(String amount, String pillar);
 
   /// No description provided for @availableLabel.
   ///
@@ -1147,18 +1105,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'RITMO'**
   String get rhythm;
-
-  /// No description provided for @weekly.
-  ///
-  /// In it, this message translates to:
-  /// **'Riepilogo della domenica'**
-  String get weekly;
-
-  /// No description provided for @weeklyHint.
-  ///
-  /// In it, this message translates to:
-  /// **'La settimana raccolta nel diario, niente da scrivere'**
-  String get weeklyHint;
 
   /// No description provided for @proverb.
   ///

@@ -87,7 +87,7 @@ class Settings extends StatelessWidget {
           ),
           row(tr.incomeFixed, tr.incomeFixedHint, value: tr.fixedValue(fmt(app.fixedTotal)), tap: () => app.go('monthStart')),
         ]),
-        group(tr.rhythm, [row(tr.weekly, tr.weeklyHint, flag: 'weekly'), row(tr.proverb, tr.proverbHint, flag: 'phraseOn')]),
+        group(tr.rhythm, [row(tr.proverb, tr.proverbHint, flag: 'phraseOn')]),
         group(tr.evenings, [
           row(tr.thoughtNotice, tr.reminderHint, flag: 'thoughtOn'),
           row(

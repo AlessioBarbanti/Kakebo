@@ -37,12 +37,7 @@ void main() {
       ),
     );
     await open();
-    for (final (label, flag) in [
-      ('Riepilogo della domenica', 'weekly'),
-      ('Frase del giorno', 'phraseOn'),
-      ('Promemoria serale', 'thoughtOn'),
-      ('Meditazione prima del pensiero', 'breathe'),
-    ]) {
+    for (final (label, flag) in [('Frase del giorno', 'phraseOn'), ('Promemoria serale', 'thoughtOn'), ('Meditazione prima del pensiero', 'breathe')]) {
       final before = app.flags[flag]!;
       await tapRow(label);
       expect(app.flags[flag], !before, reason: label);

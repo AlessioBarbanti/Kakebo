@@ -2,6 +2,12 @@
 
 Tutte le modifiche di Kakebo che si notano usando l'app, dalla più recente. I numeri di versione seguono il [versionamento semantico](https://semver.org/lang/it/).
 
+## [Non ancora rilasciato]
+
+### Modifiche
+
+- **Un diario con due momenti.** Il diario resta com'è presentato: il pensiero della sera e il mese. Spariscono il riepilogo della domenica nella cronologia, la domanda sulla settimana nascosta sotto di esso e la sua voce nelle impostazioni. Le parole già scritte per una settimana restano nei dati e nei backup, anche se non si vedono più.
+
 ## [1.1.3] - 2026-09-26
 
 ### Modifiche

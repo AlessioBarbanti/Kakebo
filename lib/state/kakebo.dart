@@ -31,14 +31,14 @@ class Kakebo extends ChangeNotifier {
   Map<String, String> thoughts = {}; // yyyy-mm-dd → text
   Map<String, String> improve = {}; // yyyy-mm → answer to question 4
   Map<String, Map<String, String>> reflections = {}; // budgeting month → good/change
-  Map<String, String> weeklyReflections = {}; // Sunday yyyy-mm-dd → reflection
+  Map<String, String> weeklyReflections = {}; // Sunday yyyy-mm-dd → reflection; no longer shown, kept so words written in 1.1 are not lost
   Map<String, double> sealed = {}; // yyyy-mm → saved when sealed
   // yyyy-mm → that month's plan: it follows every change while the month runs and stays put once it is over, so changing
   // the rent in October leaves September's figures alone. A month counts only if something was written in it, and each
   // write takes the plan; months without one (before plans were kept, or dated back into) use today's.
   Map<String, Plan> plans = {};
   // thoughtOn: the one evening reminder; breathe: guided breaths before writing the thought (off unless chosen).
-  Map<String, bool> flags = {'weekly': true, 'phraseOn': true, 'thoughtOn': true, 'breathe': false, 'sound': true};
+  Map<String, bool> flags = {'phraseOn': true, 'thoughtOn': true, 'breathe': false, 'sound': true};
   String thoughtTime = '21:00';
   int monthStart = 1; // day the budgeting month begins (1–28), e.g. payday
   Map<String, double>? budgets; // null → what is available, split by the pillars' shares

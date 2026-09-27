@@ -232,17 +232,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'L’hai scritta il mese scorso. Puoi tenerla con te, oppure scegliere una strada diversa.';
 
   @override
-  String get weekReflection => 'Un momento per riflettere';
-
-  @override
   String get reflectionMemory => 'Parole del mese';
 
   @override
   String get moreMemories => 'Mostra altri ricordi';
-
-  @override
-  String get weekReflectionPrompt =>
-      'C’è una scelta di questa settimana che vorresti ripetere?';
 
   @override
   String get branchRule =>
@@ -338,7 +331,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get journalIntro =>
-      'Uno per la sera, uno per il mese. Ogni domenica il diario raccoglie da solo la settimana.';
+      'Uno per la sera, uno per il mese. Qui sotto ritrovi ciò che hai già scritto.';
 
   @override
   String everyDayAt(String time) {
@@ -378,14 +371,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get timeline => 'Cronologia';
 
   @override
-  String week(String span) {
-    return 'La settimana · $span';
-  }
-
-  @override
-  String get weekNoSpending => 'Una settimana senza spese.';
-
-  @override
   String get backToToday => 'Torna a Oggi';
 
   @override
@@ -393,19 +378,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get reminderHint => 'Le spese di oggi e un pensiero felice';
-
-  @override
-  String get weekSame => 'Come la settimana prima.';
-
-  @override
-  String weekMore(String amount, String pillar) {
-    return '$amount in più della settimana prima, soprattutto in $pillar.';
-  }
-
-  @override
-  String weekLess(String amount, String pillar) {
-    return '$amount in meno della settimana prima, soprattutto in $pillar.';
-  }
 
   @override
   String get availableLabel => 'Disponibile';
@@ -622,13 +594,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get rhythm => 'RITMO';
-
-  @override
-  String get weekly => 'Riepilogo della domenica';
-
-  @override
-  String get weeklyHint =>
-      'La settimana raccolta nel diario, niente da scrivere';
 
   @override
   String get proverb => 'Frase del giorno';
