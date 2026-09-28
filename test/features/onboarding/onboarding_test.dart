@@ -150,6 +150,56 @@ void main() {
     expect(shown(), 0); // at the bottom it goes
   });
 
+  testWidgets('a tap outside the fields closes the keyboard, and the nudge waits while it is up', (t) async {
+    await mount(t);
+    double shown() => t.widget<AnimatedOpacity>(find.ancestor(of: find.text(tr.scrollMore), matching: find.byType(AnimatedOpacity)).first).opacity;
+    final fields = find.byType(TextField);
+    await t.tap(find.text('Salta'));
+    await t.pumpAndSettle();
+    expect(shown(), 1);
+
+    await t.showKeyboard(fields.first);
+    await t.pumpAndSettle();
+    expect(t.testTextInput.isVisible, isTrue);
+    expect(shown(), 0, reason: 'it would cover the field being typed in');
+
+    await t.tap(find.text('Prepara settembre'));
+    await t.pumpAndSettle();
+    expect(t.testTextInput.isVisible, isFalse);
+    expect(shown(), 1);
+
+    // From one field to the next, the keyboard stays.
+    await t.showKeyboard(fields.first);
+    await t.ensureVisible(fields.at(1));
+    await t.tap(fields.at(1));
+    await t.pumpAndSettle();
+    expect(t.testTextInput.isVisible, isTrue);
+    expect(FocusManager.instance.primaryFocus, t.widget<EditableText>(find.byType(EditableText).at(1)).focusNode);
+  });
+
+  testWidgets("Android's back gesture from the edge never moves a step, even once the swipe has started", (t) async {
+    await mount(t);
+    await t.tap(find.text('Salta'));
+    await t.pumpAndSettle();
+
+    // A quick flick from the left edge, 20 px every 8 ms. The system takes the touch away once it sees its back gesture:
+    // the drag is cancelled, not released.
+    Future<void> flick({required bool taken}) async {
+      final edge = await t.createGesture();
+      await edge.down(const Offset(4, 150));
+      for (var i = 1; i <= 4; i++) {
+        await edge.moveBy(const Offset(20, 0), timeStamp: Duration(milliseconds: 8 * i));
+      }
+      taken ? await edge.cancel(timeStamp: const Duration(milliseconds: 40)) : await edge.up(timeStamp: const Duration(milliseconds: 40));
+      await t.pumpAndSettle();
+    }
+
+    await flick(taken: true);
+    expect(find.text('Prepara settembre'), findsOneWidget);
+    await flick(taken: false); // the same flick, lifted, is a swipe
+    expect(find.text(tr.step3Title), findsOneWidget);
+  });
+
   testWidgets('a swipe counts anywhere on the screen, the footer included', (t) async {
     await mount(t);
     final footer = Offset(40, t.getCenter(find.text('Avanti')).dy); // beside the button, level with it

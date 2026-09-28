@@ -94,6 +94,23 @@ void main() {
     expect(app.screen, 'settings');
   });
 
+  testWidgets("a tap outside the month's fields closes the keyboard", (t) async {
+    app.go('monthStart');
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: const MaterialApp(home: Scaffold(body: MonthStart())),
+      ),
+    );
+    await t.pumpAndSettle();
+    await t.showKeyboard(find.byType(TextField).first);
+    await t.pumpAndSettle();
+    expect(t.testTextInput.isVisible, isTrue);
+    await t.tap(find.text(tr.setupTitle(monthName(app.label))));
+    await t.pumpAndSettle();
+    expect(t.testTextInput.isVisible, isFalse);
+  });
+
   testWidgets('adding an expense takes one tap without scrolling, on narrow and common phones', (t) async {
     addTearDown(t.view.reset);
     for (final size in const [Size(360, 800), Size(393, 852)]) {

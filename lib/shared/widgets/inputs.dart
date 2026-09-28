@@ -51,6 +51,9 @@ class _NumFieldState extends State<NumField> {
   );
 }
 
+/// Closes the keyboard by taking the focus from the field it types into: for a tap outside the fields.
+void unfocus() => FocusManager.instance.primaryFocus?.unfocus();
+
 /// The one look of every editable field in a form: white box, thin outline, green when focused.
 InputDecoration boxed({String? hint, TextStyle? hintStyle}) => InputDecoration(
   hintText: hint,
