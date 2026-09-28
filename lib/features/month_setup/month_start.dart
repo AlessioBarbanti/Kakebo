@@ -56,112 +56,117 @@ class MonthStart extends StatelessWidget {
       ),
     );
 
-    return SafeArea(
-      bottom: false,
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-              // Income, fixed costs, goal: the order the money flows in.
-              child: Reveal(
-                children: [
-                  Align(alignment: Alignment.centerLeft, child: TapText(tr.backArrow, () => app.go(app.from))),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Text(tr.setupTitle(monthName(pm)), style: serif(28, h: 1.2)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Text(tr.setupIntro, style: sans(14, h: 1.5, c: sub)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 24),
-                    child: field(tr.income, tr.incomeHint, income, (v) => app.update(() => app.income = v), ok(.93, .04, 155)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(16, 18, 8, 18), // the rows' × brings its own margin
-                      decoration: BoxDecoration(color: ok(.95, .025, 150), borderRadius: BorderRadius.circular(20)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 4,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Wrap(
-                              alignment: WrapAlignment.spaceBetween,
-                              crossAxisAlignment: WrapCrossAlignment.end,
-                              spacing: 8,
-                              runSpacing: 4,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  spacing: 2,
-                                  children: [
-                                    Text(tr.fixedTitle, style: sans(13, w: FontWeight.w700)),
-                                    Text(tr.fixedHint, style: sans(12, c: sub)),
-                                  ],
-                                ),
-                                Text(fmt(fixed), style: serif(24, w: FontWeight.w700)),
-                              ],
+    // A tap outside the fields closes the keyboard.
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: unfocus,
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+                // Income, fixed costs, goal: the order the money flows in.
+                child: Reveal(
+                  children: [
+                    Align(alignment: Alignment.centerLeft, child: TapText(tr.backArrow, () => app.go(app.from))),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Text(tr.setupTitle(monthName(pm)), style: serif(28, h: 1.2)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text(tr.setupIntro, style: sans(14, h: 1.5, c: sub)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: field(tr.income, tr.incomeHint, income, (v) => app.update(() => app.income = v), ok(.93, .04, 155)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(16, 18, 8, 18), // the rows' × brings its own margin
+                        decoration: BoxDecoration(color: ok(.95, .025, 150), borderRadius: BorderRadius.circular(20)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 4,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                crossAxisAlignment: WrapCrossAlignment.end,
+                                spacing: 8,
+                                runSpacing: 4,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    spacing: 2,
+                                    children: [
+                                      Text(tr.fixedTitle, style: sans(13, w: FontWeight.w700)),
+                                      Text(tr.fixedHint, style: sans(12, c: sub)),
+                                    ],
+                                  ),
+                                  Text(fmt(fixed), style: serif(24, w: FontWeight.w700)),
+                                ],
+                              ),
                             ),
-                          ),
-                          const FixedList(),
-                        ],
+                            const FixedList(),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: field(
-                      tr.savingGoal,
-                      goalNote(app) ?? tr.savingHint,
-                      app.save,
-                      (v) => app.update(() {
-                        app.save = v;
-                        app.rule = false;
-                      }),
-                      ok(.94, .035, 10),
-                      note: goalNote(app) != null,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: field(
+                        tr.savingGoal,
+                        goalNote(app) ?? tr.savingHint,
+                        app.save,
+                        (v) => app.update(() {
+                          app.save = v;
+                          app.rule = false;
+                        }),
+                        ok(.94, .035, 10),
+                        note: goalNote(app) != null,
+                      ),
+                    ),
+                    Padding(padding: const EdgeInsets.only(top: 12), child: _Rule(sub)),
+                    const Padding(padding: EdgeInsets.only(top: 12), child: _Budgets()),
+                  ],
+                ),
+              ),
+            ),
+            // What is left to spend and the final step stay in reach while the form scrolls.
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 12, 20, 12 + MediaQuery.paddingOf(context).bottom),
+              decoration: BoxDecoration(
+                color: card,
+                border: Border(top: BorderSide(color: line)),
+              ),
+              child: Row(
+                spacing: 12,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 1,
+                      children: [
+                        Text(
+                          tr.mindful,
+                          style: sans(12, w: FontWeight.w700, c: sub),
+                        ),
+                        Text(fmt(avail), style: serif(24, w: FontWeight.w700)),
+                        Text(tr.perWeek(fmt((avail * 7 / app.dim).round())), style: sans(12, c: sub)),
+                      ],
                     ),
                   ),
-                  Padding(padding: const EdgeInsets.only(top: 12), child: _Rule(sub)),
-                  const Padding(padding: EdgeInsets.only(top: 12), child: _Budgets()),
+                  Btn(tr.startMonth(monthName(pm)), () => app.go('home'), pad: const EdgeInsets.symmetric(horizontal: 22, vertical: 15)),
                 ],
               ),
             ),
-          ),
-          // What is left to spend and the final step stay in reach while the form scrolls.
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 12, 20, 12 + MediaQuery.paddingOf(context).bottom),
-            decoration: BoxDecoration(
-              color: card,
-              border: Border(top: BorderSide(color: line)),
-            ),
-            child: Row(
-              spacing: 12,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 1,
-                    children: [
-                      Text(
-                        tr.mindful,
-                        style: sans(12, w: FontWeight.w700, c: sub),
-                      ),
-                      Text(fmt(avail), style: serif(24, w: FontWeight.w700)),
-                      Text(tr.perWeek(fmt((avail * 7 / app.dim).round())), style: sans(12, c: sub)),
-                    ],
-                  ),
-                ),
-                Btn(tr.startMonth(monthName(pm)), () => app.go('home'), pad: const EdgeInsets.symmetric(horizontal: 22, vertical: 15)),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
