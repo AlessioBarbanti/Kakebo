@@ -184,10 +184,10 @@ class _LedgerState extends State<Ledger> {
                           border: Border(top: BorderSide(color: line)),
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           spacing: 10,
                           children: [
-                            Flexible(child: Text('${dayMonth(e.date)} · ${e.note}', style: sans(14))),
+                            Expanded(child: Text('${dayMonth(e.date)} · ${e.note}', style: sans(14))),
+                            if (e.receipt != null) Icon(Icons.receipt_long_outlined, size: 14, color: muted, semanticLabel: tr.withReceipt),
                             Text(fmt(e.amt), style: serif(14)),
                           ],
                         ),

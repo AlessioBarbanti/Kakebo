@@ -317,6 +317,21 @@ class AppLocalizationsIt extends AppLocalizations {
   String get receiptUnreadable => 'Non riesco a leggere lo scontrino';
 
   @override
+  String get receiptPhoto => 'Lo scontrino';
+
+  @override
+  String get openReceipt => 'Vedi lo scontrino';
+
+  @override
+  String get removeReceipt => 'Togli la foto dello scontrino';
+
+  @override
+  String get receiptMissing => 'La foto non è su questo telefono';
+
+  @override
+  String get withReceipt => 'con scontrino';
+
+  @override
   String get settings => 'Impostazioni';
 
   @override

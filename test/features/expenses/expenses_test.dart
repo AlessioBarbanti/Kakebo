@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kakebo/app/app_scope.dart';
 import 'package:kakebo/app/shell.dart';
 import 'package:kakebo/features/expenses/add_sheet.dart';
+import 'package:kakebo/features/expenses/receipt_photo.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
+import 'package:kakebo/model/entry.dart';
 import 'package:kakebo/model/receipt.dart';
 import 'package:kakebo/services/receipt_scanner.dart';
 import 'package:kakebo/state/kakebo.dart';
@@ -144,20 +148,32 @@ void main() {
 
   group('a receipt', () {
     final real = ReceiptScanner.read;
-    tearDown(() => ReceiptScanner.read = real);
+    late Directory photos;
+    setUp(() => ReceiptPhotos.dir = photos = Directory.systemTemp.createTempSync('receipts'));
+    tearDown(() {
+      ReceiptScanner.read = real;
+      ReceiptPhotos.dir = null;
+      photos.deleteSync(recursive: true);
+    });
 
-    /// A receipt as recognition reads it: one line per printed row, each 20 px high.
-    List<ReceiptLine> printed(String text) => [
-      for (final (i, row) in text.trim().split('\n').indexed) ReceiptLine(row, [(0, i * 30.0), (300, i * 30.0), (300, i * 30.0 + 20), (0, i * 30.0 + 20)]),
-    ];
+    /// A receipt as recognition reads it: one line per printed row, each 20 px high; with its photo, kept as [photo].
+    ({List<ReceiptLine> lines, String? photo}) printed(String text, {String? photo = 'receipt.jpg'}) => (
+      lines: [
+        for (final (i, row) in text.trim().split('\n').indexed) ReceiptLine(row, [(0, i * 30.0), (300, i * 30.0), (300, i * 30.0 + 20), (0, i * 30.0 + 20)]),
+      ],
+      photo: photo,
+    );
 
-    Future<void> open(WidgetTester t) async {
+    Future<void> open(WidgetTester t, {Entry? edit}) async {
       await t.pumpWidget(
         AppScope(
           notifier: app,
           child: MaterialApp(
             home: Builder(
-              builder: (c) => TextButton(onPressed: () => openAdd(c), child: const Text('apri')),
+              builder: (c) => TextButton(
+                onPressed: () => openAdd(c, edit: edit),
+                child: const Text('apri'),
+              ),
             ),
           ),
         ),
@@ -173,7 +189,7 @@ void main() {
       await t.pumpAndSettle();
     }
 
-    testWidgets('fills in the total, the shop and its day; nothing is added until Save', (t) async {
+    testWidgets('fills in the total, the shop and its day, shows the photo; nothing is added until Save', (t) async {
       bool? fromCamera;
       ReceiptScanner.read = ({required camera}) async {
         fromCamera = camera;
@@ -193,10 +209,13 @@ Pagamento contante 10,00
       expect(find.text(shortDay(DateTime(2026, 9, 22))), findsOneWidget);
       expect(find.text('Pilastro suggerito dalla nota: Necessità'), findsOneWidget);
       expect(find.text('Dallo scontrino: controlla prima di salvare'), findsOneWidget);
+      expect(find.byType(ReceiptThumb), findsOneWidget, reason: 'the photo, to check the figures against');
       expect(app.entries, isEmpty);
 
+      await t.ensureVisible(find.text('Salva'));
+      await t.pumpAndSettle();
       await t.tap(find.text('Salva'));
-      expect([for (final e in app.entries) (e.amt, e.note, e.date, e.p)], [(5.38, 'Esselunga', DateTime(2026, 9, 22), 'needs')]);
+      expect([for (final e in app.entries) (e.amt, e.note, e.date, e.p, e.receipt)], [(5.38, 'Esselunga', DateTime(2026, 9, 22), 'needs', 'receipt.jpg')]);
     });
 
     testWidgets("never over the user's note, nor on a day an expense cannot go to; says when it cannot read", (t) async {
@@ -222,7 +241,7 @@ Pagamento contante 10,00
       receipt = printed('BAR CENTRALE\nTOTALE 4,50');
       await scan(t);
       expect(find.text('Dallo scontrino: controlla prima di salvare'), findsOneWidget);
-      receipt = []; // a photo with no text in it
+      receipt = printed('', photo: 'blank.jpg'); // a photo with no text in it
       await scan(t);
       expect(find.text('Non riesco a leggere lo scontrino'), findsOneWidget);
 
@@ -233,34 +252,65 @@ Pagamento contante 10,00
       expect(app.entries, isEmpty);
     });
 
-    testWidgets('a receipt shop replaces the one before it; an expense being edited has no receipt to read', (t) async {
-      var receipt = printed('BAR CENTRALE\nTOTALE 3,00');
+    testWidgets("a later receipt replaces the earlier one's shop and photo; editing shows it, opens it whole, can leave it out", (t) async {
+      final semantics = t.ensureSemantics();
+      var receipt = printed('BAR CENTRALE\nTOTALE 3,00', photo: 'bar.jpg');
       ReceiptScanner.read = ({required camera}) async => receipt;
       await open(t);
       await scan(t);
-      receipt = printed('FARMACIA COMUNALE\nTOTALE 8,90');
+      receipt = printed('FARMACIA COMUNALE\nTOTALE 8,90', photo: 'farmacia.jpg');
       await scan(t); // the wrong receipt first, then the right one
       expect(find.widgetWithText(TextField, 'Farmacia Comunale'), findsOneWidget);
       expect(find.text('8,90\u00A0€'), findsOneWidget);
+      await t.ensureVisible(find.text('Salva'));
+      await t.pumpAndSettle();
       await t.tap(find.text('Salva'));
       await t.pumpAndSettle();
+      expect(app.entries.single.receipt, 'farmacia.jpg');
 
+      await open(t, edit: app.entries.single);
+      expect(find.byTooltip('Leggi uno scontrino'), findsNothing, reason: 'an expense being edited has no receipt to read');
+      expect(find.text('Lo scontrino'), findsOneWidget);
+      await t.tap(find.byType(ReceiptThumb));
+      await t.pumpAndSettle();
+      expect(find.byType(InteractiveViewer), findsOneWidget);
+      await t.tap(find.byIcon(Icons.close));
+      await t.pumpAndSettle();
+      expect(find.byType(InteractiveViewer), findsNothing);
+
+      await t.tap(find.bySemanticsLabel('Togli la foto dello scontrino'));
+      await t.pump();
+      expect(find.byType(ReceiptThumb), findsNothing);
+      await t.ensureVisible(find.text('Salva'));
+      await t.pumpAndSettle();
+      await t.tap(find.text('Salva'));
+      expect(app.entries.single.receipt, isNull);
+      semantics.dispose();
+    });
+
+    testWidgets('an expense with a photo says so in the list, and the photo opens from it', (t) async {
+      final semantics = t.ensureSemantics();
+      app.onboarded = true;
+      app.addEntry(8.9, 'Farmacia', 'needs', receipt: 'farmacia.jpg');
+      app.addEntry(2, 'Pane', 'needs');
+      app.go('home');
       await t.pumpWidget(
         AppScope(
           notifier: app,
-          child: MaterialApp(
-            home: Builder(
-              builder: (c) => TextButton(
-                onPressed: () => openAdd(c, edit: app.entries.single),
-                child: const Text('modifica'),
-              ),
-            ),
-          ),
+          child: const MaterialApp(home: Scaffold(body: Shell())),
         ),
       );
-      await t.tap(find.text('modifica'));
       await t.pumpAndSettle();
-      expect(find.byTooltip('Leggi uno scontrino'), findsNothing);
+      expect(find.bySemanticsLabel(RegExp('Farmacia.*con scontrino', dotAll: true)), findsOneWidget); // read with its row
+      expect(find.bySemanticsLabel(RegExp('con scontrino')), findsOneWidget, reason: 'Pane has no photo');
+      await t.ensureVisible(find.text('Farmacia'));
+      await t.pumpAndSettle();
+      await t.tap(find.text('Farmacia'));
+      await t.pumpAndSettle();
+      await t.tap(find.byType(ReceiptThumb));
+      await t.pumpAndSettle();
+      expect(find.byType(InteractiveViewer), findsOneWidget);
+      semantics.dispose();
     });
   });
 }

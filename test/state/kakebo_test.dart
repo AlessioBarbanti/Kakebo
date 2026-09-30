@@ -72,6 +72,21 @@ void main() {
     expect(b.thoughts, a.thoughts);
   });
 
+  test("a receipt's photo stays with its expense: saved, kept through edits, cleared only when asked", () {
+    Kakebo.clock = () => DateTime(2026, 9, 24, 21);
+    final a = Kakebo()..addEntry(8.9, 'Farmacia', 'needs', receipt: '1.jpg');
+    a.addEntry(2, 'Pane', 'needs');
+    final json = jsonDecode(jsonEncode(a.toJson()));
+    expect([for (final e in json['entries']) e['receipt']], [null, '1.jpg']); // no key at all without a photo
+    expect([for (final e in json['entries']) (e as Map).containsKey('receipt')], [false, true]);
+    final b = Kakebo()..read(json);
+    expect(b.entries.last.receipt, '1.jpg');
+    b.editEntry(b.entries.last, 9.9, 'Farmacia', 'needs');
+    expect(b.entries.last.receipt, '1.jpg');
+    b.editEntry(b.entries.last, 9.9, 'Farmacia', 'needs', receipt: '');
+    expect(b.entries.last.receipt, isNull);
+  });
+
   test('a month keeps its own income, fixed costs and goal once it is over', () {
     final k = Kakebo()
       ..income = 2800

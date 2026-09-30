@@ -644,6 +644,36 @@ abstract class AppLocalizations {
   /// **'Non riesco a leggere lo scontrino'**
   String get receiptUnreadable;
 
+  /// No description provided for @receiptPhoto.
+  ///
+  /// In it, this message translates to:
+  /// **'Lo scontrino'**
+  String get receiptPhoto;
+
+  /// No description provided for @openReceipt.
+  ///
+  /// In it, this message translates to:
+  /// **'Vedi lo scontrino'**
+  String get openReceipt;
+
+  /// No description provided for @removeReceipt.
+  ///
+  /// In it, this message translates to:
+  /// **'Togli la foto dello scontrino'**
+  String get removeReceipt;
+
+  /// No description provided for @receiptMissing.
+  ///
+  /// In it, this message translates to:
+  /// **'La foto non è su questo telefono'**
+  String get receiptMissing;
+
+  /// No description provided for @withReceipt.
+  ///
+  /// In it, this message translates to:
+  /// **'con scontrino'**
+  String get withReceipt;
+
   /// No description provided for @settings.
   ///
   /// In it, this message translates to:

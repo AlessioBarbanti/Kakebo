@@ -119,6 +119,7 @@ class Home extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Text(e.note, style: sans(15))),
+                      if (e.receipt != null) Icon(Icons.receipt_long_outlined, size: 14, color: muted, semanticLabel: tr.withReceipt),
                       Text(fmt(e.amt), style: serif(16)),
                     ],
                   ),

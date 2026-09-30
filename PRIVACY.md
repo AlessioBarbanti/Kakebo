@@ -14,17 +14,19 @@ Spese, entrate, spese fisse, obiettivi, pensieri e impostazioni sono salvati sol
 
 ## Backup ed esportazione
 
-Il backup e l'esportazione in CSV creano un file solo quando lo chiedi tu, nella posizione che scegli tu. Da quel momento il file è tuo: se lo salvi su un servizio cloud, vale l'informativa di quel servizio. Il ripristino legge solo il file che selezioni.
+Il backup e l'esportazione in CSV creano un file solo quando lo chiedi tu, nella posizione che scegli tu. Il file di backup non contiene le foto degli scontrini: ripristinato su un altro telefono, le spese tornano, le loro foto no. Da quel momento il file è tuo: se lo salvi su un servizio cloud, vale l'informativa di quel servizio. Il ripristino legge solo il file che selezioni.
 
 ## Scontrini
 
-Se scegli di leggere uno scontrino, lo fotografi con l'app Fotocamera del telefono (Kakebo non chiede il permesso della fotocamera) o scegli una foto dalla galleria. Kakebo la legge sul telefono con il riconoscimento del testo di Google ML Kit, il cui modello è incluso nell'app: la foto non viene inviata a nessuno. Dallo scontrino ricava solo il totale, la data e il nome del negozio, che compilano la spesa finché non la salvi tu, poi cancella la copia della foto che aveva ricevuto. La foto originale, se l'hai scelta dalla galleria, resta dov'era.
+Se scegli di leggere uno scontrino, lo fotografi con l'app Fotocamera del telefono (Kakebo non chiede il permesso della fotocamera) o scegli una foto dalla galleria. Kakebo la legge sul telefono con il riconoscimento del testo di Google ML Kit, il cui modello è incluso nell'app: la foto non viene inviata a nessuno. Dallo scontrino ricava il totale, la data e il nome del negozio, che compilano la spesa finché non la salvi tu.
+
+Una copia ridotta della foto resta nella memoria privata dell'app, legata alla spesa, così puoi rivederla aprendo la spesa. Se togli la foto o elimini la spesa, la copia viene cancellata al successivo avvio dell'app. La foto originale, se l'hai scelta dalla galleria, resta dov'era.
 
 Le librerie di ML Kit sono fatte per inviare a Google statistiche sul loro uso e funzionamento. In Kakebo non possono farlo, perché l'app non ha il permesso di accedere a Internet.
 
 ## Il backup di Android
 
-Se sul telefono è attivo il backup di Google, Android può includere i dati di Kakebo nel backup del tuo account Google e trasferirli su un telefono nuovo. Questo backup è gestito da Android e da Google secondo le loro condizioni, e lo sviluppatore non vi ha accesso. Puoi disattivarlo dalle impostazioni di sistema del telefono.
+Se sul telefono è attivo il backup di Google, Android può includere i dati di Kakebo nel backup del tuo account Google e trasferirli su un telefono nuovo. Questo backup è gestito da Android e da Google secondo le loro condizioni, e lo sviluppatore non vi ha accesso. Puoi disattivarlo dalle impostazioni di sistema del telefono. Le foto degli scontrini restano fuori dal backup di Google, perché supererebbero presto i 25 MB che Android riserva a ogni app; da Android 12 passano però al telefono nuovo con il trasferimento diretto da telefono a telefono.
 
 ## Permessi
 
@@ -36,7 +38,7 @@ Se sul telefono è attivo il backup di Google, Android può includere i dati di 
 
 ## Cancellare i dati
 
-Disinstallando l'app, o cancellandone i dati dalle impostazioni di Android, tutto quello che hai scritto viene rimosso dal telefono. I file di backup che hai salvato restano dove li hai messi.
+Disinstallando l'app, o cancellandone i dati dalle impostazioni di Android, tutto quello che hai scritto viene rimosso dal telefono, con le foto degli scontrini. I file di backup che hai salvato restano dove li hai messi.
 
 ## Minori
 
@@ -68,17 +70,19 @@ Expenses, income, fixed costs, goals, thoughts and settings are stored only in t
 
 ## Backup and export
 
-Backup and CSV export create a file only when you ask, in the place you choose. From then on the file is yours: if you save it to a cloud service, that service's privacy policy applies. Restoring reads only the file you select.
+Backup and CSV export create a file only when you ask, in the place you choose. The backup file does not hold the receipt photos: restored on another phone, the expenses come back, their photos do not. From then on the file is yours: if you save it to a cloud service, that service's privacy policy applies. Restoring reads only the file you select.
 
 ## Receipts
 
-If you choose to read a receipt, you photograph it with your phone's Camera app (Kakebo does not ask for camera access) or pick a photo from your gallery. Kakebo reads it on the phone with Google ML Kit's text recognition, whose model is inside the app: the photo is sent to no one. From the receipt it takes only the total, the date and the shop's name, which fill in the expense until you save it yourself, then it deletes the copy of the photo it was handed. The original photo, if you picked it from your gallery, stays where it was.
+If you choose to read a receipt, you photograph it with your phone's Camera app (Kakebo does not ask for camera access) or pick a photo from your gallery. Kakebo reads it on the phone with Google ML Kit's text recognition, whose model is inside the app: the photo is sent to no one. From the receipt it takes the total, the date and the shop's name, which fill in the expense until you save it yourself.
+
+A smaller copy of the photo stays in the app's private storage, with the expense, so you can see it again by opening the expense. If you remove the photo or delete the expense, the copy is deleted the next time the app starts. The original photo, if you picked it from your gallery, stays where it was.
 
 ML Kit's libraries are made to send Google statistics on their use and performance. In Kakebo they cannot, because the app has no Internet access.
 
 ## Android backup
 
-If Google backup is turned on for your phone, Android may include Kakebo's data in your Google account's backup and move it to a new phone. That backup is run by Android and Google under their own terms, and the developer has no access to it. You can turn it off in your phone's system settings.
+If Google backup is turned on for your phone, Android may include Kakebo's data in your Google account's backup and move it to a new phone. That backup is run by Android and Google under their own terms, and the developer has no access to it. You can turn it off in your phone's system settings. Receipt photos are left out of Google's backup, as they would soon pass the 25 MB Android allows each app; from Android 12 they do move to a new phone with a direct phone-to-phone transfer.
 
 ## Permissions
 
@@ -90,7 +94,7 @@ If Google backup is turned on for your phone, Android may include Kakebo's data 
 
 ## Deleting your data
 
-Uninstalling the app, or clearing its data in Android's settings, removes everything you wrote from the phone. Backup files you saved stay where you put them.
+Uninstalling the app, or clearing its data in Android's settings, removes everything you wrote from the phone, receipt photos included. Backup files you saved stay where you put them.
 
 ## Children
 

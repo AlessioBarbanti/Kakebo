@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android's backup up to Android 11: everything but the receipt photos (lib/services/receipt_scanner.dart), which would
+     soon pass the 25 MB an app may keep in the cloud, and then nothing of Kakebo would be backed up. -->
+<full-backup-content>
+    <exclude domain="file" path="receipts" />
+</full-backup-content>

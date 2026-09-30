@@ -317,6 +317,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get receiptUnreadable => 'I can\'t read the receipt';
 
   @override
+  String get receiptPhoto => 'The receipt';
+
+  @override
+  String get openReceipt => 'View the receipt';
+
+  @override
+  String get removeReceipt => 'Remove the receipt photo';
+
+  @override
+  String get receiptMissing => 'The photo is not on this phone';
+
+  @override
+  String get withReceipt => 'with receipt';
+
+  @override
   String get settings => 'Settings';
 
   @override

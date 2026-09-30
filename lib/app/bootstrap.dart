@@ -10,6 +10,7 @@ import 'package:kakebo/app/kakebo_app.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/services/home_screen_widget.dart';
+import 'package:kakebo/services/receipt_scanner.dart';
 import 'package:kakebo/services/reminders.dart';
 import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/state/kakebo.dart';
@@ -23,8 +24,10 @@ Future<void> bootstrap() async {
   const demo = bool.fromEnvironment('DEMO'), today = String.fromEnvironment('TODAY');
   if (today.isNotEmpty) Kakebo.clock = () => DateTime.parse(today);
   // Decode every artwork while the launch screen is still up, so no screen waits for an image.
-  final (loaded, _) = await (Kakebo.load(), _precache()).wait;
+  final (loaded, _, _) = await (Kakebo.load(), _precache(), ReceiptPhotos.init()).wait;
   final app = loaded;
+  // Receipt photos whose expense is gone; in the background, as nothing waits for it.
+  ReceiptPhotos.clean({for (final e in app.entries) ?e.receipt}).ignore();
   WidgetsBinding.instance.addObserver(_LocaleWatcher(app));
   if (demo && app.entries.isEmpty) app.seedDemo();
   await Reminders(app).init();

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android's backup from Android 12: the cloud one without the receipt photos, for its 25 MB (see backup_rules.xml);
+     a transfer from phone to phone, which has no such limit, carries them too. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="receipts" />
+    </cloud-backup>
+</data-extraction-rules>
