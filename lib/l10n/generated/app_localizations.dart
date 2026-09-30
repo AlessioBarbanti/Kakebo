@@ -602,6 +602,48 @@ abstract class AppLocalizations {
   /// **'Cancella'**
   String get erase;
 
+  /// No description provided for @scanReceipt.
+  ///
+  /// In it, this message translates to:
+  /// **'Leggi uno scontrino'**
+  String get scanReceipt;
+
+  /// No description provided for @receiptCamera.
+  ///
+  /// In it, this message translates to:
+  /// **'Fotografa lo scontrino'**
+  String get receiptCamera;
+
+  /// No description provided for @receiptGallery.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli una foto'**
+  String get receiptGallery;
+
+  /// No description provided for @receiptReading.
+  ///
+  /// In it, this message translates to:
+  /// **'Leggo lo scontrino…'**
+  String get receiptReading;
+
+  /// No description provided for @receiptRead.
+  ///
+  /// In it, this message translates to:
+  /// **'Dallo scontrino: controlla prima di salvare'**
+  String get receiptRead;
+
+  /// No description provided for @receiptNoTotal.
+  ///
+  /// In it, this message translates to:
+  /// **'Non trovo il totale: scrivilo tu'**
+  String get receiptNoTotal;
+
+  /// No description provided for @receiptUnreadable.
+  ///
+  /// In it, this message translates to:
+  /// **'Non riesco a leggere lo scontrino'**
+  String get receiptUnreadable;
+
   /// No description provided for @settings.
   ///
   /// In it, this message translates to:

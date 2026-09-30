@@ -296,6 +296,27 @@ class AppLocalizationsIt extends AppLocalizations {
   String get erase => 'Cancella';
 
   @override
+  String get scanReceipt => 'Leggi uno scontrino';
+
+  @override
+  String get receiptCamera => 'Fotografa lo scontrino';
+
+  @override
+  String get receiptGallery => 'Scegli una foto';
+
+  @override
+  String get receiptReading => 'Leggo lo scontrino…';
+
+  @override
+  String get receiptRead => 'Dallo scontrino: controlla prima di salvare';
+
+  @override
+  String get receiptNoTotal => 'Non trovo il totale: scrivilo tu';
+
+  @override
+  String get receiptUnreadable => 'Non riesco a leggere lo scontrino';
+
+  @override
   String get settings => 'Impostazioni';
 
   @override

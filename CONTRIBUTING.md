@@ -48,9 +48,9 @@ dart format -l 160 <file modificati>
 
 - `lib/main.dart`: punto d'ingresso; delega l'avvio a `app/bootstrap.dart`
 - `lib/app/`: inizializzazione, `MaterialApp`, navigazione, sfondo e `AppScope`
-- `lib/model/`: spese, spese fisse, periodi e pilastri; codice Dart senza dipendenze da Flutter o traduzioni
+- `lib/model/`: spese, spese fisse, periodi, pilastri e lettura degli scontrini (`receipt.dart`: righe, totale, data, negozio); codice Dart senza dipendenze da Flutter o traduzioni
 - `lib/state/kakebo.dart`: stato `ChangeNotifier`, calcoli dei budget e operazioni dell'app
-- `lib/services/`: persistenza con shared_preferences, formati backup/CSV, dialoghi per i file e notifiche
+- `lib/services/`: persistenza con shared_preferences, formati backup/CSV, dialoghi per i file, notifiche e scansione degli scontrini (foto e ML Kit, sostituibile nei test)
 - `lib/features/`: schermate raggruppate in `home`, `expenses`, `journal`, `calendar`, `onboarding`, `month_setup` e `settings`; aggiunta/modifica spesa vive in `expenses/add_sheet.dart`
 - `lib/shared/`: `theme` per colori, tipografia e presentazione dei pilastri; `widgets` per i controlli comuni; `illustrations` per ramo, sigillo ed ensō; `animations` per transizioni e respiro
 - `lib/l10n/`: sorgenti ARB, `generated/` per l'output Flutter, `localization.dart` per lingua e testi, `formatters.dart` per date e importi

@@ -7,6 +7,8 @@ import 'package:kakebo/model/entry.dart';
 import 'package:kakebo/model/period.dart';
 import 'package:kakebo/model/pillar.dart';
 import 'package:kakebo/model/pillar_suggestion.dart';
+import 'package:kakebo/model/receipt.dart';
+import 'package:kakebo/services/receipt_scanner.dart';
 import 'package:kakebo/shared/theme/color.dart';
 import 'package:kakebo/shared/theme/pillars.dart';
 import 'package:kakebo/shared/theme/tokens.dart';
@@ -45,9 +47,62 @@ class _AddSheetState extends State<AddSheet> {
   late String reflection = e?.reflection ?? '';
   late bool touched = e != null || widget.pillar != null; // an edited expense keeps its pillar, and so does one already picked
   late DateTime day = e?.date ?? DateTime(app.now.year, app.now.month, app.now.day);
+  late final _note = TextEditingController(text: note);
+  bool reading = false; // a receipt is being read
+  String? shop; // the note a receipt wrote: the next receipt may replace it, not the user's own words
+  String? said; // what reading a receipt has to say, under the amount
 
   double get value => double.tryParse(amt) ?? 0;
   bool get ready => value > 0 && pillar != null;
+
+  @override
+  void dispose() {
+    _note.dispose();
+    super.dispose();
+  }
+
+  /// The note, and the pillar it suggests while the user has picked none.
+  void noted(String v) {
+    note = v;
+    final g = suggest(v);
+    if (!touched && g != null) pillar = g;
+  }
+
+  /// The first day an expense can go to: any day of a month still open, so the previous one too until it is sealed.
+  DateTime get earliest {
+    final previous = app.previous;
+    return app.sealed.containsKey(monthKey(app.labelOf(previous))) ? app.period.start : previous.start;
+  }
+
+  /// Fills in what a receipt says, for the user to check before saving: its total, the shop as the note (never over the
+  /// user's own), and its day when an expense can still go there. The shop's name may suggest a pillar, as a typed note does.
+  Future<void> scan(bool camera) async {
+    setState(() => reading = true);
+    List<ReceiptLine>? lines;
+    try {
+      lines = await ReceiptScanner.read(camera: camera);
+    } catch (_) {
+      lines = const []; // no camera, or recognition failed: as a receipt with nothing on it, never a button left waiting
+    }
+    if (!mounted) return;
+    final today = DateTime(app.now.year, app.now.month, app.now.day);
+    final r = lines == null ? null : Receipt.read(rowsOf(lines), today: today);
+    setState(() {
+      reading = false;
+      if (r == null) return; // no photo taken
+      if (r.total case final t?) amt = t % 1 == 0 ? t.toInt().toString() : t.toStringAsFixed(2);
+      if (r.shop case final s? when note.trim().isEmpty || note == shop) {
+        shop = _note.text = s;
+        noted(s);
+      }
+      if (r.date case final d? when !d.isBefore(earliest) && !d.isAfter(today)) day = d;
+      said = r.isEmpty
+          ? tr.receiptUnreadable
+          : r.total == null
+          ? tr.receiptNoTotal
+          : tr.receiptRead;
+    });
+  }
 
   void press(String k) => setState(() {
     if (k == '⌫') {
@@ -70,8 +125,7 @@ class _AddSheetState extends State<AddSheet> {
   /// For an expense written down late: any day of a month still open, so the previous one too until it is sealed (a month
   /// sealed keeps the figures it was sealed with); never a day still to come.
   Future<void> pickDay() async {
-    final today = DateTime(app.now.year, app.now.month, app.now.day), previous = app.previous;
-    final earliest = app.sealed.containsKey(monthKey(app.labelOf(previous))) ? app.period.start : previous.start;
+    final today = DateTime(app.now.year, app.now.month, app.now.day), earliest = this.earliest;
     final picked = await showDatePicker(
       context: context,
       initialDate: day,
@@ -118,6 +172,37 @@ class _AddSheetState extends State<AddSheet> {
           Row(
             children: [
               Expanded(child: Text(e == null ? tr.newExpense : tr.editExpense, style: serif(20))),
+              // A new expense can come from a receipt: photographed now, or a photo already taken.
+              if (e == null)
+                PopupMenuButton<bool>(
+                  tooltip: tr.scanReceipt,
+                  enabled: !reading,
+                  onSelected: scan,
+                  itemBuilder: (_) => [
+                    for (final (camera, icon, label) in [
+                      (true, Icons.photo_camera_outlined, tr.receiptCamera),
+                      (false, Icons.photo_library_outlined, tr.receiptGallery),
+                    ])
+                      PopupMenuItem(
+                        value: camera,
+                        child: Row(
+                          spacing: 12,
+                          children: [
+                            Icon(icon, size: 20, color: muted),
+                            Flexible(child: Text(label, style: sans(15))),
+                          ],
+                        ),
+                      ),
+                  ],
+                  child: SizedBox.square(
+                    dimension: 48,
+                    child: Center(
+                      child: reading
+                          ? SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2, color: muted))
+                          : Icon(Icons.receipt_long_outlined, size: 18, color: muted),
+                    ),
+                  ),
+                ),
               // Quiet on purpose, in the header's own 48 dp: most expenses are today's, a tap dates one back when forgotten.
               Semantics(
                 button: true,
@@ -158,15 +243,20 @@ class _AddSheetState extends State<AddSheet> {
                 money(amt.isEmpty ? '0' : amt),
                 style: serif(46, w: FontWeight.w700, h: 1.1, c: value > 0 ? ink : ok(.7, .02, 160)),
               ),
+              if (reading || said != null)
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    reading ? tr.receiptReading : said!,
+                    textAlign: TextAlign.center,
+                    style: sans(12, c: muted),
+                  ),
+                ),
             ],
           ),
           TextFormField(
-            initialValue: note,
-            onChanged: (v) => setState(() {
-              note = v;
-              final g = suggest(v);
-              if (!touched && g != null) pillar = g;
-            }),
+            controller: _note,
+            onChanged: (v) => setState(() => noted(v)),
             style: sans(15),
             decoration: softInput(tr.notePlaceholder, ok(.96, .02, 150), 14, const EdgeInsets.symmetric(horizontal: 16, vertical: 13)),
           ),

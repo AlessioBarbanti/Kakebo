@@ -23,6 +23,8 @@ import 'package:kakebo/features/home/home.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/model/period.dart';
+import 'package:kakebo/model/receipt.dart';
+import 'package:kakebo/services/receipt_scanner.dart';
 import 'package:kakebo/shared/theme/color.dart';
 import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/state/kakebo.dart';
@@ -59,6 +61,23 @@ final List<(String, String, String, Act?)> _shots = [
   ('home', 'saying_open', 'home', (t, _) => _tap(t, find.byType(DailyPhrase))),
   ('add_expense', 'new', 'home', (t, _) => _tap(t, find.text(tr.addExpense))),
   ('add_expense', 'edit', 'home', (t, app) => _tap(t, find.text(app.today.first.note))),
+  (
+    'add_expense',
+    'receipt',
+    'home',
+    (t, _) async {
+      final real = ReceiptScanner.read;
+      addTearDown(() => ReceiptScanner.read = real);
+      // A receipt as recognition reads it, one line per printed row.
+      const rows = ['ESSELUNGA S.P.A.', 'DOCUMENTO COMMERCIALE', 'TOTALE COMPLESSIVO 23,40', '23-09-2026 18:42'];
+      ReceiptScanner.read = ({required camera}) async => [
+        for (final (i, r) in rows.indexed) ReceiptLine(r, [(0, i * 30.0), (300, i * 30.0), (300, i * 30.0 + 20), (0, i * 30.0 + 20)]),
+      ];
+      await _tap(t, find.text(tr.addExpense));
+      await _tap(t, find.byTooltip(tr.scanReceipt));
+      await _tap(t, find.text(tr.receiptCamera));
+    },
+  ),
   ('ledger', 'month', 'ledger', null),
   ('ledger', 'week', 'ledger', (t, _) => _tap(t, find.text(tr.thisWeek))),
   ('ledger', 'pillar_open', 'ledger', (t, _) => _tap(t, find.text(tr.pillarNeeds).last)),
