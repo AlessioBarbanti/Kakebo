@@ -2,6 +2,14 @@
 
 Tutte le modifiche di Kakebo che si notano usando l'app, dalla più recente. I numeri di versione seguono il [versionamento semantico](https://semver.org/lang/it/).
 
+## [1.2.1] - 2026-10-04
+
+### Correzioni
+
+- **La tastiera si chiude con un tocco.** Nell'introduzione e in "Prepara il mese" basta toccare fuori dai campi per chiudere la tastiera; passando da un campo all'altro resta aperta.
+- **Indietro non salta un passo.** Nell'introduzione, chiudere la tastiera con il gesto Indietro dal bordo dello schermo a volte riportava al passo precedente. Ora non succede più.
+- **L'invito a scorrere non copre il campo.** Mentre scrivi in un campo, l'invito a scorrere per vedere il resto aspetta: prima finiva sopra il campo lasciato in vista dalla tastiera.
+
 ## [1.2.0] - 2026-09-27
 
 ### Modifiche
@@ -72,6 +80,7 @@ La prima versione.
 - **I dati restano sul telefono:** nessun account e nessun permesso Internet; backup in un file ed esportazione in CSV.
 - **In italiano e in inglese.**
 
+[1.2.1]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.2.1
 [1.2.0]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.2.0
 [1.1.3]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.3
 [1.1.2]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.2
