@@ -206,6 +206,7 @@ class _CalendarState extends State<Calendar> {
                           child: Text(e.pillar.kanji, style: serif(14, c: e.pillar.ink)),
                         ),
                         Expanded(child: Text(e.note, style: sans(15))),
+                        if (e.receipt != null) Icon(Icons.receipt_long_outlined, size: 14, color: muted, semanticLabel: tr.withReceipt),
                         Text(fmt(e.amt), style: serif(16)),
                       ],
                     ),

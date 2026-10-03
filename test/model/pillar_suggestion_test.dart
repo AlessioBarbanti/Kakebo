@@ -8,5 +8,7 @@ void main() {
     expect(suggest('Regalo per i parenti'), 'wants'); // "parenti" is not "rent"
     expect(suggest('Weekly groceries'), 'needs');
     expect(suggest('Ciotola in ceramica'), isNull);
+    expect(suggest('Esselunga'), 'needs'); // a shop's name, read from its receipt
+    expect(suggest('Ipercoop Lame'), 'needs');
   });
 }

@@ -19,10 +19,13 @@ import 'package:kakebo/app/app_scope.dart';
 import 'package:kakebo/app/bootstrap.dart' show artwork;
 import 'package:kakebo/app/kakebo_app.dart';
 import 'package:kakebo/features/expenses/add_sheet.dart';
+import 'package:kakebo/features/expenses/receipt_photo.dart';
 import 'package:kakebo/features/home/home.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
 import 'package:kakebo/model/period.dart';
+import 'package:kakebo/model/receipt.dart';
+import 'package:kakebo/services/receipt_scanner.dart';
 import 'package:kakebo/shared/theme/color.dart';
 import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/state/kakebo.dart';
@@ -59,6 +62,16 @@ final List<(String, String, String, Act?)> _shots = [
   ('home', 'saying_open', 'home', (t, _) => _tap(t, find.byType(DailyPhrase))),
   ('add_expense', 'new', 'home', (t, _) => _tap(t, find.text(tr.addExpense))),
   ('add_expense', 'edit', 'home', (t, app) => _tap(t, find.text(app.today.first.note))),
+  ('add_expense', 'receipt', 'home', (t, _) => _receipt(t)),
+  (
+    'add_expense',
+    'receipt_photo',
+    'home',
+    (t, _) async {
+      await _receipt(t);
+      await _tap(t, find.byType(ReceiptThumb));
+    },
+  ),
   ('ledger', 'month', 'ledger', null),
   ('ledger', 'week', 'ledger', (t, _) => _tap(t, find.text(tr.thisWeek))),
   ('ledger', 'pillar_open', 'ledger', (t, _) => _tap(t, find.text(tr.pillarNeeds).last)),
@@ -90,6 +103,41 @@ final List<(String, String, String, Act?)> _shots = [
     },
   ),
 ];
+
+/// A new expense read from a receipt: recognition swapped for the receipt's rows, and a drawing of it as the photo kept.
+Future<void> _receipt(WidgetTester t) async {
+  const rows = ['ESSELUNGA S.P.A.', 'DOCUMENTO COMMERCIALE', 'LATTE INTERO 1,29', 'PANE COMUNE 2,10', 'TOTALE COMPLESSIVO 23,40', '23-09-2026 18:42'];
+  final real = ReceiptScanner.read, folder = Directory.systemTemp.createTempSync('receipts');
+  ReceiptPhotos.dir = folder;
+  addTearDown(() {
+    ReceiptScanner.read = real;
+    ReceiptPhotos.dir = null;
+    folder.deleteSync(recursive: true);
+  });
+  final paper = img.Image(width: 600, height: 800)..clear(img.ColorRgb8(120, 104, 88)); // on a wooden table
+  img.fillRect(paper, x1: 90, y1: 30, x2: 510, y2: 800, color: img.ColorRgb8(250, 248, 242));
+  for (final (i, r) in rows.indexed) {
+    img.drawString(paper, r, font: img.arial24, x: 120, y: 80 + i * 60, color: img.ColorRgb8(70, 70, 70));
+  }
+  final photo = File('${folder.path}/receipt.png')..writeAsBytesSync(img.encodePng(paper));
+  ReceiptScanner.read = ({required camera}) async => (
+    lines: [
+      for (final (i, r) in rows.indexed) ReceiptLine(r, [(0, i * 30.0), (300, i * 30.0), (300, i * 30.0 + 20), (0, i * 30.0 + 20)]),
+    ],
+    photo: 'receipt.png',
+  );
+  // Decoded before any widget asks for it: a load started under the test's fake clock would never finish.
+  final app = t.element(find.byType(KakeboApp));
+  await t.runAsync(
+    () => Future.wait([
+      precacheImage(ResizeImage(FileImage(photo), width: (34 * t.view.devicePixelRatio).round()), app), // the thumbnail
+      precacheImage(FileImage(photo), app), // the photo opened whole
+    ]),
+  );
+  await _tap(t, find.text(tr.addExpense));
+  await _tap(t, find.byTooltip(tr.scanReceipt));
+  await _tap(t, find.text(tr.receiptCamera));
+}
 
 /// The Play listing's screenshots, in the order the store shows them: screen, what to do there.
 final List<(String, Act?)> _play = [

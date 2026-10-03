@@ -263,12 +263,20 @@ class Kakebo extends ChangeNotifier {
     if (rule) save = (income * .2).roundToDouble();
   });
 
-  /// A new expense, today unless [on] says another day (one written down late).
-  void addEntry(double amt, String note, String p, {DateTime? on}) =>
-      update(() => _insertByDate(Entry(_day(on ?? now), note.isEmpty ? tr.pillars[p]!.name : note, amt, p)));
+  /// A new expense, today unless [on] says another day (one written down late), with the [receipt]'s photo it was read from.
+  void addEntry(double amt, String note, String p, {DateTime? on, String? receipt}) =>
+      update(() => _insertByDate(Entry(_day(on ?? now), note.isEmpty ? tr.pillars[p]!.name : note, amt, p, receipt: receipt)));
 
-  void editEntry(Entry old, double amt, String note, String p, {String? reflection, DateTime? on}) => update(() {
-    final e = Entry(on == null ? old.date : _day(on), note.isEmpty ? tr.pillars[p]!.name : note, amt, p, reflection: reflection ?? old.reflection);
+  /// [reflection] and [receipt] stay as they were when null; an empty one clears them.
+  void editEntry(Entry old, double amt, String note, String p, {String? reflection, DateTime? on, String? receipt}) => update(() {
+    final e = Entry(
+      on == null ? old.date : _day(on),
+      note.isEmpty ? tr.pillars[p]!.name : note,
+      amt,
+      p,
+      reflection: reflection ?? old.reflection,
+      receipt: receipt == null ? old.receipt : (receipt.isEmpty ? null : receipt),
+    );
     if (e.date == old.date) {
       entries[entries.indexOf(old)] = e;
     } else {

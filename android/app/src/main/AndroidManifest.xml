@@ -1,4 +1,10 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- No Internet, as the privacy policy promises: ML Kit's libraries (receipts are read on the phone) ask for it to send
+         Google their usage figures. Only the debug build keeps it, for flutter run (src/debug/AndroidManifest.xml).
+         ACCESS_NETWORK_STATE, which they also ask for, stays: it only tells whether the phone is online, and Android 14
+         throws when a library schedules its uploads without it. -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove"/>
     <!-- Evening reminders are rescheduled after a reboot. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- User-granted in "Sveglie e promemoria", so notifications arrive at the chosen minute. -->
@@ -6,7 +12,10 @@
     <application
         android:label="Kakebo"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        tools:targetApi="31">
         <activity
             android:name=".MainActivity"
             android:exported="true"
