@@ -2,6 +2,18 @@
 
 Tutte le modifiche di Kakebo che si notano usando l'app, dalla più recente. I numeri di versione seguono il [versionamento semantico](https://semver.org/lang/it/).
 
+## [1.3.0] - 2026-10-04
+
+### Novità
+
+- **Leggi lo scontrino.** Accanto ad "Annota spesa" c'è un pulsante con la fotocamera: fotografa lo scontrino o scegli una foto, e la nuova spesa si apre già con il totale, il negozio come nota e la data. Controlli e salvi tu. Lo scontrino è letto sul telefono e non va da nessuna parte. La foto resta con la spesa: la rivedi aprendola, e in Oggi, nel Registro e nel Calendario una piccola icona segna le spese che ne hanno una. Il file di backup non contiene le foto.
+- **Il widget per la schermata Home.** Mostra quello che l'app ti chiede in quel momento: di giorno quanto ti resta e circa quanto al giorno, con i quattro pilastri per annotare subito una spesa; la sera, se il promemoria è attivo e finché non l'hai scritto, il pensiero della sera; finito il mese, il mese da chiudere. Sotto, il mese come una linea: quanto del disponibile è già speso e a che giorno sei. Si può allargare o stringere, e segue il tema chiaro o scuro del telefono.
+
+### Correzioni
+
+- **Indietro porta dove eri.** Il pensiero della sera e le Impostazioni tornano alla schermata da cui li hai aperti, anche dopo più passi (Diario → Impostazioni → Entrate e spese fisse), invece di riportare sempre a Oggi. Il pulsante del pensiero dice dove torni, per esempio "Torna al Diario", e nelle Impostazioni "← Oggi" diventa "← Indietro".
+- **Nessuna cifra negativa al giorno.** Quando non resta più niente da spendere, Oggi dice quando si chiude il mese invece di una somma negativa al giorno.
+
 ## [1.2.1] - 2026-10-04
 
 ### Correzioni
@@ -80,6 +92,7 @@ La prima versione.
 - **I dati restano sul telefono:** nessun account e nessun permesso Internet; backup in un file ed esportazione in CSV.
 - **In italiano e in inglese.**
 
+[1.3.0]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.3.0
 [1.2.1]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.2.1
 [1.2.0]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.2.0
 [1.1.3]: https://github.com/AlessioBarbanti/Kakebo/releases/tag/v1.1.3

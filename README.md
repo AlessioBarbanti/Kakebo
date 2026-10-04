@@ -64,6 +64,7 @@ All'inizio e alla fine di ogni mese si risponde alle stesse quattro domande:
 - **Diario.** Il pensiero della sera ("Cosa ti ha reso felice oggi?"), con qualche respiro guidato se lo desideri; le quattro domande di fine mese e il sigillo che chiude il mese.
 - **Una frase al giorno.** Trenta detti e citazioni giapponesi, con l'originale, il romaji e la fonte.
 - **Un promemoria serale** all'ora che scegli.
+- **Il widget.** Sulla schermata Home, quello che Kakebo ti chiede in quel momento: quanto ti resta, il pensiero della sera, il mese da chiudere.
 - **In italiano e in inglese.** Valuta, date e orari seguono le impostazioni del telefono.
 - **Accessibile.** Pensata per TalkBack e per il testo grande, con aree di tocco da 48 dp.
 
