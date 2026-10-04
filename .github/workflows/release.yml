@@ -1,17 +1,22 @@
-# Builds the signed app. A tag like v1.0.0 (it must match the version in pubspec.yaml) also publishes a GitHub release
-# with one APK per processor to install (arm64 for almost every phone, armv7 for old ones) and the app bundle for Google
-# Play, which carries them all and gives each phone its own. Run by hand (Actions > Release > Run workflow) it only
-# builds, and the files wait in the run's artifacts.
+# Builds the signed app and publishes it (CONTRIBUTING.md "Rilascio"):
+# - a push to main, i.e. merging develop, publishes the version in pubspec.yaml when it has no release yet: tag v1.3.0
+#   on that commit and a GitHub release whose notes are the version's section of CHANGELOG.md, both written on develop
+#   before the merge. A push that leaves the version as it was (a README fix, say) publishes nothing;
+# - run by hand on develop (Actions > Release > Run workflow, or gh workflow run release.yml --ref develop) it publishes
+#   a pre-release of the coming version: v1.3.0-pre.1, -pre.2 and so on, kept apart from the latest release;
+# - run by hand on any other branch it only builds, and the files wait in the run's artifacts.
+# A release carries one APK per processor to install (arm64 for almost every phone, armv7 for old ones) and the app
+# bundle for Google Play, which carries them all and gives each phone its own.
 #
 # Signing uses the Play upload key from the repository secrets ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD and
-# ANDROID_KEY_PASSWORD. They reach only the steps that need them and are never printed; the job runs only on tags and by
-# hand, never for pull requests, so forks cannot reach them. The key's alias is not a secret (as one, GitHub would mask
-# the word everywhere in the logs).
+# ANDROID_KEY_PASSWORD. They reach only the steps that need them and are never printed; the job runs only on pushes to
+# main and by hand, never for pull requests, so forks cannot reach them. The key's alias is not a secret (as one, GitHub
+# would mask the word everywhere in the logs).
 name: Release
 
 on:
   push:
-    tags: ['v*']
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -21,13 +26,51 @@ concurrency:
   group: release-${{ github.ref }}
 
 jobs:
+  # What this run publishes, decided in seconds, before Flutter is installed.
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      build: ${{ steps.plan.outputs.build }}
+      tag: ${{ steps.plan.outputs.tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - id: plan
+        run: |
+          version=$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml)
+          released() { git ls-remote --exit-code --refs --tags origin "refs/tags/$1" > /dev/null; }
+          case "$GITHUB_EVENT_NAME $GITHUB_REF_NAME" in
+            "push main")
+              if released "v$version"; then
+                echo "::notice::v$version is already released, so there is nothing to publish. A release needs a higher version in pubspec.yaml."
+                exit 0
+              fi
+              tag="v$version" ;;
+            "workflow_dispatch develop")
+              if released "v$version"; then
+                echo "::error::v$version is already released: raise the version in pubspec.yaml to the coming one first"
+                exit 1
+              fi
+              tag="v$version-pre.$(( $(git ls-remote --refs --tags origin "refs/tags/v$version-pre.*" | wc -l) + 1 ))" ;;
+            *) tag= ;;
+          esac
+          echo "Publishing: ${tag:-nothing, only building}"
+          echo "build=true" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
   release:
+    needs: plan
+    if: needs.plan.outputs.build == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     permissions:
-      contents: write # creating the release
+      contents: write # creating the release and its tag
     env:
       FLUTTER_VERSION: 3.47.5 # the version the app is developed with
+      TAG: ${{ needs.plan.outputs.tag }} # empty when only building
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -43,24 +86,21 @@ jobs:
           git clone --depth 1 --branch "$FLUTTER_VERSION" https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
           echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
 
-      - name: Tag matches pubspec.yaml
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          version=$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml)
-          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match version $version in pubspec.yaml"
-            exit 1
-          fi
-
       # The release notes are the version's section of CHANGELOG.md, up to the next version or the link list at the end.
+      # A pre-release says it is one, and may come before the section is written.
       - name: Release notes from CHANGELOG.md
-        if: startsWith(github.ref, 'refs/tags/')
+        if: env.TAG != ''
         run: |
-          awk -v v="${GITHUB_REF_NAME#v}" '/^## \[/ { on = index($0, "[" v "]") > 0; next } /^\[[^]]+\]: / { on = 0 } on' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
-          if ! grep -q '[^[:space:]]' "$RUNNER_TEMP/notes.md"; then
-            echo "::error::CHANGELOG.md has no section for $GITHUB_REF_NAME"
+          version=${TAG#v}
+          version=${version%-pre.*}
+          awk -v v="$version" '/^## \[/ { on = index($0, "[" v "]") > 0; next } /^\[[^]]+\]: / { on = 0 } on' CHANGELOG.md > "$RUNNER_TEMP/section.md"
+          if [[ $TAG == *-pre.* ]]; then
+            printf 'Versione di prova della %s, dal branch develop: può ancora cambiare prima della release.\n\n' "$version" > "$RUNNER_TEMP/notes.md"
+          elif ! grep -q '[^[:space:]]' "$RUNNER_TEMP/section.md"; then
+            echo "::error::CHANGELOG.md has no section for $version"
             exit 1
           fi
+          cat "$RUNNER_TEMP/section.md" >> "$RUNNER_TEMP/notes.md"
           cat >> "$RUNNER_TEMP/notes.md" <<'NOTES'
 
           ### Quale file scaricare
@@ -93,9 +133,10 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         # One APK per processor instead of a universal one (about 20 MB instead of 55). x86_64 only runs emulators and
         # Chromebooks: those get it from the bundle. Split APKs number their versions 1000 (armv7) or 2000 (arm64) higher.
+        # A pre-release shows its own name in Android's settings (1.3.0-pre.1); its version number is the release's.
         run: |
-          flutter build apk --release --split-per-abi --target-platform android-arm,android-arm64
-          flutter build appbundle --release
+          flutter build apk --release --split-per-abi --target-platform android-arm,android-arm64 ${TAG:+--build-name=${TAG#v}}
+          flutter build appbundle --release ${TAG:+--build-name=${TAG#v}}
 
       - name: Remove the key
         if: always()
@@ -119,21 +160,28 @@ jobs:
             exit 1
           fi
 
+      # Named after the tag, or after the branch when only building (feature/x becomes feature-x).
       - name: Name the files
         run: |
+          name=${TAG:-${GITHUB_REF_NAME//\//-}}
+          echo "NAME=$name" >> "$GITHUB_ENV"
           mkdir dist
-          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "dist/kakebo-$GITHUB_REF_NAME-arm64.apk"
-          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk "dist/kakebo-$GITHUB_REF_NAME-armv7.apk"
-          cp build/app/outputs/bundle/release/app-release.aab "dist/kakebo-$GITHUB_REF_NAME-play.aab"
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "dist/kakebo-$name-arm64.apk"
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk "dist/kakebo-$name-armv7.apk"
+          cp build/app/outputs/bundle/release/app-release.aab "dist/kakebo-$name-play.aab"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: kakebo-${{ github.ref_name }}
+          name: kakebo-${{ env.NAME }}
           path: dist/
           if-no-files-found: error
 
+      # Creates the tag on the commit built; a pre-release never becomes the latest release.
       - name: GitHub release
-        if: startsWith(github.ref, 'refs/tags/')
+        if: env.TAG != ''
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "Kakebo $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md" --verify-tag
+        run: |
+          pre=()
+          if [[ $TAG == *-pre.* ]]; then pre=(--prerelease); fi
+          gh release create "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Kakebo $TAG" --notes-file "$RUNNER_TEMP/notes.md" "${pre[@]}"

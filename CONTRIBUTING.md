@@ -84,10 +84,15 @@ Le frasi non ancora tradotte finiscono in `build/untranslated-messages.json`.
 
 ## Rilascio
 
-1. Aggiorna `version` in `pubspec.yaml`: il nome (`1.2.0`) per le persone, il numero dopo `+` per Android e Google Play, che deve crescere a ogni caricamento. Il nome segue il versionamento semantico: correzioni → `1.1.1`, novità → `1.2.0`.
+Si lavora su `develop`; `main` riceve solo ciò che si pubblica, e ogni merge che alza la versione diventa una release.
+
+1. Quando `develop` è pronto, aggiorna `version` in `pubspec.yaml`: il nome (`1.2.0`) per le persone, il numero dopo `+` per Android e Google Play, che deve crescere a ogni caricamento. Il nome segue il versionamento semantico: correzioni → `1.1.1`, novità → `1.2.0`.
 2. Aggiungi in cima a `CHANGELOG.md` la sezione `## [1.2.0] - data`, scritta per chi usa l'app (Novità, Modifiche, Correzioni), e il suo link in fondo al file. Diventa il testo della release: senza, la Action si ferma.
-3. Fai commit su `main`, poi crea e invia il tag con lo stesso nome: `git tag v1.2.0 && git push origin v1.2.0`.
-4. La GitHub Action *Release* (`.github/workflows/release.yml`) esegue analisi e test, compila gli APK (`-arm64`, `-armv7`) e l'app bundle firmati e pubblica la release su GitHub con i tre file. Gli APK si installano direttamente; il file `-play.aab` va caricato nella Play Console. In fondo alle note la Action aggiunge da sé il paragrafo "Quale file scaricare". Avviata a mano da GitHub (Actions → Release → Run workflow) compila soltanto, senza pubblicare.
+3. Fai il merge di `develop` in `main`. La GitHub Action *Release* (`.github/workflows/release.yml`) parte da sola: esegue analisi e test, compila gli APK (`-arm64`, `-armv7`) e l'app bundle firmati, crea il tag `v1.2.0` sul commit e pubblica la release su GitHub con i tre file. Gli APK si installano direttamente; il file `-play.aab` va caricato nella Play Console. In fondo alle note la Action aggiunge da sé il paragrafo "Quale file scaricare". Un push su `main` che lascia la versione com'era (una correzione al README, per esempio) non pubblica niente.
+
+**Versioni di prova.** Avviata a mano su `develop` (Actions → Release → Run workflow, branch `develop`, oppure `gh workflow run release.yml --ref develop`), la Action pubblica una pre-release della versione in arrivo: `v1.3.0-pre.1`, poi `-pre.2` e così via, segnate su GitHub come versioni di prova e mai come ultima release. Prima va alzata la versione in `pubspec.yaml`: se è già pubblicata la Action si ferma, perché una `1.2.1-pre` verrebbe dopo la `1.2.1`. Le note dicono che è una versione di prova e riportano la sezione del CHANGELOG, se è già scritta. Avviata a mano su un altro branch, la Action compila soltanto e i file restano negli artifact dell'esecuzione.
+
+**Correzioni urgenti.** Un branch da `main` con la correzione, la versione alzata (`1.2.2`) e la sua sezione nel CHANGELOG: il merge in `main` la pubblica, poi `main` va unito in `develop`.
 
 La chiave di caricamento (upload key) di Google Play non è nel repository:
 
