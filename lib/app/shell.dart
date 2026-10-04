@@ -172,23 +172,27 @@ class _ShellState extends State<Shell> {
                 top: false,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: FilledButton.icon(
-                      onPressed: () => writes ? app.go('thought') : openAdd(context),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: green,
-                        foregroundColor: onGreen,
-                        minimumSize: const Size(0, 52),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    spacing: 10,
+                    children: [
+                      if (!writes) const ReceiptButton(),
+                      FilledButton.icon(
+                        onPressed: () => writes ? app.go('thought') : openAdd(context),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: green,
+                          foregroundColor: onGreen,
+                          minimumSize: const Size(0, 52),
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        icon: Icon(writes ? Icons.edit_outlined : Icons.add),
+                        label: Text(
+                          writes ? tr.writeThought : tr.addExpense,
+                          style: sans(15, w: FontWeight.w700, c: onGreen),
+                        ),
                       ),
-                      icon: Icon(writes ? Icons.edit_outlined : Icons.add),
-                      label: Text(
-                        writes ? tr.writeThought : tr.addExpense,
-                        style: sans(15, w: FontWeight.w700, c: onGreen),
-                      ),
-                    ),
+                    ],
                   ),
                 ),
               ),

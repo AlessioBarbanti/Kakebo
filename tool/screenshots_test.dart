@@ -134,7 +134,6 @@ Future<void> _receipt(WidgetTester t) async {
       precacheImage(FileImage(photo), app), // the photo opened whole
     ]),
   );
-  await _tap(t, find.text(tr.addExpense));
   await _tap(t, find.byTooltip(tr.scanReceipt));
   await _tap(t, find.text(tr.receiptCamera));
 }

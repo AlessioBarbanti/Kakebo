@@ -18,8 +18,8 @@ import 'package:kakebo/shared/widgets/inputs.dart';
 import 'package:kakebo/state/kakebo.dart';
 
 /// New expense, or [edit] an existing one (tap on any expense row); a new one may come with its [pillar] already chosen
-/// (the home screen widget's pillars).
-void openAdd(BuildContext context, {Entry? edit, String? pillar}) => showModalBottomSheet(
+/// (the home screen widget's pillars), or from a receipt to [scan] as it opens: photographed (true) or picked (false).
+void openAdd(BuildContext context, {Entry? edit, String? pillar, bool? scan}) => showModalBottomSheet(
   context: context,
   isScrollControlled: true,
   backgroundColor: card,
@@ -27,14 +27,50 @@ void openAdd(BuildContext context, {Entry? edit, String? pillar}) => showModalBo
   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
   builder: (_) => AppScope(
     notifier: AppScope.read(context),
-    child: AddSheet(edit: edit, pillar: pillar),
+    child: AddSheet(edit: edit, pillar: pillar, scan: scan),
   ),
 );
 
+/// Beside "Annota spesa": a new expense from a receipt, photographed now or a photo already taken.
+class ReceiptButton extends StatelessWidget {
+  const ReceiptButton({super.key});
+
+  @override
+  // A node of its own for TalkBack: alone in the bar, its label and tap would join the screen's scrolling node.
+  Widget build(BuildContext context) => Semantics(
+    container: true,
+    button: true,
+    child: Material(
+      color: ok(.93, .025, 150),
+      borderRadius: BorderRadius.circular(16),
+      clipBehavior: Clip.antiAlias,
+      child: PopupMenuButton<bool>(
+        tooltip: tr.scanReceipt,
+        onSelected: (camera) => openAdd(context, scan: camera),
+        itemBuilder: (_) => [
+          for (final (camera, icon, label) in [(true, Icons.photo_camera_outlined, tr.receiptCamera), (false, Icons.photo_library_outlined, tr.receiptGallery)])
+            PopupMenuItem(
+              value: camera,
+              child: Row(
+                spacing: 12,
+                children: [
+                  Icon(icon, size: 20, color: muted),
+                  Flexible(child: Text(label, style: sans(15))),
+                ],
+              ),
+            ),
+        ],
+        child: SizedBox.square(dimension: 52, child: Icon(Icons.photo_camera_outlined, size: 22, color: green)),
+      ),
+    ),
+  );
+}
+
 class AddSheet extends StatefulWidget {
-  const AddSheet({super.key, this.edit, this.pillar});
+  const AddSheet({super.key, this.edit, this.pillar, this.scan});
   final Entry? edit;
   final String? pillar;
+  final bool? scan;
 
   @override
   State<AddSheet> createState() => _AddSheetState();
@@ -50,12 +86,17 @@ class _AddSheetState extends State<AddSheet> {
   late DateTime day = e?.date ?? DateTime(app.now.year, app.now.month, app.now.day);
   late final _note = TextEditingController(text: note);
   bool reading = false; // a receipt is being read
-  String? shop; // the note a receipt wrote: the next receipt may replace it, not the user's own words
   String? said; // what reading a receipt has to say, under the amount
   late String? photo = e?.receipt; // the receipt's photo, kept with the expense
 
   double get value => double.tryParse(amt) ?? 0;
   bool get ready => value > 0 && pillar != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.scan case final camera?) WidgetsBinding.instance.addPostFrameCallback((_) => scan(camera));
+  }
 
   @override
   void dispose() {
@@ -76,9 +117,9 @@ class _AddSheetState extends State<AddSheet> {
     return app.sealed.containsKey(monthKey(app.labelOf(previous))) ? app.period.start : previous.start;
   }
 
-  /// Fills in what a receipt says, for the user to check before saving: its total, the shop as the note (never over the
-  /// user's own), and its day when an expense can still go there. The shop's name may suggest a pillar, as a typed note does.
-  /// The photo goes with the expense, a later receipt's in place of an earlier one.
+  /// Fills in what a receipt says, for the user to check before saving: its total, the shop as the note (never over words
+  /// typed while it was read), and its day when an expense can still go there. The shop's name may suggest a pillar, as a
+  /// typed note does. The photo goes with the expense. No photo taken or picked: the sheet closes, back where it was opened.
   Future<void> scan(bool camera) async {
     setState(() => reading = true);
     ({List<ReceiptLine> lines, String? photo})? read;
@@ -89,14 +130,14 @@ class _AddSheetState extends State<AddSheet> {
     }
     if (!mounted) return;
     final today = DateTime(app.now.year, app.now.month, app.now.day);
-    final r = read == null ? null : Receipt.read(rowsOf(read.lines), today: today);
+    if (read == null) return Navigator.pop(context);
+    final r = Receipt.read(rowsOf(read.lines), today: today);
     setState(() {
       reading = false;
-      if (r == null) return; // no photo taken
-      photo = read!.photo ?? photo;
+      photo = read!.photo;
       if (r.total case final t?) amt = t % 1 == 0 ? t.toInt().toString() : t.toStringAsFixed(2);
-      if (r.shop case final s? when note.trim().isEmpty || note == shop) {
-        shop = _note.text = s;
+      if (r.shop case final s? when note.trim().isEmpty) {
+        _note.text = s;
         noted(s);
       }
       if (r.date case final d? when !d.isBefore(earliest) && !d.isAfter(today)) day = d;
@@ -178,37 +219,6 @@ class _AddSheetState extends State<AddSheet> {
           Row(
             children: [
               Expanded(child: Text(e == null ? tr.newExpense : tr.editExpense, style: serif(20))),
-              // A new expense can come from a receipt: photographed now, or a photo already taken.
-              if (e == null)
-                PopupMenuButton<bool>(
-                  tooltip: tr.scanReceipt,
-                  enabled: !reading,
-                  onSelected: scan,
-                  itemBuilder: (_) => [
-                    for (final (camera, icon, label) in [
-                      (true, Icons.photo_camera_outlined, tr.receiptCamera),
-                      (false, Icons.photo_library_outlined, tr.receiptGallery),
-                    ])
-                      PopupMenuItem(
-                        value: camera,
-                        child: Row(
-                          spacing: 12,
-                          children: [
-                            Icon(icon, size: 20, color: muted),
-                            Flexible(child: Text(label, style: sans(15))),
-                          ],
-                        ),
-                      ),
-                  ],
-                  child: SizedBox.square(
-                    dimension: 48,
-                    child: Center(
-                      child: reading
-                          ? SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2, color: muted))
-                          : Icon(Icons.receipt_long_outlined, size: 18, color: muted),
-                    ),
-                  ),
-                ),
               // Quiet on purpose, in the header's own 48 dp: most expenses are today's, a tap dates one back when forgotten.
               Semantics(
                 button: true,

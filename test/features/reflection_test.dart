@@ -140,6 +140,7 @@ void main() {
     );
     await t.pumpAndSettle();
     expect(find.text(tr.addExpense), findsNothing);
+    expect(find.byTooltip(tr.scanReceipt), findsNothing, reason: 'the receipt goes beside Annota spesa only');
     await t.tap(find.text(tr.writeThought));
     expect(app.screen, 'thought');
   });

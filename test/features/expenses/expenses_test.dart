@@ -164,7 +164,7 @@ void main() {
       photo: photo,
     );
 
-    Future<void> open(WidgetTester t, {Entry? edit}) async {
+    Future<void> open(WidgetTester t, {required Entry edit}) async {
       await t.pumpWidget(
         AppScope(
           notifier: app,
@@ -182,10 +182,27 @@ void main() {
       await t.pumpAndSettle();
     }
 
+    /// The receipt button, as beside "Annota spesa", on a page of its own each time: it opens a new expense and reads.
     Future<void> scan(WidgetTester t, {String from = 'Fotografa lo scontrino'}) async {
+      await t.pumpWidget(const SizedBox());
+      await t.pumpWidget(
+        AppScope(
+          notifier: app,
+          child: const MaterialApp(
+            home: Scaffold(body: Center(child: ReceiptButton())),
+          ),
+        ),
+      );
       await t.tap(find.byTooltip('Leggi uno scontrino'));
       await t.pumpAndSettle();
       await t.tap(find.text(from));
+      await t.pumpAndSettle();
+    }
+
+    Future<void> save(WidgetTester t) async {
+      await t.ensureVisible(find.text('Salva'));
+      await t.pumpAndSettle();
+      await t.tap(find.text('Salva'));
       await t.pumpAndSettle();
     }
 
@@ -201,10 +218,10 @@ Pagamento contante 10,00
 22-09-2026 18:42
 ''');
       };
-      await open(t);
       await scan(t);
       expect(fromCamera, isTrue);
-      expect(find.text('5,38\u00A0€'), findsOneWidget);
+      expect(find.text('Nuova spesa'), findsOneWidget);
+      expect(find.text('5,38 €'), findsOneWidget);
       expect(find.widgetWithText(TextField, 'Esselunga'), findsOneWidget);
       expect(find.text(shortDay(DateTime(2026, 9, 22))), findsOneWidget);
       expect(find.text('Pilastro suggerito dalla nota: Necessità'), findsOneWidget);
@@ -212,64 +229,43 @@ Pagamento contante 10,00
       expect(find.byType(ReceiptThumb), findsOneWidget, reason: 'the photo, to check the figures against');
       expect(app.entries, isEmpty);
 
-      await t.ensureVisible(find.text('Salva'));
-      await t.pumpAndSettle();
-      await t.tap(find.text('Salva'));
+      await save(t);
       expect([for (final e in app.entries) (e.amt, e.note, e.date, e.p, e.receipt)], [(5.38, 'Esselunga', DateTime(2026, 9, 22), 'needs', 'receipt.jpg')]);
     });
 
-    testWidgets("never over the user's note, nor on a day an expense cannot go to; says when it cannot read", (t) async {
+    testWidgets('never on a day an expense cannot go to; says when it cannot read; no photo, no new expense', (t) async {
       var receipt = printed('BAR CENTRALE\nTOTALE 12,00\n01-01-2026');
       ReceiptScanner.read = ({required camera}) async => receipt;
-      await open(t);
-      await t.enterText(find.byType(TextField), 'Pranzo con Luca');
       await scan(t, from: 'Scegli una foto');
-      expect(find.text('12\u00A0€'), findsOneWidget);
-      expect(find.widgetWithText(TextField, 'Pranzo con Luca'), findsOneWidget);
+      expect(find.text('12 €'), findsOneWidget);
       expect(find.text('Oggi'), findsOneWidget, reason: 'January is long sealed');
 
       receipt = printed('BAR CENTRALE\nCAFFE 1,20\n24/09/2026');
       await scan(t);
       expect(find.text('Non trovo il totale: scrivilo tu'), findsOneWidget);
-      expect(find.text('12\u00A0€'), findsOneWidget, reason: 'the amount already there stays');
+
+      receipt = printed('', photo: 'blank.jpg'); // a photo with no text in it
+      await scan(t);
+      expect(find.text('Non riesco a leggere lo scontrino'), findsOneWidget);
 
       ReceiptScanner.read = ({required camera}) async => throw Exception('no camera');
       await scan(t);
       expect(find.text('Non riesco a leggere lo scontrino'), findsOneWidget);
 
-      ReceiptScanner.read = ({required camera}) async => receipt;
-      receipt = printed('BAR CENTRALE\nTOTALE 4,50');
-      await scan(t);
-      expect(find.text('Dallo scontrino: controlla prima di salvare'), findsOneWidget);
-      receipt = printed('', photo: 'blank.jpg'); // a photo with no text in it
-      await scan(t);
-      expect(find.text('Non riesco a leggere lo scontrino'), findsOneWidget);
-
       ReceiptScanner.read = ({required camera}) async => null; // the camera closed without a photo
       await scan(t);
-      expect(find.text('4,50\u00A0€'), findsOneWidget);
-      expect(find.widgetWithText(TextField, 'Pranzo con Luca'), findsOneWidget);
+      expect(find.text('Nuova spesa'), findsNothing, reason: 'back where it was opened');
       expect(app.entries, isEmpty);
     });
 
-    testWidgets("a later receipt replaces the earlier one's shop and photo; editing shows it, opens it whole, can leave it out", (t) async {
+    testWidgets('editing shows the photo, opens it whole, can leave it out', (t) async {
       final semantics = t.ensureSemantics();
-      var receipt = printed('BAR CENTRALE\nTOTALE 3,00', photo: 'bar.jpg');
-      ReceiptScanner.read = ({required camera}) async => receipt;
-      await open(t);
+      ReceiptScanner.read = ({required camera}) async => printed('FARMACIA COMUNALE\nTOTALE 8,90', photo: 'farmacia.jpg');
       await scan(t);
-      receipt = printed('FARMACIA COMUNALE\nTOTALE 8,90', photo: 'farmacia.jpg');
-      await scan(t); // the wrong receipt first, then the right one
-      expect(find.widgetWithText(TextField, 'Farmacia Comunale'), findsOneWidget);
-      expect(find.text('8,90\u00A0€'), findsOneWidget);
-      await t.ensureVisible(find.text('Salva'));
-      await t.pumpAndSettle();
-      await t.tap(find.text('Salva'));
-      await t.pumpAndSettle();
+      await save(t);
       expect(app.entries.single.receipt, 'farmacia.jpg');
 
       await open(t, edit: app.entries.single);
-      expect(find.byTooltip('Leggi uno scontrino'), findsNothing, reason: 'an expense being edited has no receipt to read');
       expect(find.text('Lo scontrino'), findsOneWidget);
       await t.tap(find.byType(ReceiptThumb));
       await t.pumpAndSettle();
@@ -281,9 +277,7 @@ Pagamento contante 10,00
       await t.tap(find.bySemanticsLabel('Togli la foto dello scontrino'));
       await t.pump();
       expect(find.byType(ReceiptThumb), findsNothing);
-      await t.ensureVisible(find.text('Salva'));
-      await t.pumpAndSettle();
-      await t.tap(find.text('Salva'));
+      await save(t);
       expect(app.entries.single.receipt, isNull);
       semantics.dispose();
     });
@@ -301,6 +295,7 @@ Pagamento contante 10,00
         ),
       );
       await t.pumpAndSettle();
+      expect(find.byTooltip('Leggi uno scontrino'), findsOneWidget, reason: 'beside Annota spesa');
       expect(find.bySemanticsLabel(RegExp('Farmacia.*con scontrino', dotAll: true)), findsOneWidget); // read with its row
       expect(find.bySemanticsLabel(RegExp('con scontrino')), findsOneWidget, reason: 'Pane has no photo');
       await t.ensureVisible(find.text('Farmacia'));
