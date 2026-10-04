@@ -11,11 +11,13 @@ Income, fixed costs and a savings goal: Kakebo works out how much you can spend 
 
 <b>Every day</b>
 • Add an expense in a few taps; the note suggests the pillar.
+• Photograph a receipt and the expense fills itself in: total, shop and date, read on your phone.
 • Today shows what is left, roughly how much per day, and the plum branch, which measures pace, not money.
 • The Ledger splits the week or the month by pillar, with what is left of each budget.
 • The Calendar shades each day by its free spending; the year view sets every month beside what it had available.
 • In the evening, a thought: "What made you happy today?", with a few guided breaths if you wish.
 • A Japanese saying every day, with the original, the romaji and its source.
+• The home screen widget shows what is left and, in the evening, the thought to write.
 
 <b>At the end of the month</b>
 Four questions and a seal close the books. If you forget, the month closes itself when the next one ends.

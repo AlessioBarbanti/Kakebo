@@ -11,11 +11,13 @@ Entrate, spese fisse e obiettivo di risparmio: Kakebo calcola quanto puoi spende
 
 <b>Ogni giorno</b>
 • Annoti una spesa in pochi tocchi, e la nota suggerisce il pilastro.
+• Fotografi lo scontrino e la spesa si compila da sola: totale, negozio e data, letti sul telefono.
 • Oggi mostra quanto ti resta, circa quanto al giorno e il ramo di susino, che misura il ritmo e non il denaro.
 • Il Registro divide la settimana o il mese per pilastro, con quanto resta di ogni budget.
 • Il Calendario colora i giorni in base alle spese libere; la vista annuale mette ogni mese accanto al suo disponibile.
 • La sera, un pensiero: "Cosa ti ha reso felice oggi?", con qualche respiro guidato se lo desideri.
 • Una frase giapponese al giorno, con l'originale, il romaji e la fonte.
+• Il widget sulla schermata Home mostra quanto ti resta e, la sera, il pensiero da scrivere.
 
 <b>A fine mese</b>
 Quattro domande e un sigillo chiudono i conti. Se te ne dimentichi, il mese si chiude da solo quando finisce il successivo.
