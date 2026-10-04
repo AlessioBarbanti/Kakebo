@@ -18,7 +18,7 @@ import 'package:kakebo/shared/theme/seasons.dart';
 import 'package:kakebo/shared/theme/tokens.dart';
 import 'package:kakebo/state/kakebo.dart';
 
-const _tabs = ['home', 'ledger', 'journal', 'calendar']; // labels: tr.tabs
+const _tabs = Kakebo.tabs;
 
 /// In-app layout: greeting, sticky tabs, swipeable content, and the add button always in reach.
 class Shell extends StatefulWidget {
@@ -261,7 +261,7 @@ class _ShellState extends State<Shell> {
                   shape: const CircleBorder(),
                   child: InkWell(
                     customBorder: const CircleBorder(),
-                    onTap: () => app.go(app.screen == 'settings' ? 'home' : 'settings'),
+                    onTap: () => app.screen == 'settings' ? app.back() : app.go('settings'),
                     child: SizedBox.square(dimension: 48, child: Icon(Icons.settings_outlined, size: 23, color: ok(.35, .03, 160))),
                   ),
                 ),

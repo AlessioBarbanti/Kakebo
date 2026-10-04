@@ -6,16 +6,9 @@ import 'package:kakebo/app/shell.dart';
 import 'package:kakebo/features/journal/thought.dart';
 import 'package:kakebo/features/month_setup/month_start.dart';
 import 'package:kakebo/features/onboarding/onboarding.dart';
-import 'package:kakebo/state/kakebo.dart';
 
 class Root extends StatelessWidget {
   const Root({super.key});
-
-  static String _back(Kakebo app) => switch (app.screen) {
-    'review' => 'journal',
-    'monthStart' => app.from,
-    _ => 'home',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +17,8 @@ class Root extends StatelessWidget {
     return PopScope(
       canPop: s == 'home' || (s == 'onboarding' && !app.onboarded),
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) app.go(_back(app));
+        // The month review closes to the Diario, as its "← Diario" says; a tab other than Today goes to Today.
+        if (!didPop) s == 'review' ? app.go('journal') : app.back();
       },
       child: Scaffold(
         body: Stack(

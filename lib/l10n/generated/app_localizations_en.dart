@@ -31,9 +31,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backArrow => '← Back';
 
   @override
-  String get backHome => '← Today';
-
-  @override
   String setupTitle(String month) {
     return 'Plan $month';
   }
@@ -407,7 +404,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeline => 'Timeline';
 
   @override
-  String get backToToday => 'Back to Today';
+  String backTo(String screen) {
+    String _temp0 = intl.Intl.selectLogic(screen, {
+      'home': 'Back to Today',
+      'ledger': 'Back to Ledger',
+      'journal': 'Back to Journal',
+      'calendar': 'Back to Calendar',
+      'settings': 'Back to Settings',
+      'other': 'Back',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get choosePillar => 'Choose a pillar';

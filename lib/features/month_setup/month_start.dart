@@ -70,7 +70,7 @@ class MonthStart extends StatelessWidget {
                 // Income, fixed costs, goal: the order the money flows in.
                 child: Reveal(
                   children: [
-                    Align(alignment: Alignment.centerLeft, child: TapText(tr.backArrow, () => app.go(app.from))),
+                    Align(alignment: Alignment.centerLeft, child: TapText(tr.backArrow, app.back)),
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: Text(tr.setupTitle(monthName(pm)), style: serif(28, h: 1.2)),

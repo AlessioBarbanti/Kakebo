@@ -169,7 +169,7 @@ void main() {
     );
     await t.pump(const Duration(seconds: 1));
     expect(find.byType(TextFormField), findsNothing);
-    expect(find.text(tr.backToToday), findsOneWidget);
+    expect(find.text(tr.backTo('home')), findsOneWidget);
     await t.pumpWidget(
       AppScope(
         notifier: app,

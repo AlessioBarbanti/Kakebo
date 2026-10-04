@@ -140,12 +140,6 @@ abstract class AppLocalizations {
   /// **'← Indietro'**
   String get backArrow;
 
-  /// No description provided for @backHome.
-  ///
-  /// In it, this message translates to:
-  /// **'← Oggi'**
-  String get backHome;
-
   /// No description provided for @setupTitle.
   ///
   /// In it, this message translates to:
@@ -800,11 +794,11 @@ abstract class AppLocalizations {
   /// **'Cronologia'**
   String get timeline;
 
-  /// No description provided for @backToToday.
+  /// No description provided for @backTo.
   ///
   /// In it, this message translates to:
-  /// **'Torna a Oggi'**
-  String get backToToday;
+  /// **'{screen, select, home{Torna a Oggi} ledger{Torna al Registro} journal{Torna al Diario} calendar{Torna al Calendario} settings{Torna alle Impostazioni} other{Torna indietro}}'**
+  String backTo(String screen);
 
   /// No description provided for @choosePillar.
   ///

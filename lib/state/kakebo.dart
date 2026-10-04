@@ -116,13 +116,23 @@ class Kakebo extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// The screen before the current one, for a way back from screens reached from several places (monthStart).
-  String from = 'home';
+  /// The tabs, Today first (labels: tr.tabs).
+  static const tabs = ['home', 'ledger', 'journal', 'calendar'];
+
+  /// The screens the current one was opened from, the last on top: every way back returns there, through any number of
+  /// steps (Diario → Impostazioni → Entrate e spese fisse). A tab starts it afresh.
+  final trail = <String>[];
+
+  /// Where [back] leads.
+  String get from => trail.lastOrNull ?? 'home';
 
   void go(String s) => update(() {
-    if (s != screen) from = screen;
+    if (s == screen) return;
+    tabs.contains(s) ? trail.clear() : trail.add(screen);
     screen = s;
   });
+
+  void back() => update(() => screen = trail.isEmpty ? 'home' : trail.removeLast());
 
   /// Redraw for a new hour/day (greeting, evening notice, "today"); saves only if a forgotten month has just sealed itself.
   void refresh() => closeForgotten() ? notifyListeners() : super.notifyListeners();

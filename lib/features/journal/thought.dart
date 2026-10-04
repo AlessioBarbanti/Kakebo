@@ -36,7 +36,6 @@ class _ThoughtState extends State<Thought> {
     if (text.trim().isEmpty && !editing) key = app.eveningKey;
     final thought = app.thoughts[key], saved = thought != null && !editing;
     final closed = !saved && !app.evening && text.trim().isEmpty;
-    void home() => app.go('home');
 
     return Container(
       color: ok(.95, .025, 295, .7),
@@ -74,7 +73,7 @@ class _ThoughtState extends State<Thought> {
                       textAlign: TextAlign.center,
                       style: sans(15, h: 1.6, c: ok(.42, .03, 280)),
                     ),
-                    Center(child: Btn(tr.backToToday, home, pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 14))),
+                    Center(child: Btn(tr.backTo(app.from), app.back, pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 14))),
                   ] else if (saved) ...[
                     const Center(
                       child: SizedBox.square(dimension: 130, child: Center(child: Enso())),
@@ -100,7 +99,7 @@ class _ThoughtState extends State<Thought> {
                           style: sans(15, c: violet),
                           pad: const EdgeInsets.symmetric(horizontal: 18),
                         ),
-                        Btn(tr.backToToday, home, pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 14)),
+                        Btn(tr.backTo(app.from), app.back, pad: const EdgeInsets.symmetric(horizontal: 28, vertical: 14)),
                       ],
                     ),
                   ] else if (!breathed) ...[
@@ -139,7 +138,7 @@ class _ThoughtState extends State<Thought> {
                       children: [
                         TapText(
                           tr.later,
-                          home,
+                          app.back,
                           style: sans(15, c: violet),
                           pad: const EdgeInsets.symmetric(horizontal: 18),
                         ),
@@ -178,7 +177,7 @@ class _ThoughtState extends State<Thought> {
             right: 16,
             child: TapText(
               tr.close,
-              home,
+              app.back,
               style: sans(14, c: violet),
               pad: const EdgeInsets.symmetric(horizontal: 8),
             ),

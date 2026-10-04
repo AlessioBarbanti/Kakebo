@@ -73,7 +73,7 @@ class Settings extends StatelessWidget {
     return Reveal(
       spacing: 24,
       children: [
-        Align(alignment: Alignment.centerLeft, child: TapText(tr.backHome, () => app.go('home'))),
+        Align(alignment: Alignment.centerLeft, child: TapText(tr.backArrow, app.back)),
         Text(tr.settings, style: serif(26, h: 1.2)),
         group(tr.ledgerGroup, [
           row(

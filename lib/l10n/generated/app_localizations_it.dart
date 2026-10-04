@@ -31,9 +31,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get backArrow => '← Indietro';
 
   @override
-  String get backHome => '← Oggi';
-
-  @override
   String setupTitle(String month) {
     return 'Prepara $month';
   }
@@ -407,7 +404,17 @@ class AppLocalizationsIt extends AppLocalizations {
   String get timeline => 'Cronologia';
 
   @override
-  String get backToToday => 'Torna a Oggi';
+  String backTo(String screen) {
+    String _temp0 = intl.Intl.selectLogic(screen, {
+      'home': 'Torna a Oggi',
+      'ledger': 'Torna al Registro',
+      'journal': 'Torna al Diario',
+      'calendar': 'Torna al Calendario',
+      'settings': 'Torna alle Impostazioni',
+      'other': 'Torna indietro',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get choosePillar => 'Scegli un pilastro';

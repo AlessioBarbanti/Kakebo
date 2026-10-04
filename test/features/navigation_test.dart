@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kakebo/app/app_scope.dart';
 import 'package:kakebo/app/shell.dart';
 import 'package:kakebo/features/home/home.dart';
+import 'package:kakebo/features/journal/thought.dart';
 import 'package:kakebo/features/month_setup/month_start.dart';
 import 'package:kakebo/l10n/formatters.dart';
 import 'package:kakebo/l10n/localization.dart';
@@ -92,6 +93,33 @@ void main() {
     await t.pumpAndSettle();
     await t.tap(find.text(tr.backArrow));
     expect(app.screen, 'settings');
+  });
+
+  testWidgets('every way out leads back where it was opened, through several steps', (t) async {
+    app.go('journal');
+    app.go('thought');
+    await t.pumpWidget(
+      AppScope(
+        notifier: app,
+        child: const MaterialApp(home: Scaffold(body: Thought())),
+      ),
+    );
+    await t.pump(const Duration(seconds: 1));
+    await t.tap(find.text(tr.close));
+    expect(app.screen, 'journal'); // not Today
+    app
+      ..go('settings')
+      ..go('monthStart')
+      ..back();
+    expect(app.screen, 'settings');
+    app.back();
+    expect(app.screen, 'journal');
+    app
+      ..go('settings')
+      ..go('ledger')
+      ..go('settings')
+      ..back();
+    expect(app.screen, 'ledger'); // a tab starts the way back afresh
   });
 
   testWidgets("a tap outside the month's fields closes the keyboard", (t) async {

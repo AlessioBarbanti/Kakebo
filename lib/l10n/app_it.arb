@@ -7,7 +7,6 @@
   "skip": "Salta",
   "back": "Indietro",
   "backArrow": "← Indietro",
-  "backHome": "← Oggi",
   "setupTitle": "Prepara {month}",
   "@setupTitle": {
     "placeholders": {
@@ -227,7 +226,8 @@
   "open": "Aperto",
   "questionsHint": "Ciò che ti ha fatto stare bene, ciò che cambieresti, una piccola intenzione per il futuro.",
   "timeline": "Cronologia",
-  "backToToday": "Torna a Oggi",
+  "backTo": "{screen, select, home{Torna a Oggi} ledger{Torna al Registro} journal{Torna al Diario} calendar{Torna al Calendario} settings{Torna alle Impostazioni} other{Torna indietro}}",
+  "@backTo": {"placeholders": {"screen": {"type": "String"}}},
   "choosePillar": "Scegli un pilastro",
   "reminderHint": "Le spese di oggi e un pensiero felice",
   "availableLabel": "Disponibile",
