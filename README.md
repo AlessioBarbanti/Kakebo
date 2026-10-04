@@ -57,7 +57,7 @@ All'inizio e alla fine di ogni mese si risponde alle stesse quattro domande:
 
 - **Prepara il mese.** Entrate, spese fisse e obiettivo di risparmio: Kakebo calcola quanto resta da spendere con consapevolezza e lo divide tra i pilastri, anche con la regola 50/30/20. Il mese può cominciare il giorno dello stipendio.
 - **Annota in pochi tocchi.** Importo, una nota, il pilastro. La nota suggerisce il pilastro: "cena fuori" va nei Desideri.
-- **Leggi lo scontrino.** Una foto e Kakebo compila totale, negozio e data, letti sul telefono: controlli e salvi tu. La foto resta con la spesa, per rivederla.
+- **Leggi lo scontrino.** Con la fotocamera accanto ad "Annota spesa": una foto e Kakebo compila totale, negozio e data, letti sul telefono. Controlli e salvi tu, e la foto resta con la spesa per rivederla.
 - **Oggi.** Quanto ti resta, circa quanto al giorno e il ramo del mese, che misura il ritmo e non il denaro.
 - **Registro.** La settimana o il mese per pilastro, con quanto resta di ogni budget.
 - **Calendario.** I giorni si colorano con le spese libere (Desideri, Cultura, Imprevisti) rispetto alla loro quota giornaliera, così la spesa settimanale non sembra un eccesso. La vista annuale mette ogni mese accanto al suo disponibile.
