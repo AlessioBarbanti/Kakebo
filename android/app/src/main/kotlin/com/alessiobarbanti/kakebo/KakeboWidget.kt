@@ -83,25 +83,28 @@ class KakeboWidget : AppWidgetProvider() {
             }
         }
 
+        // Both layouts set every view they change for every moment: the launcher applies an update over the views it already
+        // shows when the layout is the same, so what the moment before showed (the evening's note, its smaller title) would stay.
+
         private fun small(context: Context, f: JSONObject?, texts: JSONObject) = RemoteViews(context.packageName, R.layout.widget_small).apply {
             setOnClickPendingIntent(android.R.id.background, tap(context, f))
             if (f == null) return@apply
-            when (f.getString("kind")) {
+            val kind = f.getString("kind")
+            shown(R.id.kicker, kind == "day")
+            shown(R.id.seal, kind == "close")
+            shown(R.id.action, kind != "close")
+            setTextViewTextSize(R.id.title, TypedValue.COMPLEX_UNIT_SP, if (kind == "day") 28f else 15f)
+            when (kind) {
                 "day" -> {
                     setTextViewText(R.id.kicker, f.getString("kicker"))
                     setTextViewText(R.id.title, f.getString("title"))
                     action(context, "+", texts.optString("add"), "add")
                 }
                 "evening" -> {
-                    setViewVisibility(R.id.kicker, View.GONE)
-                    title(f.getString("title"), 15f)
+                    setTextViewText(R.id.title, f.getString("title"))
                     action(context, "筆", texts.optString("write"), "thought")
                 }
-                "close" -> {
-                    setViewVisibility(R.id.kicker, View.GONE)
-                    setViewVisibility(R.id.seal, View.VISIBLE)
-                    title(f.getString("small"), 15f)
-                }
+                "close" -> setTextViewText(R.id.title, f.getString("small"))
             }
         }
 
@@ -109,40 +112,37 @@ class KakeboWidget : AppWidgetProvider() {
             setOnClickPendingIntent(android.R.id.background, tap(context, f))
             if (f == null) return@apply
             val kind = f.getString("kind")
+            val day = kind == "day"
+            shown(R.id.sub, day)
+            shown(R.id.pillars, day)
+            shown(R.id.notes, !day)
+            shown(R.id.seal, kind == "close")
+            shown(R.id.month, true)
             setTextViewText(R.id.kicker, f.getString("kicker"))
             setTextViewText(R.id.title, f.getString("title"))
-            if (kind == "day") {
+            setTextViewTextSize(R.id.title, TypedValue.COMPLEX_UNIT_SP, if (day) 40f else 22f)
+            if (day) {
                 setTextViewText(R.id.sub, f.getString("sub"))
-                setViewVisibility(R.id.sub, View.VISIBLE)
-                setViewVisibility(R.id.pillars, View.VISIBLE)
                 pillars.forEachIndexed { i, (key, id) ->
                     setOnClickPendingIntent(id, open(context, 2 + i, "add", key))
                     setContentDescription(id, texts.optString(key))
                 }
             } else {
-                setTextViewTextSize(R.id.title, TypedValue.COMPLEX_UNIT_SP, 22f)
                 setTextViewText(R.id.note, f.getString("note"))
                 setTextViewText(R.id.button, f.getString("button"))
                 setOnClickPendingIntent(R.id.button, tap(context, f))
-                setViewVisibility(R.id.notes, View.VISIBLE)
-                if (kind == "close") setViewVisibility(R.id.seal, View.VISIBLE)
             }
             setImageViewBitmap(R.id.line, line(context, f.getDouble("ink").toFloat(), f.getDouble("tick").toFloat()))
             setContentDescription(R.id.line, f.getString("line"))
             setTextViewText(R.id.stamp, f.getString("stamp"))
-            setViewVisibility(R.id.month, View.VISIBLE)
         }
 
-        private fun RemoteViews.title(text: String, sp: Float) {
-            setTextViewText(R.id.title, text)
-            setTextViewTextSize(R.id.title, TypedValue.COMPLEX_UNIT_SP, sp)
-        }
+        private fun RemoteViews.shown(id: Int, on: Boolean) = setViewVisibility(id, if (on) View.VISIBLE else View.GONE)
 
         private fun RemoteViews.action(context: Context, glyph: String, description: String, screen: String) {
             setTextViewText(R.id.action, glyph)
             setContentDescription(R.id.action, description)
             setOnClickPendingIntent(R.id.action, open(context, if (screen == "add") 1 else 6, screen))
-            setViewVisibility(R.id.action, View.VISIBLE)
         }
 
         /** A tap anywhere: by day the app, in the evening the thought, at the month's end the review. */
